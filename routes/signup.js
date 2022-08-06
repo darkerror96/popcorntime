@@ -15,12 +15,12 @@ router.post('/', async(req, res)=>{
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword;
 
-    const checkUsername = await users.getUsername(username);
-    const checkEmail = await users.getEmail(email);
+    const checkUser = await users.getUser(username);
+    const checkEmail = await users.getUserByEmail(email);
     if(checkEmail){
         let error = "Email already exists";
         res.render('users/signup', {error: error, title: title});
-    }else if(checkUsername){
+    }else if(checkUser){
         let error = "Username already exists";
         res.render('users/signup', {error: error, title: title});
     }else if(password !== confirmPassword){

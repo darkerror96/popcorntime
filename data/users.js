@@ -6,7 +6,7 @@ const exportedMethods = {
     async getUsername(username){
         const usersCollection = await users();
         const user = await usersCollection.findOne({username: username});
-        return user;
+        return user.username;
     },
     async insertUser(user){
         const usersCollection = await users();
@@ -16,7 +16,7 @@ const exportedMethods = {
     async getEmail(email){
         const usersCollection = await users();
         const user = await usersCollection.findOne({email: email});
-        return user;
+        return user.email;
     }
 }
 

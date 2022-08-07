@@ -119,3 +119,23 @@ img {
 .empty-list {
     font-style: italic;
 }
+
+footer {
+    border-top: 1px solid #afafaf;
+    margin-top: 2em;
+    padding-top: 2em;
+    text-align: center;
+}
+
+.thumbnail-list-td {
+    text-align: center;
+}
+
+.thumbnail-item-title {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.thumbnail-item-img {
+    width: 10em;
+}

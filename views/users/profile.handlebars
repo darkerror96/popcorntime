@@ -1,0 +1,166 @@
+<header>
+    <h1 style="text-align:left;">Hello {{first_name}}</h1>
+</header>
+
+<main>
+    <h2>Watch list</h2>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if watchList}}
+        <table>
+            {{#each watchList}}
+            <td class='thumbnail-list-td'>
+                {{!-- TODO Fix links after movie page is ready --}}                
+                <a href='/movie/{{this._id}}'>
+                    <div class='thumbnail-item-title'>{{ this.name }}</div>
+                    <img class='thumbnail-item-img' src={{this.poster}} style='width:10em;' />
+                </a>
+            </td>
+            {{/each}}
+        </table>
+        {{else}}
+        <p class="empty-list">
+            You don't have any movies in your watchlist yet
+        </p>
+        {{/if}}
+    </div>
+
+    <h2>Preferences</h2>
+
+    <h4>Liked Genres</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if preferences.liked_genres}}
+        <ul>
+            {{#each preferences.liked_genres}}
+            <li>
+                {{ this }}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="empty-list">
+            You don't have any genres liked yet
+        </p>
+        {{/if}}
+    </div>
+    <h4>Liked Movies</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if likedMovies}}
+        <table>
+            {{#each likedMovies}}
+            <td class='thumbnail-list-td'>
+                <a href='/movie/{{this._id}}'>
+                    <div class='thumbnail-item-title'>{{ this.name }}</div>
+                    <img class='thumbnail-item-img' src={{this.poster}} style='width:10em;' />
+                </a>
+            </td>
+            {{/each}}
+        </table>
+        {{else}}
+        <p class="empty-list">
+            You don't have any movies liked yet
+        </p>
+        {{/if}}
+    </div>
+    <h4>Liked Actors</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if preferences.liked_actors}}
+        <ul>
+            {{#each preferences.liked_actors}}
+            <li>
+                {{ this }}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="empty-list">
+            You don't have any actors liked yet
+        </p>
+        {{/if}}
+    </div>
+    <h4>Liked Directors</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if preferences.liked_directors}}
+        <ul>
+            {{#each preferences.liked_directors}}
+            <li>
+                {{ this }}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="empty-list">
+            You don't have any directors liked yet
+        </p>
+        {{/if}}
+    </div>
+
+    <h4>Disliked Genres</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if preferences.disliked_genres}}
+        <ul>
+            {{#each preferences.disliked_genres}}
+            <li>
+                {{ this }}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="empty-list">
+            You don't have any genres disliked yet
+        </p>
+        {{/if}}
+    </div>
+    <h4>Disliked Movies</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if dislikedMovies}}
+        <table>
+            {{#each dislikedMovies}}
+            <td class='thumbnail-list-td'>
+                <a href='/movie/{{this._id}}'>
+                    <div class='thumbnail-item-title'>{{ this.name }}</div>
+                    <img class='thumbnail-item-img' src={{this.poster}} style='width:10em;' />
+                </a>
+            </td>
+            {{/each}}
+        </table>
+        {{else}}
+        <p class="empty-list">
+            You don't have any movies disliked yet
+        </p>
+        {{/if}}
+    </div>
+    <h4>Disliked Actors</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if preferences.disliked_actors}}
+        <ul>
+            {{#each preferences.disliked_actors}}
+            <li>
+                {{ this }}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="empty-list">
+            You don't have any actors disliked yet
+        </p>
+        {{/if}}
+    </div>
+    <h4>Disliked Directors</h4>
+    <div class="col-sm-12 col-md-6" id="todo-area">
+        {{#if preferences.disliked_directors}}
+        <ul>
+            {{#each preferences.disliked_directors}}
+            <li>
+                {{ this }}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="empty-list">
+            You don't have any directors disliked yet
+        </p>
+        {{/if}}
+    </div>
+
+    <a href="/" id="homeLink" style="margin-top:5em; position: relative;">Back to home</a>
+</main>

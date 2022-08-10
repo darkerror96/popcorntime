@@ -2,13 +2,13 @@
   <h1>Shows Found</h1>
   <br />
 
-  <h2>Top 10 list of TV Shows based on your search for `{{searchTerm}}`</h2>
+  <h2>Top 10 list of Movies based on your search for `{{searchTerm}}`</h2>
   <br />
 
   {{#each shows}}
   <ul>
     <li>
-      <a href="/shows/{{id}}">{{name}}</a>
+      <a href="/movies/{{imdbID}}">{{Title}}</a>
     </li>
   </ul>
   {{/each}}

@@ -1,3 +1,4 @@
+const { default: axios } = require('axios');
 const express = require('express');
 const router = express.Router();
 const tvshows = require('../data/tvshows');
@@ -15,24 +16,25 @@ router.post('/', async(req, res) => {
     }
 
     try {
-        let showList = await tvshows.searchTVShows(searchTerm);
+        let showList = await tvshows.searchMovie(searchTerm);
 
         if (showList.length == 0) {
             res.status(404).render('shows/error', {
-                title: "No Shows Found",
+                title: "No Movies Found",
                 hasSearchError: true,
                 searchTerm: searchTerm
             });
         } else {
             res.render('shows/index', {
-                title: "Shows Found",
+                title: "Movies Found",
                 shows: showList,
                 searchTerm: searchTerm
-            });
+            }); 
+            
         }
     } catch (e) {
         res.status(500).render('shows/error', {
-            title: "No Shows Found",
+            title: "No Movies Found",
             hasErrors: true,
             error: e
         });

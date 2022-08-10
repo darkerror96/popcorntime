@@ -6,6 +6,7 @@ router.get('/:id', async(req, res) => {
     try {
         let movie = await tvshows.getMovie(req.params.id);
 
+
         if (!movie.Title) {
             movie.Title = "NA";
         }
@@ -16,6 +17,7 @@ router.get('/:id', async(req, res) => {
             }
         } else {
             movie.Poster = {
+
                 "medium": "NA"
             };
         }
@@ -44,6 +46,7 @@ router.get('/:id', async(req, res) => {
             movie: movie,
             title: movie.Title
         });
+
 
     } catch (e) {
         if (e.response && e.response.status && e.response.status === 404) {

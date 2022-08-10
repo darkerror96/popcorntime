@@ -7,7 +7,7 @@ const path = require('path');
 const constructorMethod = (app) => {
     app.get('/', (req, res) => {
         res.render('shows/new', {
-            title: "Show Finder"
+            title: "Flick Finder"
         });
     });
 

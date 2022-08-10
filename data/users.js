@@ -10,7 +10,7 @@ const exportedMethods = {
   },
   async getUserById(id) {
     const usersCollection = await users();
-    const user = await usersCollection.findOne({ _id: ObjectId(id) });    
+    const user = await usersCollection.findOne({ _id: ObjectId(id) });
     return user;
   },
   async insertUser(user) {
@@ -44,6 +44,45 @@ const exportedMethods = {
       .toArray();
     return usersResult;
   },
+  async addToWatchList(id, movieId) {
+    const usersCollection = await users();
+    const updateInfo = await usersCollection.updateOne(
+      { _id: ObjectId(id) },
+      {
+        $addToSet: {
+          watch_list: movieId,
+        },
+      }
+    );
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+      throw "Update failed";
+  },
+  async updatePreferences(id, updatedPreferences) {
+    const usersCollection = await users();
+    const updateInfo = await usersCollection.updateOne(
+      { _id: ObjectId(id) },
+      {
+        $set: {
+          preferences: updatedPreferences,
+        },
+      }
+    );
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+      throw "Update failed";
+  },
+  async removeFromWatchList(id, movieId) {
+    const usersCollection = await users();
+    const updateInfo = await usersCollection.updateOne(
+      { _id: ObjectId(id) },
+      {
+        $pull: {
+          watch_list: movieId,
+        },
+      }
+    );
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+      throw "Update failed";
+  }
 };
 
 module.exports = exportedMethods;

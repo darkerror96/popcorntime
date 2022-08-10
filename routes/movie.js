@@ -133,7 +133,7 @@ router.post("/:id/comment", async (req, res) => {
     }
     movie.reviews.push(currentReview);
     try {
-      await movies.addReview(id, movie.reviews, newAverage);
+      await movies.updateReviewsAndRating(id, movie.reviews, newAverage);
       res.status(200).json();
       return;
     } catch (e) {

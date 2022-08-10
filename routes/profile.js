@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const users = require("../data/users");
 const movies = require("../data/movies");
+const validation = require("../utils/validation");
 
 router.get("/", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
@@ -56,17 +57,22 @@ router.post("/watchlist/:id", async (req, res) => {
   req.session.user = "john_doe";
   req.session.user_id = "62edec84bcd3a79c27abaa0c";
   if (true || (req.session && req.session.user)) {
+    let movieId = req.params.id;
     try {
-      let movieId = req.params.id;
       movieId = validation.checkId(movieId, "Id url param");
+    } catch (e) {
+      res.status(400).json(e).send();
+      return;
+    }
 
+    try {
       const user = await users.getUserById(req.session.user_id);
       const index = user.watch_list.findIndex(
         (watchListMovieId) => movieId === watchListMovieId
       );
       if (index === -1) {
-        user.watch_list.push(movieId);
-        users.addToWatchList(movieId);
+        users.addToWatchList(req.session.user_id, movieId);
+        res.status(200).send();
       } else {
         res.status(304).send();
       }
@@ -75,6 +81,219 @@ router.post("/watchlist/:id", async (req, res) => {
       res.status(400).json(e).send();
       return;
     }
+    return;
+  } else {
+    //TODO Add a section to display errors in the signup page
+    res.status(403).render("../views/users/signup", {
+      message: "You need to be signed up to access this page",
+    });
+    return;
+  }
+});
+
+router.post("/prefs", async (req, res) => {
+  // TODO Stop non-users from accessing this, and remove this hard-coding
+  req.session = {};
+  req.session.user = "john_doe";
+  req.session.user_id = "62edec84bcd3a79c27abaa0c";
+  if (true || (req.session && req.session.user)) {
+    let requestBody = undefined;
+    let preferenceCategory = undefined;
+    let preferenceValue = undefined;
+    try {
+      requestBody = req.body;
+      if (!requestBody) {
+        throw `Request body is empty`;
+      }
+
+      preferenceCategory = requestBody.preferenceCategory;
+      preferenceValue = requestBody.preferenceValue;
+
+      preferenceCategory =
+        validation.checkPreferenceCategory(preferenceCategory);
+      if (
+        preferenceCategory == "liked_movies" ||
+        preferenceCategory == "disliked_movies"
+      ) {
+        preferenceValue = validation.checkId(
+          preferenceValue,
+          "preferenceValue"
+        );
+      } else {
+        preferenceValue = validation.checkString(
+          preferenceValue,
+          "preferenceValue"
+        );
+      }
+    } catch (e) {
+      res.status(400).json(e).send();
+      return;
+    }
+
+    try {
+      const user = await users.getUserById(req.session.user_id);
+      if (!user.preferences) {
+        user.preferences = {};
+      }
+
+      // Disallow liking and disliking the same item
+      let oppositeCategory = preferenceCategory.includes("disliked")
+        ? preferenceCategory.replace("disliked", "liked")
+        : preferenceCategory.replace("liked", "disliked");
+
+      let preferenceSubSection = user.preferences[preferenceCategory];
+      let oppositeSubSection = user.preferences[oppositeCategory];
+
+      if (!oppositeSubSection) {
+        oppositeSubSection = [];
+      }
+      let oppositeIndex = oppositeSubSection.findIndex(
+        (value) => value === preferenceValue
+      );
+      if (oppositeIndex !== -1) {
+        res
+          .status(400)
+          .json(`Both likes and dislikes can't have this preference`);
+        return;
+      }
+
+      if (!preferenceSubSection) {
+        preferenceSubSection = [];
+      }
+      const index = preferenceSubSection.findIndex(
+        (value) => value === preferenceValue
+      );
+      if (index === -1) {
+        preferenceSubSection.push(preferenceValue);
+        user.preferences[preferenceCategory] = preferenceSubSection;
+        users.updatePreferences(req.session.user_id, user.preferences);
+        res.status(200).send();
+      } else {
+        res.status(304).send();
+      }
+      return;
+    } catch (e) {
+      res.status(500).json(e).send();
+      return;
+    }
+    return;
+  } else {
+    //TODO Add a section to display errors in the signup page
+    res.status(403).render("../views/users/signup", {
+      message: "You need to be signed up to access this page",
+    });
+    return;
+  }
+});
+
+router.delete("/watchlist/:id", async (req, res) => {
+  // TODO Stop non-users from accessing this, and remove this hard-coding
+  req.session = {};
+  req.session.user = "john_doe";
+  req.session.user_id = "62edec84bcd3a79c27abaa0c";
+  if (true || (req.session && req.session.user)) {
+    let movieId = req.params.id;
+    try {
+      movieId = validation.checkId(movieId, "Id url param");
+    } catch (e) {
+      res.status(400).json(e).send();
+      return;
+    }
+
+    try {
+      const user = await users.getUserById(req.session.user_id);
+      const index = user.watch_list.findIndex(
+        (watchListMovieId) => movieId === watchListMovieId
+      );
+      if (index === -1) {
+        res.status(404).send();
+      } else {
+        users.removeFromWatchList(req.session.user_id, movieId);
+        res.status(200).send();
+      }
+      return;
+    } catch (e) {
+      res.status(400).json(e).send();
+      return;
+    }
+    return;
+  } else {
+    //TODO Add a section to display errors in the signup page
+    res.status(403).render("../views/users/signup", {
+      message: "You need to be signed up to access this page",
+    });
+    return;
+  }
+});
+
+router.delete("/prefs", async (req, res) => {
+  // TODO Stop non-users from accessing this, and remove this hard-coding
+  req.session = {};
+  req.session.user = "john_doe";
+  req.session.user_id = "62edec84bcd3a79c27abaa0c";
+  if (true || (req.session && req.session.user)) {
+    let requestBody = undefined;
+    let preferenceCategory = undefined;
+    let preferenceValue = undefined;
+    try {
+      requestBody = req.body;
+      if (!requestBody) {
+        throw `Request body is empty`;
+      }
+
+      preferenceCategory = requestBody.preferenceCategory;
+      preferenceValue = requestBody.preferenceValue;
+
+      preferenceCategory =
+        validation.checkPreferenceCategory(preferenceCategory);
+      if (
+        preferenceCategory == "liked_movies" ||
+        preferenceCategory == "disliked_movies"
+      ) {
+        preferenceValue = validation.checkId(
+          preferenceValue,
+          "preferenceValue"
+        );
+      } else {
+        preferenceValue = validation.checkString(
+          preferenceValue,
+          "preferenceValue"
+        );
+      }
+    } catch (e) {
+      res.status(400).json(e).send();
+      return;
+    }
+
+    try {
+      const user = await users.getUserById(req.session.user_id);
+      if (!user.preferences) {
+        user.preferences = {};
+      }
+
+      let preferenceSubSection = user.preferences[preferenceCategory];
+      if (!user.preferences[preferenceCategory]) {
+        preferenceSubSection = [];
+      }
+      const index = preferenceSubSection.findIndex(
+        (value) => value === preferenceValue
+      );
+      if (index === -1) {
+        res.status(404).send();
+      } else {
+        preferenceSubSection = preferenceSubSection.filter(
+          (value) => value != preferenceValue
+        );
+        user.preferences[preferenceCategory] = preferenceSubSection;
+        users.updatePreferences(req.session.user_id, user.preferences);
+        res.status(200).send();
+      }
+      return;
+    } catch (e) {
+      res.status(500).json(e).send();
+      return;
+    }
+    return;
   } else {
     //TODO Add a section to display errors in the signup page
     res.status(403).render("../views/users/signup", {

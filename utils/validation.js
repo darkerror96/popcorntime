@@ -51,4 +51,23 @@ module.exports = {
     }
     return val;
   },
+
+  checkPreferenceCategory(preferenceCategory) {
+    if (!preferenceCategory) {
+      throw `You must provide a value for preference category`;
+    }
+    if (
+      preferenceCategory != "liked_genres" &&
+      preferenceCategory != "disliked_genres" &&
+      preferenceCategory != "liked_movies" &&
+      preferenceCategory != "disliked_movies" &&
+      preferenceCategory != "liked_actors" &&
+      preferenceCategory != "disliked_actors" &&
+      preferenceCategory != "liked_directors" &&
+      preferenceCategory != "disliked_directors"
+    ) {
+      throw `You must provide a valid value for preference category`;
+    }
+    return preferenceCategory;
+  },
 };

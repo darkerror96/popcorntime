@@ -29,13 +29,13 @@ const exportedMethods = {
       .toArray();
     return moviesResult;
   },
-  async addReview(id, reviews, newAverage) {
+  async updateReviewsAndRating(id, reviews, newAverage) {
     const moviesCollection = await movies();
     const updateInfo = await moviesCollection.updateOne(
       { _id: ObjectId(id) },
       {
-        $set: {        
-          reviews: reviews,          
+        $set: {
+          reviews: reviews,
           avg_rating: newAverage,
         },
       }

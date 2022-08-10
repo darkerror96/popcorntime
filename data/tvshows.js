@@ -1,58 +1,55 @@
 const axios = require("axios");
 const validation = require('./validation');
 
-async function searchTVShowsAPI(searchTerm) {
-    const {
-        data
-    } = await axios.get('http://api.tvmaze.com/search/shows?q=' + searchTerm);
+async function searchMovieAPI(searchTerm){
+    const {data} = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
     return data;
 }
 
-async function getTVShowAPI(showID) {
-    const {
-        data
-    } = await axios.get('http://api.tvmaze.com/shows/' + showID);
-    return data;
-}
-
-async function searchTVShows(searchTerm) {
+async function searchMovie(searchTerm) {
 
     validation.validateString("searchTerm", searchTerm);
 
-    const data = await searchTVShowsAPI(searchTerm);
+    const data = await searchMovieAPI(searchTerm);
+    
+    let movieResult = [];
+    let movieCounter = 0;
+    for (var i = 0; i < data.Search.length; i++) {
+        
+        movieResult.push(data.Search[i]);
+        movieCounter++;
 
-    let tvShowsResult = [];
-    let tvShowCounter = 0;
-    for (let temp of data) {
-        show = {
-            'id': temp.show.id,
-            'name': temp.show.name
-        }
-        tvShowsResult.push(show);
-        tvShowCounter++;
-
-        if (tvShowCounter === 10) {
+        if (movieCounter === 10) {
             break;
         }
     }
 
-    return tvShowsResult;
+    return movieResult;
 }
 
-async function getTVShow(showID) {
+async function getMovieAPI(imdbID) {
+    const {
+        data
+    } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&i=' + imdbID);
+    return data;
+}
 
-    validation.validateNumber("showID", showID);
+async function getMovie(imdbID) {
 
-    const data = await getTVShowAPI(showID);
+    validation.validateString("imdbID", imdbID);
 
-    if (data.id == null) {
-        throw "TV Show not found for ID = `" + showID + "`";
+    const data = await getMovieAPI(imdbID);
+
+    if (data.Title == null) {
+        throw "Movie not found for ID = `" + imdbID + "`";
     }
 
     return data;
 }
 
 module.exports = {
-    searchTVShows,
-    getTVShow
+    searchMovie,
+    searchMovieAPI,
+    getMovie,
+    getMovieAPI
 };

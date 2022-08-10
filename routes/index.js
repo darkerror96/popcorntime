@@ -3,15 +3,17 @@ const showsRoutes = require('./shows');
 const movieRoutes = require('./movie');
 const signupRoutes = require('./signup');
 const profileRoutes = require('./profile');
+const movieRoutes = require('./movies');
 const path = require('path');
 
 const constructorMethod = (app) => {
     app.get('/', (req, res) => {
         res.render('shows/new', {
-            title: "Show Finder"
+            title: "Flick Finder"
         });
     });
 
+    app.use('/movies', movieRoutes);
     app.use('/search', searchRoutes);
     app.use('/movie', movieRoutes);
     app.use('/signup', signupRoutes);

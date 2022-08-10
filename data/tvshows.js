@@ -40,7 +40,7 @@ async function getMovieAPI(imdbID) {
 
 async function getMovie(imdbID) {
 
-    validation.validateNumber("imdbID", imdbID);
+    validation.validateString("imdbID", imdbID);
 
     const data = await getMovieAPI(imdbID);
 
@@ -56,6 +56,4 @@ module.exports = {
     searchMovieAPI,
     getMovie,
     getMovieAPI
-    
 };
-

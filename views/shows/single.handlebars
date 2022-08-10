@@ -1,24 +1,24 @@
-<main class="show">
+<main class="movie">
   <div>
-    <h1>{{show.name}}</h1>
-    <img alt="{{show.name}}" src="{{show.image.medium}}" />
+    <h1>{{movie.Title}}</h1>
+    <img alt="{{movie.Title}}" src="{{movie.Poster}}" />
     <dl>
       <dt>Language</dt>
-      <dd>{{show.language}}</dd>
+      <dd>{{movie.Language}}</dd>
       <dt>Genres</dt>
-      {{#each show.genres}}
+      <dd>{{movie.Genre}}</dd>
+      <dt>Average Rating</dt>
+      {{#each movie.Ratings}}
       <dd>
         <ul>
           <li>{{this}}</li>
         </ul>
       </dd>
-      {{/each}}
-      <dt>Average Rating</dt>
-      <dd>{{show.rating.average}}</dd>
-      <dt>Network</dt>
-      <dd>{{show.network.name}}</dd>
-      <dt>Summary</dt>
-      <dd>{{show.summary}}</dd>
+      {{/each}} 
+      <dt>Runtime</dt>
+      <dd>{{movie.Runtime}}</dd>
+      <dt>Plot</dt>
+      <dd>{{movie.Plot}}</dd>
     </dl>
   </div>
 </main>

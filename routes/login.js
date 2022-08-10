@@ -15,7 +15,7 @@ router.post('/', async(req, res) => {
         const hashedPassword = userAttempt.password;
         if(hashedPassword){
             if(await bcrypt.compare(password, hashedPassword)){
-                req.session.user = {username: username};
+                req.session.user = {username: username, id: userAttempt._id};
                 res.redirect('/');
             }else{
                 let error = "Invalid password";

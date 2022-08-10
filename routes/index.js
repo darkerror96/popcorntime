@@ -1,5 +1,6 @@
 const searchRoutes = require('./search');
 const showsRoutes = require('./shows');
+const movieRoutes = require('./movie');
 const signupRoutes = require('./signup');
 const profileRoutes = require('./profile');
 const movieRoutes = require('./movies');
@@ -14,7 +15,7 @@ const constructorMethod = (app) => {
 
     app.use('/movies', movieRoutes);
     app.use('/search', searchRoutes);
-    app.use('/shows', showsRoutes);
+    app.use('/movie', movieRoutes);
     app.use('/signup', signupRoutes);
     app.use('/profile', profileRoutes);
 

@@ -12,7 +12,7 @@
                 {{!-- TODO Fix links after movie page is ready --}}                
                 <a href='/movie/{{this._id}}'>
                     <div class='thumbnail-item-title'>{{ this.name }}</div>
-                    <img class='thumbnail-item-img' src={{this.poster}} style='width:10em;' />
+                    <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src={{this.poster}} />
                 </a>
             </td>
             {{/each}}
@@ -50,7 +50,7 @@
             <td class='thumbnail-list-td'>
                 <a href='/movie/{{this._id}}'>
                     <div class='thumbnail-item-title'>{{ this.name }}</div>
-                    <img class='thumbnail-item-img' src={{this.poster}} style='width:10em;' />
+                    <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src={{this.poster}} />
                 </a>
             </td>
             {{/each}}
@@ -118,7 +118,7 @@
             <td class='thumbnail-list-td'>
                 <a href='/movie/{{this._id}}'>
                     <div class='thumbnail-item-title'>{{ this.name }}</div>
-                    <img class='thumbnail-item-img' src={{this.poster}} style='width:10em;' />
+                    <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src={{this.poster}} />
                 </a>
             </td>
             {{/each}}

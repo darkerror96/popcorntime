@@ -139,3 +139,38 @@ footer {
 .thumbnail-item-img {
     width: 10em;
 }
+
+dt {
+    padding-top: 1em;
+    font-weight: bold;
+}
+
+.review_block {
+    padding-top: 1em;    
+}
+
+.review_comment {
+    font-style: italic;    
+}
+
+.review_rating {
+    float: right
+}
+
+.review_author {
+    font-size: 0.85em;
+}
+
+.review_likes_and_dislikes {
+    float: right
+}
+
+.review_likes, .review_dislikes {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.rating {
+    font-weight: bold;
+    color: blue;
+}

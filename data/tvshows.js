@@ -11,15 +11,11 @@ async function searchMovie(searchTerm) {
     validation.validateString("searchTerm", searchTerm);
 
     const data = await searchMovieAPI(searchTerm);
-    console.log("option a" + data.Search[0].imdbID);
     
     let movieResult = [];
     let movieCounter = 0;
     for (var i = 0; i < data.Search.length; i++) {
-        // movie = {
-        //     'id': temp.Search.imdbID,
-        //     'name': temp.Search.Title
-        // }
+        
         movieResult.push(data.Search[i]);
         movieCounter++;
 

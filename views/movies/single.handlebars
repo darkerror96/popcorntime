@@ -1,0 +1,108 @@
+<main class="movie">
+  <div>
+    <h1>{{movie.name}}</h1>
+    <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src="{{movie.poster}}" />
+    <dl>
+      <dt>Release date</dt>
+      <dd>{{movie.release_date}}</dd>
+      <dt>Genres</dt>
+      {{#each movie.genres}}
+      <dd>
+        <ul>
+          <li>{{this}}</li>
+        </ul>
+      </dd>
+      {{/each}}
+
+      <dt>Cast</dt>
+      {{#each movie.cast}}
+      <dd>
+        <ul>
+          <li>{{this}}</li>
+        </ul>
+      </dd>
+      {{/each}}
+
+      <dt>Directors</dt>
+      {{#each movie.director}}
+      <dd>
+        <ul>
+          <li>{{this}}</li>
+        </ul>
+      </dd>
+      {{/each}}
+
+      <dt>Summary</dt>
+      <dd>{{movie.summary}}</dd>
+
+      <dt>Average Rating</dt>
+      <dd><span class="rating">{{movie.avg_rating}}</span> (out of {{movie.reviews.length}} reviews)</dd>
+
+      <dt>Reviews</dt>
+      {{#if reviewsWithUserName }}
+      {{#each reviewsWithUserName}}
+      <dd>
+        <div class="review_block">
+          <span class="review_comment"> {{this.comment}} </span>
+          <span class="review_rating"> Rated:
+            <span class="rating">{{this.rating}}</span>
+          </span>
+          <br />
+          <span class="review_author">added by {{this.user}} on {{this.timestamp}}</span>
+          <span class="review_likes_and_dislikes">
+            <span title="{{{this.likes}}}" class="review_likes">
+              Likes:
+              {{#if this.likes }}
+              {{this.likesCount}}
+              {{else}}
+              0
+              {{/if}}
+            </span>
+            <span> | </span>
+            <span title="{{{this.dislikes}}}" class="review_dislikes">
+              Dislikes:
+              {{#if this.dislikes }}
+              {{this.dislikesCount}}
+              {{else}}
+              0
+              {{/if}}
+            </span>
+          </span>
+        </div>
+      </dd>
+      {{/each}}
+      {{else}}
+      No reviews yet
+      {{/if}}
+      <dd style="margin: 0em; padding-top: 1em;">
+        <div class="container">
+          <form>
+            <div class="row">
+              <label for="textAreaComment" style="font-weight: 100; display: table-cell; vertical-align: middle;">Add a
+                review: </label>
+              <textarea class="col-sm-6" id="textAreaComment" rows="3" placeholder="Your comment goes here"
+                width="maximum"></textarea>
+              <button type="submit" id="btn-review" class="btn btn-primary col-sm-1" style="margin:2em">Submit</button>
+            </div>
+            <div class="row">
+              <label for="ratingInput" class="col-sm-2"
+                style="font-weight: 100; display: table-cell; vertical-align: middle;">
+                Add rating:
+              </label>
+              <input type="number" class="form-control col-sm-3" min="1" value="10" max="10" id="ratingInput"
+                style="width: 5em">
+            </div>
+
+          </form>
+        </div>
+
+
+
+      </dd>
+
+
+    </dl>
+  </div>
+
+  <script src="/public/js/movies-single.js"></script>
+</main>

@@ -1,3 +1,5 @@
+const { v4 } = require("uuid");
+
 const express = require("express");
 const router = express.Router();
 const movies = require("../data/movies");
@@ -37,53 +39,27 @@ router.get("/:id", async (req, res) => {
     });
     let reviewsWithUserName = [];
     movie.reviews.forEach((review) => {
-      let likesWithUserName = "";
-      if (review.likes && review.likes.length > 0) {
-        likesWithUserName = "Liked by";
-        for (let i = 0; i < review.likes.length; i++) {
-          if (i > 5) {
-            break;
-          }
-          if (i != 0) {
-            likesWithUserName = likesWithUserName + ",";
-          }
-          likesWithUserName =
-            likesWithUserName + " " + usersResultMap[review.likes[i]];
-        }
-      } else {
-        likesWithUserName = "No likes yet";
-      }
-      let dislikesWithUserName = "";
-      if (review.dislikes && review.dislikes.length > 0) {
-        dislikesWithUserName = "Disliked by";
-        for (let i = 0; i < review.dislikes.length; i++) {
-          if (i > 5) {
-            dislikesWithUserName += " and many more";
-            break;
-          }
-          if (i != 0) {
-            dislikesWithUserName = dislikesWithUserName + ",";
-          }
-          dislikesWithUserName =
-            dislikesWithUserName + " " + usersResultMap[review.dislikes[i]];
-        }
-      } else {
-        dislikesWithUserName = "No dislikes yet";
-      }
+      let likesWithUserName = getLikesWithUserName(review, usersResultMap);
+      let dislikesWithUserName = getDislikesWithUserName(
+        review,
+        usersResultMap
+      );
       let timestampIso = new Date(review.timestamp);
       reviewsWithUserName.push({
         user: usersResultMap[review.user_id],
         // TODO Change this today-n days|weeks|months|years ago
         timestamp: timestampIso.toISOString().substring(0, 10),
-        rating: review.rating,
+        rating: review.rating.toFixed(0),
         comment: review.comment,
+        commentId: review.comment_id,
         likes: likesWithUserName,
         likesCount: review.likes ? review.likes.length : 0,
         dislikes: dislikesWithUserName,
         dislikesCount: review.dislikes ? review.dislikes.length : 0,
       });
     });
-
+    movie.avg_rating = movie.avg_rating.toFixed(1);
+    
     res.render("movies/single", {
       title: movie.name,
       movie: movie,
@@ -128,10 +104,12 @@ router.post("/:id/comment", async (req, res) => {
     const currAverage = movie.avg_rating;
     const numOfReviews =
       movie.reviews && movie.reviews.length ? movie.reviews.length : 0;
+    const newNumOfReviews = numOfReviews + 1;
     const newAverage =
-      (currAverage * numOfReviews + requestBody.rating) / (numOfReviews + 1);
-    // ).toPrecision(3);
+      (currAverage * numOfReviews + requestBody.rating) / newNumOfReviews;
+    let uuid = v4();
     const currentReview = {
+      comment_id: uuid,
       user_id: req.session.user_id,
       timestamp: new Date().toISOString(),
       rating: requestBody.rating,
@@ -146,7 +124,18 @@ router.post("/:id/comment", async (req, res) => {
     movie.reviews.push(currentReview);
     try {
       await movies.updateReviewsAndRating(id, movie.reviews, newAverage);
-      res.status(200).json();
+      let responseBody = {
+        commentId: uuid,
+        comment: requestBody.comment,
+        rating: requestBody.rating,
+        user: req.session.user,
+        date: new Date().toJSON().slice(0, 10),
+        likes: getLikesWithUserName({}, {}),
+        dislikes: getDislikesWithUserName({}, {}),
+        newAverage: newAverage.toFixed(1),
+        newNumOfReviews: newNumOfReviews,
+      };
+      res.status(200).json(responseBody).send();
       return;
     } catch (e) {
       res.status(500).json(e).send();
@@ -183,6 +172,47 @@ function pushFieldsToArray(targetArray, inputArray, fieldInArrayElement) {
       }
     });
   }
+}
+
+function getLikesWithUserName(review, usersResultMap) {
+  let likesWithUserName = "";
+  if (review.likes && review.likes.length > 0) {
+    likesWithUserName = "Liked by";
+    for (let i = 0; i < review.likes.length; i++) {
+      if (i > 5) {
+        break;
+      }
+      if (i != 0) {
+        likesWithUserName = likesWithUserName + ",";
+      }
+      likesWithUserName =
+        likesWithUserName + " " + usersResultMap[review.likes[i]];
+    }
+  } else {
+    likesWithUserName = "No likes yet";
+  }
+  return likesWithUserName;
+}
+
+function getDislikesWithUserName(review, usersResultMap) {
+  let dislikesWithUserName = "";
+  if (review.dislikes && review.dislikes.length > 0) {
+    dislikesWithUserName = "Disliked by";
+    for (let i = 0; i < review.dislikes.length; i++) {
+      if (i > 5) {
+        dislikesWithUserName += " and many more";
+        break;
+      }
+      if (i != 0) {
+        dislikesWithUserName = dislikesWithUserName + ",";
+      }
+      dislikesWithUserName =
+        dislikesWithUserName + " " + usersResultMap[review.dislikes[i]];
+    }
+  } else {
+    dislikesWithUserName = "No dislikes yet";
+  }
+  return dislikesWithUserName;
 }
 
 module.exports = router;

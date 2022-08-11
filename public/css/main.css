@@ -170,6 +170,11 @@ dt {
     cursor: pointer;
 }
 
+.review_action {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .rating {
     font-weight: bold;
     color: blue;

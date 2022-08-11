@@ -36,12 +36,17 @@
       <dd>{{movie.summary}}</dd>
 
       <dt>Average Rating</dt>
-      <dd><span class="rating">{{movie.avg_rating}}</span> (out of {{movie.reviews.length}} reviews)</dd>
+      <dd>
+        <span id="avg_rating" class="rating">{{movie.avg_rating}}</span>
+        <span id="total_reviews"> (out of {{movie.reviews.length}} reviews)
+        </span>
+      </dd>
 
       <dt>Reviews</dt>
-      {{#if reviewsWithUserName }}
-      {{#each reviewsWithUserName}}
-      <dd>
+      <dd id="reviews_dd">
+        {{#if reviewsWithUserName }}
+        {{#each reviewsWithUserName}}
+
         <div class="review_block">
           <span class="review_comment"> {{this.comment}} </span>
           <span class="review_rating"> Rated:
@@ -68,15 +73,23 @@
               {{/if}}
             </span>
           </span>
+          <p>
+            <span class="review_action" style="color: green" id="like_{{this.commentId}}">Like</span>
+            <span class="review_action" style="color: red" id="dislike_{{this.commentId}})">Dislike</span>
+          </p>
         </div>
+
+        {{/each}}
+        {{else}}
+        No reviews yet
+        {{/if}}
       </dd>
-      {{/each}}
-      {{else}}
-      No reviews yet
-      {{/if}}
       <dd style="margin: 0em; padding-top: 1em;">
+        <div id="errorMessageDiv" class="alert alert-danger hidden" role="alert">
+        </div>
         <div class="container">
-          <form>
+          <form id="reviewForm" name="reviewForm">
+            <input type="hidden" id="movieId" name="movieId" value={{movie._id}}>
             <div class="row">
               <label for="textAreaComment" style="font-weight: 100; display: table-cell; vertical-align: middle;">Add a
                 review: </label>

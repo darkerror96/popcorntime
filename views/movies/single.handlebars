@@ -74,8 +74,16 @@
             </span>
           </span>
           <p>
+            {{#if this.likedByCurrentUser }}
+            <span class="review_action" style="color: orange" id="unlike_{{this.commentId}}">Undo 'Like'</span>
+            {{else}}
             <span class="review_action" style="color: green" id="like_{{this.commentId}}">Like</span>
-            <span class="review_action" style="color: red" id="dislike_{{this.commentId}})">Dislike</span>
+            {{/if}}
+            {{#if this.dislikedByCurrentUser }}
+            <span class="review_action" style="color: orange" id="undislike_{{this.commentId}}">Undo 'Dislike'</span>
+            {{else}}
+            <span class="review_action" style="color: red" id="dislike_{{this.commentId}}">Dislike</span>
+            {{/if}}
           </p>
         </div>
 
@@ -89,32 +97,40 @@
         </div>
         <div class="container">
           <form id="reviewForm" name="reviewForm">
-            <input type="hidden" id="movieId" name="movieId" value={{movie._id}}>
             <div class="row">
-              <label for="textAreaComment" style="font-weight: 100; display: table-cell; vertical-align: middle;">Add a
-                review: </label>
-              <textarea class="col-sm-6" id="textAreaComment" rows="3" placeholder="Your comment goes here"
-                width="maximum"></textarea>
-              <button type="submit" id="btn-review" class="btn btn-primary col-sm-1" style="margin:2em">Submit</button>
-            </div>
-            <div class="row">
-              <label for="ratingInput" class="col-sm-2"
-                style="font-weight: 100; display: table-cell; vertical-align: middle;">
-                Add rating:
-              </label>
-              <input type="number" class="form-control col-sm-3" min="1" value="10" max="10" id="ratingInput"
-                style="width: 5em">
-            </div>
 
+
+              <input type="hidden" id="movieId" name="movieId" value={{movie._id}}>
+              <div class="col-sm-8">
+                <label for="textAreaComment" style="font-weight: 100; display: table-cell; vertical-align: middle;">Add
+                  a
+                  review: </label>
+                <textarea class="col-sm-6" id="textAreaComment" rows="3" placeholder="Your comment goes here"
+                  width="maximum"></textarea>
+                <button type="submit" id="btn-review" class="btn btn-primary col-sm-1"
+                  style="margin:2em">Submit</button>
+              </div>
+              {{!-- <div class="row"> --}}
+                <label for="ratingInput" class="col-sm-2"
+                  style="font-weight: 100; display: table-cell; vertical-align: middle;">
+                  Add rating:
+                </label>
+                <input type="number" class="form-control col-sm-3" min="1" value="10" max="10" id="ratingInput"
+                  style="width: 5em">
+                {{!--
+              </div> --}}
+            </div>
           </form>
+
         </div>
+  </div>
 
 
 
-      </dd>
+  </dd>
 
 
-    </dl>
+  </dl>
   </div>
 
   <script src="/public/js/movies-single.js"></script>

@@ -25,12 +25,57 @@
     return newCommentBlock;
   }
 
-  function reviewAction(action, commentId) {
-    console.log(action, commentId);
+  function reviewAction(action, commentId, reviewActionButton) {
+    let movieId = movieIdField.value;
+    console.log(action, commentId, movieId);
+
+    let postReviewActionInfo = {
+      method: "POST",
+      url: `/movies/${movieId}/comment/${commentId}/${action}`,
+      contentType: "application/json",
+    };
+
+    $.ajax(postReviewActionInfo)
+      .then(function (responseMessage) {
+        let postReviewActionResponse = $(responseMessage)[0];
+        console.log("success", postReviewActionResponse);
+
+        if (action === "like") {
+          reviewActionButton.innerHTML = "Undo 'Like'";
+          reviewActionButton.style = "color: orange";
+          reviewActionButton.id = `unlike_${commentId}`;
+          return;
+        }
+        if (action === "unlike") {
+          reviewActionButton.innerHTML = "Like";
+          reviewActionButton.style = "color: green";
+          reviewActionButton.id = `like_${commentId}`;
+          return;
+        }
+        if (action === "dislike") {
+          reviewActionButton.innerHTML = "Undo 'Dislike";
+          reviewActionButton.style = "color: orange";
+          reviewActionButton.id = `undislike_${commentId}`;
+          return;
+        }
+        if (action === "undislike") {
+          reviewActionButton.innerHTML = "Dislike";
+          reviewActionButton.style = "color: red";
+          reviewActionButton.id = `dislike_${commentId}`;
+          return;
+        }
+      })
+      .fail(function (data, textStatus, xhr) {
+        console.log("failure", data, textStatus, xhr);
+        console.log("failure", data.status);
+        console.log("failure", textStatus);
+        console.log("failure", xhr);
+      });
   }
 
   const submitReviewForm = document.getElementById("reviewForm");
   const submitReviewButton = document.getElementById("btn-review");
+  const movieIdField = document.getElementById("movieId");
   const reviewActionButtons = document.getElementsByClassName("review_action");
   console.log("reviewActionButtons", reviewActionButtons);
   submitReviewButton.addEventListener("submit", (event) => {
@@ -42,7 +87,7 @@
     event.preventDefault();
     let rating = $("#ratingInput").val();
     let comment = $("#textAreaComment").val();
-    let movieId = $("#movieId").val();
+    let movieId = movieIdField.value;
     let errorMessageDiv = $("#errorMessageDiv");
     let reviews_dd = $("#reviews_dd");
     let avg_ratingsSpan = $("#avg_rating");
@@ -97,7 +142,13 @@
   for (let reviewActionButton of reviewActionButtons) {
     reviewActionButton.addEventListener("click", (event) => {
       console.log(reviewActionButton);
+      console.log(reviewActionButton.id);
       console.log(event);
+      let actionAndCommentId = reviewActionButton.id.split("_");
+      let action = actionAndCommentId[0];
+      let commentId = actionAndCommentId[1];
+
+      reviewAction(action, commentId, reviewActionButton);
     });
   }
 })();

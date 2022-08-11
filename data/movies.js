@@ -43,6 +43,19 @@ const exportedMethods = {
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },
+  async updateReviews(id, reviews) {
+    const moviesCollection = await movies();
+    const updateInfo = await moviesCollection.updateOne(
+      { _id: ObjectId(id) },
+      {
+        $set: {
+          reviews: reviews,
+        },
+      }
+    );
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+      throw "Update failed";
+  },
 };
 
 module.exports = exportedMethods;

@@ -31,7 +31,7 @@ router.get("/:id", async (req, res) => {
       res.status(404).render("movies/error", {
         title: "No Movie Found",
         hasErrors: true,
-        error: "No Movie Found with Movie ID = `" + Number(req.params.id) + "`",
+        error: "No Movie Found with Movie ID = `" + req.params.id + "`",
       });
     }
     let usersResultMap = {};
@@ -51,7 +51,7 @@ router.get("/:id", async (req, res) => {
       );
       let currentUserInDislikes = review.dislikes.filter(
         (dislike) => dislike === req.session.user_id
-      );      
+      );
       reviewsWithUserName.push({
         user: usersResultMap[review.user_id],
         // TODO Change this today-n days|weeks|months|years ago
@@ -68,7 +68,6 @@ router.get("/:id", async (req, res) => {
       });
     });
     movie.avg_rating = movie.avg_rating.toFixed(1);
-        
 
     res.render("movies/single", {
       title: movie.name,
@@ -172,6 +171,25 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
     const action = req.params.action;
 
     const movie = await movies.getMovieById(movieId);
+    let userIds = [];
+    pushFieldToArray(userIds, movie.reviews, "user_id");
+    pushFieldsToArray(userIds, movie.reviews, "likes");
+    pushFieldsToArray(userIds, movie.reviews, "dislikes");
+
+    try {
+      userIdsResult = await users.getUsersById(userIds);
+      if (!userIdsResult) {
+        throw `No movie found with id ${id}`;
+      }
+    } catch (e) {
+      res.status(404).json("No Movie Found").send();
+      return;
+    }
+    let usersResultMap = {};
+    userIdsResult.forEach((user) => {
+      usersResultMap[user._id.toString()] = user.username;
+    });
+
     const review = movie.reviews.find(
       (review) => review.comment_id === commentId
     );
@@ -179,6 +197,9 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
       res.status(404).json("Comment does not exist").send();
       return;
     }
+
+    let likesWithUserName = "";
+    let dislikesWithUserName = getDislikesWithUserName(review, usersResultMap);
 
     if (action === "like") {
       const currentUserInLikes = review.likes.find(
@@ -192,15 +213,22 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
           (dislikedUser) => dislikedUser === req.session.user_id
         );
         if (currentUserInDislikes) {
-          res.status(400).json("Cannot like a disliked comment").send();
+          res.status(409).json("Cannot like a disliked comment").send();
           return;
         }
         review.likes.push(req.session.user_id);
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
         );
+        likesWithUserName = getLikesWithUserName(review, usersResultMap);
         movies.updateReviews(movieId, movie.reviews);
-        res.status(200).json({}).send();
+        res
+          .status(200)
+          .json({
+            currentCommentLikes: review.likes.length,
+            likesWithUserName: likesWithUserName,
+          })
+          .send();
         return;
       }
     }
@@ -216,8 +244,15 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
         );
+        likesWithUserName = getLikesWithUserName(review, usersResultMap);
         movies.updateReviews(movieId, movie.reviews);
-        res.status(200).json({}).send();
+        res
+          .status(200)
+          .json({
+            currentCommentLikes: review.likes.length,
+            likesWithUserName: likesWithUserName,
+          })
+          .send();
         return;
       } else {
         res
@@ -240,15 +275,22 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
           (likedUser) => likedUser === req.session.user_id
         );
         if (currentUserInLikes) {
-          res.status(400).json("Cannot dislike a liked comment").send();
+          res.status(409).json("Cannot dislike a liked comment").send();
           return;
         }
         review.dislikes.push(req.session.user_id);
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
         );
+        dislikesWithUserName = getDislikesWithUserName(review, usersResultMap);
         movies.updateReviews(movieId, movie.reviews);
-        res.status(200).json({}).send();
+        res
+          .status(200)
+          .json({
+            currentCommentDislikes: review.dislikes.length,
+            dislikesWithUserName: dislikesWithUserName,
+          })
+          .send();
         return;
       }
     }
@@ -264,8 +306,15 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
         );
+        dislikesWithUserName = getDislikesWithUserName(review, usersResultMap);
         movies.updateReviews(movieId, movie.reviews);
-        res.status(200).json({}).send();
+        res
+          .status(200)
+          .json({
+            currentCommentDislikes: review.dislikes.length,
+            dislikesWithUserName: dislikesWithUserName,
+          })
+          .send();
         return;
       } else {
         res

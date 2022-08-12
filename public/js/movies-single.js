@@ -1,6 +1,5 @@
 (function () {
   function createCommentBlock(postCommentResponse) {
-    console.log(postCommentResponse);
     let newCommentBlock = `
     <div class="review_block">
     <span class="review_comment"> ${postCommentResponse.comment} </span>
@@ -10,24 +9,46 @@
     <br />
     <span class="review_author">added by ${postCommentResponse.user} on ${postCommentResponse.date}</span>
     <span class="review_likes_and_dislikes">
-      <span title="${postCommentResponse.likes}" class="review_likes">
+      <span title="${postCommentResponse.likes}" class="review_likes" id="likesCount_${postCommentResponse.commentId}">
         Likes:        
         0        
       </span>
       <span> | </span>
-      <span title="${postCommentResponse.dislikes}" class="review_dislikes">
+      <span title="${postCommentResponse.dislikes}" class="review_dislikes" id="dislikesCount_${postCommentResponse.commentId}">
         Dislikes:
         0
       </span>
     </span>
+
+    <p>        
+    <span class="review_action" style="color: green" id="like_${postCommentResponse.commentId}" 
+    onclick="reviewAction('like', '${postCommentResponse.commentId}', this)"
+    >Like</span>
+    <span class="review_action" style="color: red" id="dislike_${postCommentResponse.commentId}">Dislike</span>    
+  </p>
   </div>
     `;
+
     return newCommentBlock;
   }
 
+  function addEventListenersToActionButtons() {
+    for (let reviewActionButton of reviewActionButtons) {
+      // Note: Any updates to this must be copied to the createCommentBlock() function
+      reviewActionButton.addEventListener("click", (event) => {
+        let actionAndCommentId = reviewActionButton.id.split("_");
+        let action = actionAndCommentId[0];
+        let commentId = actionAndCommentId[1];
+
+        reviewAction(action, commentId, reviewActionButton);
+      });
+    }
+  }
+
   function reviewAction(action, commentId, reviewActionButton) {
+    $("body").css("cursor", "progress");
     let movieId = movieIdField.value;
-    console.log(action, commentId, movieId);
+    let errorActionDiv = $(`#errorActionDiv_${commentId}`);
 
     let postReviewActionInfo = {
       method: "POST",
@@ -38,46 +59,88 @@
     $.ajax(postReviewActionInfo)
       .then(function (responseMessage) {
         let postReviewActionResponse = $(responseMessage)[0];
-        console.log("success", postReviewActionResponse);
+        errorActionDiv.addClass("hidden");
 
         if (action === "like") {
           reviewActionButton.innerHTML = "Undo 'Like'";
           reviewActionButton.style = "color: orange";
           reviewActionButton.id = `unlike_${commentId}`;
+
+          let currentCommentLikes =
+            postReviewActionResponse.currentCommentLikes;
+          let likesWithUserName = postReviewActionResponse.likesWithUserName;
+          let likesCountSpan = document.getElementById(
+            `likesCount_${commentId}`
+          );
+          likesCountSpan.innerHTML = `Likes: ${currentCommentLikes}`;
+          likesCountSpan.title = likesWithUserName;
+
           return;
         }
         if (action === "unlike") {
           reviewActionButton.innerHTML = "Like";
           reviewActionButton.style = "color: green";
           reviewActionButton.id = `like_${commentId}`;
+
+          let currentCommentLikes =
+            postReviewActionResponse.currentCommentLikes;
+          let likesWithUserName = postReviewActionResponse.likesWithUserName;
+          let likesCountSpan = document.getElementById(
+            `likesCount_${commentId}`
+          );
+          likesCountSpan.innerHTML = `Likes: ${currentCommentLikes}`;
+          likesCountSpan.title = likesWithUserName;
+
           return;
         }
         if (action === "dislike") {
           reviewActionButton.innerHTML = "Undo 'Dislike";
           reviewActionButton.style = "color: orange";
           reviewActionButton.id = `undislike_${commentId}`;
+
+          let currentCommentDislikes =
+            postReviewActionResponse.currentCommentDislikes;
+          let dislikesWithUserName =
+            postReviewActionResponse.dislikesWithUserName;
+          let dislikesCountSpan = document.getElementById(
+            `dislikesCount_${commentId}`
+          );
+          dislikesCountSpan.innerHTML = `Dislikes: ${currentCommentDislikes}`;
+          dislikesCountSpan.title = dislikesWithUserName;
+
           return;
         }
         if (action === "undislike") {
           reviewActionButton.innerHTML = "Dislike";
           reviewActionButton.style = "color: red";
           reviewActionButton.id = `dislike_${commentId}`;
+
+          let currentCommentDislikes =
+            postReviewActionResponse.currentCommentDislikes;
+          let dislikesWithUserName =
+            postReviewActionResponse.dislikesWithUserName;
+          let dislikesCountSpan = document.getElementById(
+            `dislikesCount_${commentId}`
+          );
+          dislikesCountSpan.innerHTML = `Dislikes: ${currentCommentDislikes}`;
+          dislikesCountSpan.title = dislikesWithUserName;
           return;
         }
       })
       .fail(function (data, textStatus, xhr) {
-        console.log("failure", data, textStatus, xhr);
-        console.log("failure", data.status);
-        console.log("failure", textStatus);
-        console.log("failure", xhr);
+        if (data.status == 409) {
+          errorActionDiv.text("You cannot like and dislike the same message");
+          errorActionDiv.removeClass("hidden");
+        }
       });
+
+    $("body").css("cursor", "default");
   }
 
   const submitReviewForm = document.getElementById("reviewForm");
   const submitReviewButton = document.getElementById("btn-review");
   const movieIdField = document.getElementById("movieId");
   const reviewActionButtons = document.getElementsByClassName("review_action");
-  console.log("reviewActionButtons", reviewActionButtons);
   submitReviewButton.addEventListener("submit", (event) => {
     event.preventDefault();
   });
@@ -112,6 +175,8 @@
         let newCommentBlock = createCommentBlock(postCommentResponse);
         reviews_dd.append(newCommentBlock);
 
+        addEventListenersToActionButtons();
+
         let newAverage = postCommentResponse.newAverage;
         let newNumOfReviews = postCommentResponse.newNumOfReviews;
 
@@ -119,36 +184,12 @@
         total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
       })
       .fail(function (data, textStatus, xhr) {
-        //This shows status code eg. 403
-        console.log("error", data.status);
-        console.log("error data", data);
-        console.log("error data", data.responseText);
-        //This shows status message eg. Forbidden
-        console.log("STATUS: " + xhr);
-
         errorMessageDiv.text(data.responseText);
         errorMessageDiv.removeClass("hidden");
       });
+
     $("body").css("cursor", "default");
   });
 
-  // reviewActionButtons.forEach((reviewActionButton) => {
-  //   reviewActionButton.addEventListener("click", (event) => {
-  //     console.log(reviewActionButton);
-  //     console.log(event);
-  //   });
-  // });
-
-  for (let reviewActionButton of reviewActionButtons) {
-    reviewActionButton.addEventListener("click", (event) => {
-      console.log(reviewActionButton);
-      console.log(reviewActionButton.id);
-      console.log(event);
-      let actionAndCommentId = reviewActionButton.id.split("_");
-      let action = actionAndCommentId[0];
-      let commentId = actionAndCommentId[1];
-
-      reviewAction(action, commentId, reviewActionButton);
-    });
-  }
+  addEventListenersToActionButtons();
 })();

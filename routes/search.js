@@ -1,38 +1,42 @@
+// const { default: axios } = require('axios');
 const express = require('express');
 const router = express.Router();
-const tvshows = require('../data/tvshows');
+const movies = require("../data/movies");
+const validation = require("../utils/validation");
+
 
 router.post('/', async(req, res) => {
     let searchTerm = req.body.searchTerm;
 
     if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length === 0) {
-        res.status(400).render('shows/error', {
-            title: "No Shows Found",
+        res.status(400).render('movies/error', {
+            title: "No Movies Found",
             hasErrors: true,
-            error: 'TV Show search term can not be blank / empty or just spaces. Please try entering valid string search term!'
+            error: 'Movie search term can not be blank / empty or just spaces. Please try entering valid string search term!'
         });
         return;
     }
 
     try {
-        let showList = await tvshows.searchTVShows(searchTerm);
-
-        if (showList.length == 0) {
-            res.status(404).render('shows/error', {
-                title: "No Shows Found",
+        console.log(searchTerm);
+        const movieList = await movies.searchMovie(searchTerm);
+        if (movieList.length == 0) {
+            res.status(404).render('movies/error', {
+                title: "No Movies Found",
                 hasSearchError: true,
                 searchTerm: searchTerm
             });
         } else {
-            res.render('shows/index', {
-                title: "Shows Found",
-                shows: showList,
+            res.render('movies/index', {
+                title: "Movies Found",
+                movies: movieList,
                 searchTerm: searchTerm
-            });
+            }); 
+            
         }
     } catch (e) {
-        res.status(500).render('shows/error', {
-            title: "No Shows Found",
+        res.status(500).render('movies/error', {
+            title: "No Movies Found",
             hasErrors: true,
             error: e
         });

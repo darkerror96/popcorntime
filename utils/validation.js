@@ -16,7 +16,7 @@ module.exports = {
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-    const regex = /^[a-zA-Z0-9.-_]*$/;
+    const regex = /^[a-zA-Z0-9.-_ ]*$/;
     if (!regex.test(strVal)) {
       throw `Only Alphabets, Numbers, Dot and Underscore allowed`;
     }
@@ -34,8 +34,12 @@ module.exports = {
   },
 
   checkNumber(val, variableName, minValue, maxValue) {
-    if (typeof val !== "number") {
-      throw `${variableName || "provided variable"} is not a number`;
+    try {
+      val = parseInt(val, 10);
+    } catch (e) {
+      throw `${
+        variableName || "provided variable"
+      } can't be parsed to a number`;
     }
 
     if (val < minValue) {

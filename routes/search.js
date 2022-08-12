@@ -1,24 +1,26 @@
-const { default: axios } = require('axios');
+// const { default: axios } = require('axios');
 const express = require('express');
 const router = express.Router();
-const tvshows = require('../data/tvshows');
+const movies = require("../data/movies");
+const validation = require("../utils/validation");
+
 
 router.post('/', async(req, res) => {
     let searchTerm = req.body.searchTerm;
 
     if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length === 0) {
         res.status(400).render('movies/error', {
-            title: "No Shows Found",
+            title: "No Movies Found",
             hasErrors: true,
-            error: 'TV Show search term can not be blank / empty or just spaces. Please try entering valid string search term!'
+            error: 'Movie search term can not be blank / empty or just spaces. Please try entering valid string search term!'
         });
         return;
     }
 
     try {
-        let showList = await tvshows.searchMovie(searchTerm);
-
-        if (showList.length == 0) {
+        console.log(searchTerm);
+        const movieList = await movies.searchMovie(searchTerm);
+        if (movieList.length == 0) {
             res.status(404).render('movies/error', {
                 title: "No Movies Found",
                 hasSearchError: true,
@@ -27,7 +29,7 @@ router.post('/', async(req, res) => {
         } else {
             res.render('movies/index', {
                 title: "Movies Found",
-                shows: showList,
+                movies: movieList,
                 searchTerm: searchTerm
             }); 
             

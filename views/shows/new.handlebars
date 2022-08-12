@@ -1,0 +1,21 @@
+<main>
+  <h1>Show Finder</h1>
+
+  {{#if username}}
+  <h2>Welcome {{username}}</h2>
+  {{/if}}
+
+  <p>This application will provide a search form to start a search of TV Shows for a keyword. User can get more
+    information for a specific TV Show by clicking on Search Results TV Show Name.</p>
+  <br />
+
+  <form action="/search" method="POST" class="new-search-form">
+    <label>
+      Search TV Shows
+      <input type="text" name="searchTerm" placeholder="Enter TV Show Name" value="{{show.searchTerm}}" />
+    </label>
+    <br />
+    <br />
+    <button type="submit">Search</button>
+  </form>
+</main>

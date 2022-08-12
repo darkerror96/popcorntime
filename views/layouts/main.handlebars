@@ -10,17 +10,21 @@
 </head>
 
 <body>
-    <nav>
-        <ul>
-            <li>
-                <a href="/">Home</a>
-                <a href="/signup">Sign Up</a>
-                <a href="/wishlist">Wishlist</a>
-                <a href="/profile">Profile</a>
-                <a href="/logout">Logout</a>
-            </li>
-        </ul>
-    </nav>
+     <nav>
+            <ul>
+                <li>
+                    <a href="/">Home</a>
+                    {{#if username}}
+                    <a href="/wishlist">Wishlist</a>
+                    <a href="/profile">Profile</a>
+                    <a href="/logout">Logout</a>
+                    {{else}}
+                    <a href="/login">Login</a>
+                    <a href="/signup">Sign Up</a>
+                    {{/if}}
+                </li>
+            </ul>
+        </nav>
     <main>
         {{{body}}}
     </main>

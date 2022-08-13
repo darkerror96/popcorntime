@@ -60,7 +60,7 @@
             formData.append('moviePoster', file);
             formData.append('movieData', JSON.stringify(movieData));
 
-            fetch('http://localhost:3000/shows/add', {
+            fetch('http://localhost:3000/movies/add', {
                     method: 'POST',
                     body: formData
                 }).then(response => response.json())
@@ -69,7 +69,7 @@
                     addMovieForm.trigger('reset');
 
                     if (json.status === 201) {
-                        const movieURL = "http://localhost:3000/shows/" + json.movieID;
+                        const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
                         result.show();
                         result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully added!</p>');

@@ -7,6 +7,7 @@ const validation = require("../utils/validation");
 
 router.post('/', async(req, res) => {
     let searchTerm = req.body.searchTerm;
+    let searchType = req.body.options;
 
     if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length === 0) {
         res.status(400).render('movies/error', {
@@ -18,8 +19,14 @@ router.post('/', async(req, res) => {
     }
 
     try {
-        console.log(searchTerm);
-        const movieList = await movies.searchMovie(searchTerm);
+        let movieList = [];
+        if(searchType == "Movie"){
+            movieList = await movies.searchMovie(searchTerm);
+        }else if(searchType == "Cast"){
+            movieList = await movies.searchCast(searchTerm);
+        }else if(searchType == "Director"){
+            movieList = await movies.searchDirector(searchTerm);
+        }
         if (movieList.length == 0) {
             res.status(404).render('movies/error', {
                 title: "No Movies Found",

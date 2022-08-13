@@ -61,25 +61,58 @@ const exportedMethods = {
   },
 };
 
+//TODO: search for all movies with the search term of movies
 async function searchMovie(searchTerm) {
-  console.log("im reaching movies search")
   validation.validateString("searchTerm", searchTerm);
-
-  const data = await searchMovieAPI(searchTerm);
-  
+  const moviesCollection = await movies();
+  const data = await moviesCollection.find({}, {name: {$regex: searchTerm + '*', $options: 'i'}});
   let movieResult = [];
   let movieCounter = 0;
-  for (var i = 0; i < data.Search.length; i++) {
-      
-      movieResult.push(data.Search[i]);
+  for (var i = 0; i < data.length; i++) {  
+      movieResult.push(data[i].name);
       movieCounter++;
-
       if (movieCounter === 10) {
           break;
       }
   }
 
-  return movieResult;
+  return movieResult;  
+}
+
+//TODO: search for all movies with the search term of cast member
+async function searchCast(searchTerm) {
+  validation.validateString("searchTerm", searchTerm);
+  const moviesCollection = await movies();
+  const data = await moviesCollection.find({}, {cast: {$regex: searchTerm + '*', $options: 'i'}});
+  let movieResult = [];
+  let movieCounter = 0;
+  for (var i = 0; i < data.length; i++) {  
+      movieResult.push(data[i].cast);
+      movieCounter++;
+      if (movieCounter === 10) {
+          break;
+      }
+  }
+
+  return movieResult;  
+}
+
+//TODO: search for all movies with the search term of director
+async function searchDirector(searchTerm) {
+  validation.validateString("searchTerm", searchTerm);
+  const moviesCollection = await movies();
+  const data = await moviesCollection.find({}, {director: {$regex: searchTerm + '*', $options: 'i'}});
+  let movieResult = [];
+  let movieCounter = 0;
+  for (var i = 0; i < data.length; i++) {  
+      movieResult.push(data[i].director);
+      movieCounter++;
+      if (movieCounter === 10) {
+          break;
+      }
+  }
+
+  return movieResult;  
 }
 
 async function getMovieAPI(imdbID) {
@@ -102,15 +135,8 @@ async function getMovie(imdbID) {
   return data;
 }
 
-async function searchMovieAPI(searchTerm){
-  const {data} = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
-  return data;
-}
-
 module.exports = {
   exportedMethods,
   searchMovie,
-  searchMovieAPI,
-  getMovie,
-  getMovieAPI
+  searchMovieAPI
 };

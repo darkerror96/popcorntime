@@ -8,11 +8,13 @@ const path = require("path");
 
 
 const constructorMethod = (app) => {
-    app.get("/", (req, res) => {
-      res.render("movies/new", {
+  var movieOption = ["Movie", "Cast", "Director"];
+  app.get("/", (req, res) => {
+      res.render("movies/homePage", {
         title: "Flick Finder",
+        option: movieOption
       });
-    });
+  });
 
 
   app.use("/search", searchRoutes);

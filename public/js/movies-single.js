@@ -2,33 +2,28 @@
   function createCommentBlock(postCommentResponse) {
     let newCommentBlock = `
     <div class="review_block">
-    <span class="review_comment"> ${postCommentResponse.comment} </span>
-    <span class="review_rating"> Rated:
-      <span class="rating">${postCommentResponse.rating}</span>
-    </span>
-    <br />
-    <span class="review_author">added by ${postCommentResponse.user.username} on ${postCommentResponse.date}</span>
-    <span class="review_likes_and_dislikes">
-      <span title="${postCommentResponse.likes}" class="review_likes" id="likesCount_${postCommentResponse.commentId}">
-        Likes:        
-        0        
+      <span class="review_comment"> ${postCommentResponse.comment} </span>
+      <span class="review_rating"> Rated:
+        <span class="rating">${postCommentResponse.rating}</span>
       </span>
-      <span> | </span>
-      <span title="${postCommentResponse.dislikes}" class="review_dislikes" id="dislikesCount_${postCommentResponse.commentId}">
-        Dislikes:
-        0
+      <br />
+      <span class="review_author">added by ${postCommentResponse.user.username} on ${postCommentResponse.date}</span>
+      <span class="review_likes_and_dislikes">
+        <span title="${postCommentResponse.likes}" class="review_likes" id="likesCount_${postCommentResponse.commentId}">
+          Likes: 0        
+        </span>
+        <span> | </span>
+        <span title="${postCommentResponse.dislikes}" class="review_dislikes" id="dislikesCount_${postCommentResponse.commentId}">
+          Dislikes: 0
+        </span>
       </span>
-    </span>
-
-    <p>        
-    <span class="review_action" style="color: green" id="like_${postCommentResponse.commentId}" 
-    onclick="reviewAction('like', '${postCommentResponse.commentId}', this)"
-    >Like</span>
-    <span class="review_action" style="color: red" id="dislike_${postCommentResponse.commentId}">Dislike</span>    
-  </p>
-  <div id="errorActionDiv_${postCommentResponse.commentId}" class="alert alert-danger hidden" role="alert">
-  </div>
-  </div>
+      <p>        
+        <span class="review_action" style="color: green" id="like_${postCommentResponse.commentId}" 
+          onclick="reviewAction('like', '${postCommentResponse.commentId}', this)">Like</span>
+        <span class="review_action" style="color: red" id="dislike_${postCommentResponse.commentId}">Dislike</span>    
+      </p>
+      <div id="errorActionDiv_${postCommentResponse.commentId}" class="alert alert-danger hidden" role="alert"></div>
+    </div>
     `;
 
     return newCommentBlock;

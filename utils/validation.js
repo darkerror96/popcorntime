@@ -20,7 +20,7 @@ module.exports = {
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
     const regex = /^[a-zA-Z0-9.-_ ]*$/;
     if (!regex.test(strVal)) {
-      throw `Only Alphabets, Numbers, Dot and Underscore allowed`;
+      throw `Only alphabets, numbers, period, dash, and underscore are allowed`;
     }
     return strVal;
   },

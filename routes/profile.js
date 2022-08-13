@@ -39,8 +39,7 @@ router.get("/", async (req, res) => {
       likedMovies: likedMovies,
       dislikedMovies: dislikedMovies,
     });
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -75,8 +74,7 @@ router.post("/watchlist/:id", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -166,8 +164,7 @@ router.post("/prefs", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -202,8 +199,7 @@ router.delete("/watchlist/:id", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -275,8 +271,7 @@ router.delete("/prefs", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });

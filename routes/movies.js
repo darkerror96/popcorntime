@@ -161,7 +161,6 @@ router.get("/:id", async (req, res) => {
       reviewsWithUserName: reviewsWithUserName,
     });
   } else {
-    //TODO Add a section to display errors in the signup page
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -232,7 +231,6 @@ router.post("/:id/comment", async (req, res) => {
       return;
     }
   } else {
-    //TODO Add a section to display errors in the signup page
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -401,7 +399,6 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
       }
     }
   } else {
-    //TODO Add a section to display errors in the signup page
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });

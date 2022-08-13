@@ -69,7 +69,7 @@ router.get("/:id", async (req, res) => {
     });
     movie.avg_rating = movie.avg_rating.toFixed(1);
 
-    res.render("movies/single", {
+    res.render("movies/moviePage", {
       title: movie.name,
       movie: movie,
       reviewsWithUserName: reviewsWithUserName,

@@ -146,6 +146,26 @@ async function searchMovieByAPI(searchTerm) {
     return movieResult;
 }
 
+async function searchMovieByAPI(searchTerm){
+  validation.validateString("searchTerm", searchTerm);
+
+  const {data} = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+
+  let movieResult = [];
+  let movieCounter = 0;
+  for (var i = 0; i < data.Search.length; i++) {
+      
+      movieResult.push(data.Search[i]);
+      movieCounter++;
+
+      if (movieCounter === 10) {
+          break;
+      }
+  }
+
+  return movieResult;
+}
+
 async function getMovieAPI(imdbID) {
     const {
         data
@@ -174,3 +194,4 @@ module.exports = {
     searchYear,
     searchMovieByAPI
 };
+

@@ -26,6 +26,7 @@ router.post('/', async(req, res) => {
                 movieList = await movies.searchMovieByAPI(searchTerm);
             }
         } else if (searchType == "Cast") {
+
             movieList = await movies.searchCast(searchTerm);
         } else if (searchType == "Director") {
             movieList = await movies.searchDirector(searchTerm);

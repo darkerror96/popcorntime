@@ -37,7 +37,7 @@ router.post('/', async(req, res)=>{
             first_name: null,
             last_name: null,
             birthday: null,
-            role: null,
+            role: "user",
             watch_list: [],
             preferences: {
                 liked_genres: [],

@@ -25,6 +25,7 @@ app.use(
 app.use(async (req, res, next) => {
     if(req.session.user){
         res.locals.username = req.session.user.username;
+        res.locals.role = req.session.user.role;
     }
     next();
 });
@@ -44,6 +45,19 @@ app.use('/login', (req, res, next) => {
         next();
     }
   });
+
+  app.use('/admin', (req, res, next) => {
+    if(req.session.user.role !== 'admin'){
+        return res.redirect('/');
+    }else{
+        next();
+    }
+  });
+
+  hbs = exphbs.create({});
+  hbs.handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
 
 app.use('/public', static);
 app.use(express.json());

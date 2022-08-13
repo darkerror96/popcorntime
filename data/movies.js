@@ -163,10 +163,78 @@ const exportedMethods = {
         }
 
         return movieResult;
+    },
+
+    async addMovie(name, summary, genres, duration, poster, release_date, cast, director) {
+        validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
+        validation.validatePosterFilePath("Poster", poster);
+
+        const newMovie = {
+            name: name,
+            summary: summary,
+            genres: genres,
+            duration: duration,
+            poster: poster,
+            release_date: release_date,
+            cast: cast,
+            director: director,
+            avg_rating: 0,
+            reviews: []
+        };
+
+        const moviesCollection = await movies();
+        const newInsertInformation = await moviesCollection.insertOne(newMovie);
+        if (!newInsertInformation.insertedId) throw 'Insert failed!';
+
+        return this.getMovieById(newInsertInformation.insertedId.toString());
+    },
+
+    async removeMovie(id) {
+        validation.validateID('id', id);
+        id = id.trim();
+
+        const moviesCollection = await movies();
+        const deletionInfo = await moviesCollection.deleteOne({
+            _id: ObjectId(id)
+        });
+
+        if (deletionInfo.deletedCount === 0) throw `Could not delete movie with id of ${id}`;
+        return true;
+    },
+
+    async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, avg_rating, reviews) {
+        validation.validateID('id', id);
+        id = id.trim();
+
+        validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
+        validation.validatePosterFilePath("Poster", poster);
+        validation.validateAvgRating("Avg Rating", avg_rating);
+        validation.validateReviews("Reviews", reviews);
+
+        const updatedMovie = {
+            name: name,
+            summary: summary,
+            genres: genres,
+            duration: duration,
+            poster: poster,
+            release_date: release_date,
+            cast: cast,
+            director: director,
+            avg_rating: avg_rating,
+            reviews: reviews
+        };
+
+        const moviesCollection = await movies();
+        const updateInfo = await moviesCollection.updateOne({
+            _id: ObjectId(id)
+        }, {
+            $set: updatedMovie
+        });
+
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+        return this.getMovieById(id);
     }
 };
-
-
 
 // async function createMovie(movieData) {
 //     const moviesCollection = await movies();

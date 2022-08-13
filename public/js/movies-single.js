@@ -7,7 +7,7 @@
       <span class="rating">${postCommentResponse.rating}</span>
     </span>
     <br />
-    <span class="review_author">added by ${postCommentResponse.user} on ${postCommentResponse.date}</span>
+    <span class="review_author">added by ${postCommentResponse.user.username} on ${postCommentResponse.date}</span>
     <span class="review_likes_and_dislikes">
       <span title="${postCommentResponse.likes}" class="review_likes" id="likesCount_${postCommentResponse.commentId}">
         Likes:        
@@ -26,6 +26,8 @@
     >Like</span>
     <span class="review_action" style="color: red" id="dislike_${postCommentResponse.commentId}">Dislike</span>    
   </p>
+  <div id="errorActionDiv_${postCommentResponse.commentId}" class="alert alert-danger hidden" role="alert">
+  </div>
   </div>
     `;
 

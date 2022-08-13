@@ -5,7 +5,7 @@ const movies = require("../data/movies");
 const validation = require("../utils/validation");
 
 
-router.post('/', async(req, res) => {
+router.post('/', async (req, res) => {
     let searchTerm = req.body.searchTerm;
     let searchType = req.body.options;
 

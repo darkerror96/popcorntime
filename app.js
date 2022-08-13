@@ -6,62 +6,67 @@ const configRoutes = require('./routes');
 const exphbs = require('express-handlebars');
 const session = require('express-session');
 
+var cors = require('cors');
+
 //mongodb
 const connection = require('./config/mongoConnection');
 
 const main = async () => {
-const db = await connection.dbConnection();
-console.log("Connected to database");
+    const db = await connection.dbConnection();
+    console.log("Connected to database");
 
-app.use(
-    session({
-        name: 'PopcornTimeCookie',
-        secret: 'eikooCemiTnrocpoP',
-        resave: false,
-        saveUninitialized: true
-    })
-);
+    //Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any origins
+    app.use(cors());
 
-app.use(async (req, res, next) => {
-    if(req.session.user){
-        res.locals.username = req.session.user.username;
-    }
-    next();
-});
+    app.use(
+        session({
+            name: 'PopcornTimeCookie',
+            secret: 'eikooCemiTnrocpoP',
+            resave: false,
+            saveUninitialized: true
+        })
+    );
 
-app.use('/login', (req, res, next) => {
-    if (req.session.user) {
-      return res.redirect('/');
-    } else {
+    app.use(async (req, res, next) => {
+        if (req.session.user) {
+            res.locals.username = req.session.user.username;
+        }
         next();
-    }
-  });
+    });
 
-  app.use('/signup', (req, res, next) => {
-    if (req.session.user) {
-      return res.redirect('/');
-    } else {
-        next();
-    }
-  });
+    app.use('/login', (req, res, next) => {
+        if (req.session.user) {
+            return res.redirect('/');
+        } else {
+            next();
+        }
+    });
 
-app.use('/public', static);
-app.use(express.json());
-app.use(express.urlencoded({
-    extended: true
-}));
+    app.use('/signup', (req, res, next) => {
+        if (req.session.user) {
+            return res.redirect('/');
+        } else {
+            next();
+        }
+    });
 
-app.engine('handlebars', exphbs.engine({
-    defaultLayout: 'main'
-}));
-app.set('view engine', 'handlebars');
+    app.use('/public', static);
+    app.use(express.json());
+    app.use(express.urlencoded({
+        extended: true
+    }));
 
-configRoutes(app);
+    app.engine('handlebars', exphbs.engine({
+        defaultLayout: 'main'
+    }));
+    app.set('view engine', 'handlebars');
 
-app.listen(3000, () => {
-    console.log("We've now got a server!");
-    console.log('Your routes will be running on http://localhost:3000');
-});
+    configRoutes(app);
+
+    app.listen(3000, () => {
+        console.log("We've now got a server!");
+        console.log('Your routes will be running on http://localhost:3000');
+    });
 };
 
 main();

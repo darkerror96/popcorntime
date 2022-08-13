@@ -1,13 +1,17 @@
 const mongoCollections = require("../config/mongoCollections");
 const movies = mongoCollections.movies;
-const { ObjectId } = require("mongodb");
+const {
+    ObjectId
+} = require("mongodb");
 const axios = require("axios");
 const validation = require('./validation');
 
 const exportedMethods = {
     async getMovieById(id) {
         const moviesCollection = await movies();
-        const movie = await moviesCollection.findOne({ _id: ObjectId(id) });
+        const movie = await moviesCollection.findOne({
+            _id: ObjectId(id)
+        });
         return movie;
     },
     async getMoviesById(idArray) {
@@ -33,7 +37,9 @@ const exportedMethods = {
     },
     async updateReviewsAndRating(id, reviews, newAverage) {
         const moviesCollection = await movies();
-        const updateInfo = await moviesCollection.updateOne({ _id: ObjectId(id) }, {
+        const updateInfo = await moviesCollection.updateOne({
+            _id: ObjectId(id)
+        }, {
             $set: {
                 reviews: reviews,
                 avg_rating: newAverage,
@@ -44,7 +50,9 @@ const exportedMethods = {
     },
     async updateReviews(id, reviews) {
         const moviesCollection = await movies();
-        const updateInfo = await moviesCollection.updateOne({ _id: ObjectId(id) }, {
+        const updateInfo = await moviesCollection.updateOne({
+            _id: ObjectId(id)
+        }, {
             $set: {
                 reviews: reviews,
             },
@@ -113,7 +121,6 @@ const exportedMethods = {
         searchTerm = searchTerm.toLowerCase();
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
-
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -164,7 +171,9 @@ const exportedMethods = {
     async searchMovieByAPI(searchTerm) {
         validation.validateString("searchTerm", searchTerm);
 
-        const { data } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+        const {
+            data
+        } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
 
         let movieResult = [];
         let movieCounter = 0;
@@ -179,10 +188,78 @@ const exportedMethods = {
         }
 
         return movieResult;
+    },
+
+    async addMovie(name, summary, genres, duration, poster, release_date, cast, director) {
+        validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
+        validation.validatePosterFilePath("Poster", poster);
+
+        const newMovie = {
+            name: name,
+            summary: summary,
+            genres: genres,
+            duration: duration,
+            poster: poster,
+            release_date: release_date,
+            cast: cast,
+            director: director,
+            avg_rating: 0,
+            reviews: []
+        };
+
+        const moviesCollection = await movies();
+        const newInsertInformation = await moviesCollection.insertOne(newMovie);
+        if (!newInsertInformation.insertedId) throw 'Insert failed!';
+
+        return this.getMovieById(newInsertInformation.insertedId.toString());
+    },
+
+    async removeMovie(id) {
+        validation.validateID('id', id);
+        id = id.trim();
+
+        const moviesCollection = await movies();
+        const deletionInfo = await moviesCollection.deleteOne({
+            _id: ObjectId(id)
+        });
+
+        if (deletionInfo.deletedCount === 0) throw `Could not delete movie with id of ${id}`;
+        return true;
+    },
+
+    async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, avg_rating, reviews) {
+        validation.validateID('id', id);
+        id = id.trim();
+
+        validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
+        validation.validatePosterFilePath("Poster", poster);
+        validation.validateAvgRating("Avg Rating", avg_rating);
+        validation.validateReviews("Reviews", reviews);
+
+        const updatedMovie = {
+            name: name,
+            summary: summary,
+            genres: genres,
+            duration: duration,
+            poster: poster,
+            release_date: release_date,
+            cast: cast,
+            director: director,
+            avg_rating: avg_rating,
+            reviews: reviews
+        };
+
+        const moviesCollection = await movies();
+        const updateInfo = await moviesCollection.updateOne({
+            _id: ObjectId(id)
+        }, {
+            $set: updatedMovie
+        });
+
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+        return this.getMovieById(id);
     }
 };
-
-
 
 // async function createMovie(movieData) {
 //     const moviesCollection = await movies();
@@ -209,7 +286,9 @@ const exportedMethods = {
 async function searchMovieByAPI(searchTerm) {
     validation.validateString("searchTerm", searchTerm);
 
-    const { data } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+    const {
+        data
+    } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
 
     let movieResult = [];
     let movieCounter = 0;

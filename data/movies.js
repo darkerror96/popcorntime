@@ -31,7 +31,6 @@ const exportedMethods = {
             .toArray();
         return moviesResult;
     },
-
     async updateReviewsAndRating(id, reviews, newAverage) {
         const moviesCollection = await movies();
         const updateInfo = await moviesCollection.updateOne({ _id: ObjectId(id) }, {

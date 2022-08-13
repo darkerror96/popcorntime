@@ -6,12 +6,17 @@ const configRoutes = require('./routes');
 const exphbs = require('express-handlebars');
 const session = require('express-session');
 
+var cors = require('cors');
+
 //mongodb
 const connection = require('./config/mongoConnection');
 
 const main = async () => {
     const db = await connection.dbConnection();
     console.log("Connected to database");
+
+    //Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any origins
+    app.use(cors());
 
     app.use(
         session({

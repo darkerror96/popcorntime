@@ -8,6 +8,88 @@ const movies = require("../data/movies");
 const users = require("../data/users");
 const validation = require("../utils/validation");
 
+var multer = require('multer');
+let fs = require('fs-extra');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    let path = `./public/posters/` + Date.now() + `/`;
+    fs.mkdirsSync(path);
+    cb(null, path);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+// for parsing multipart/form-data and storing files
+const Data = multer({
+  storage: storage
+});
+
+router.post('/add', Data.any("poster"), async (req, res) => {
+
+  // if (req.session.user) {
+  //     logger(req.method, req.originalUrl, true);
+  //     res.render('../views/movies/add_movie', {});
+  // } else {
+  //     logger(req.method, req.originalUrl, false);
+  //     res.status(401).render('../views/login_logout/login', {});
+  //     return;
+  // }
+
+  const {
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } = JSON.parse(req.body.movieData);
+
+  const poster = req.files[0].path;
+
+  try {
+    validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
+    validation.validatePosterFilePath("Poster", poster);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({
+      error: e
+    });
+  }
+
+  try {
+    const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director);
+    return res.status(201).json({
+      status: 201,
+      movieID: newMovie._id
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      error: e
+    });
+  }
+});
+
+router.get('/add', async (req, res) => {
+
+  // if (req.session.user) {
+  //     logger(req.method, req.originalUrl, true);
+  //     res.render('../views/movies/add_movie', {});
+  // } else {
+  //     logger(req.method, req.originalUrl, false);
+  //     res.status(401).render('../views/login_logout/login', {});
+  //     return;
+  // }
+
+  res.render('../views/movies/add_movie', {
+    title: "Add Movie"
+  });
+});
+
 router.get("/:id", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
   // req.session = {};

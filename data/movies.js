@@ -54,6 +54,7 @@ const exportedMethods = {
     },
     async searchMovie(searchTerm) {
         validation.validateString("searchTerm", searchTerm);
+        searchTerm = searchTerm.toLowerCase();
 
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
@@ -61,61 +62,101 @@ const exportedMethods = {
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-            if (data[i].name.includes(searchTerm)) {
+            if (data[i].name.toLowerCase().replace(/\s/g, '').includes(searchTerm) && data[i].name !== undefined) {
+
                 movieResult.push(data[i]);
                 movieCounter++;
                 if (movieCounter === 10) {
                     break;
                 }
             }
+
+        }
+        if (movieResult.length == 0) {
+            throw "No results found for " + searchTerm;
         }
 
         return movieResult;
     },
     async searchCast(searchTerm) {
+
         validation.validateString("searchTerm", searchTerm);
+        searchTerm = searchTerm.toLowerCase();
         const moviesCollection = await movies();
-        const data = await moviesCollection.find({}, { cast: { $regex: searchTerm + '*', $options: 'i' } });
+        const data = await moviesCollection.find({}).toArray();
+
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-            movieResult.push(data[i].cast);
-            movieCounter++;
-            if (movieCounter === 10) {
-                break;
+
+            if (data[i].cast !== undefined) {
+                for (var j = 0; j < data[i].cast.length; j++) {
+                    if (data[i].cast[j].toLowerCase().replace(/\s/g, '').includes(searchTerm)) {
+                        movieResult.push(data[i]);
+                        movieCounter++;
+                        if (movieCounter === 10) {
+                            break;
+                        }
+                    }
+                }
             }
         }
+        if (movieResult.length == 0) {
+            throw "No results found for " + searchTerm;
+        }
+
 
         return movieResult;
     },
     async searchDirector(searchTerm) {
         validation.validateString("searchTerm", searchTerm);
+        searchTerm = searchTerm.toLowerCase();
         const moviesCollection = await movies();
-        const data = await moviesCollection.find({}, { director: { $regex: searchTerm + '*', $options: 'i' } });
+        const data = await moviesCollection.find({}).toArray();
+
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-            movieResult.push(data[i].director);
-            movieCounter++;
-            if (movieCounter === 10) {
-                break;
+            if (data[i].director !== undefined) {
+                for (var j = 0; j < data[i].director.length; j++) {
+                    if (data[i].director[j].toLowerCase().replace(/\s/g, '').includes(searchTerm)) {
+                        movieResult.push(data[i]);
+                        movieCounter++;
+                        if (movieCounter === 10) {
+                            break;
+                        }
+                    }
+                }
             }
+        }
+        if (movieResult.length == 0) {
+            throw "No results found for " + searchTerm;
         }
 
         return movieResult;
     },
     async searchYear(searchTerm) {
-        validation.validateNumber("searchTerm", searchTerm);
+        validation.validateString("searchTerm", searchTerm);
+        searchTerm = searchTerm.toLowerCase();
+
         const moviesCollection = await movies();
-        const data = await moviesCollection.find({}, { release_date: { $regex: '*' + searchTerm + '*', $options: 'i' } });
+        const data = await moviesCollection.find({}).toArray();
+
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-            movieResult.push(data[i].director);
-            movieCounter++;
-            if (movieCounter === 10) {
-                break;
+            if (data[i].release_date.toLowerCase().replace(/-/g, '').slice(0, 4).includes(searchTerm) && data[i].release_date !== undefined) {
+
+                movieResult.push(data[i]);
+                movieCounter++;
+                if (movieCounter === 10) {
+                    break;
+                }
             }
+
+        }
+        if (movieResult.length == 0) {
+            throw "No results found for " + searchTerm;
         }
 
         return movieResult;

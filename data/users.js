@@ -1,26 +1,34 @@
 const mongoCollections = require("../config/mongoCollections");
 const users = mongoCollections.users;
-const { ObjectId } = require("mongodb");
+const {
+  ObjectId
+} = require("mongodb");
 
 const exportedMethods = {
-    async getUser(username){
-        const usersCollection = await users();
-        const user = await usersCollection.findOne({username: username});
-        return user;
-    },
-    async getUserByEmail(email){
-        const usersCollection = await users();
-        const user = await usersCollection.findOne({email: email});
-        return user;
-    },
-    async insertUser(user){
-        const usersCollection = await users();
-        const newUser = await usersCollection.insertOne(user);
-        return newUser.insertedId;
-    },
+  async getUser(username) {
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({
+      username: username
+    });
+    return user;
+  },
+  async getUserByEmail(email) {
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({
+      email: email
+    });
+    return user;
+  },
+  async insertUser(user) {
+    const usersCollection = await users();
+    const newUser = await usersCollection.insertOne(user);
+    return newUser.insertedId;
+  },
   async getUserById(id) {
     const usersCollection = await users();
-    const user = await usersCollection.findOne({ _id: ObjectId(id) });
+    const user = await usersCollection.findOne({
+      _id: ObjectId(id)
+    });
     return user;
   },
   async getUsersById(idArray) {
@@ -46,40 +54,37 @@ const exportedMethods = {
   },
   async addToWatchList(id, movieId) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne(
-      { _id: ObjectId(id) },
-      {
-        $addToSet: {
-          watch_list: movieId,
-        },
-      }
-    );
+    const updateInfo = await usersCollection.updateOne({
+      _id: ObjectId(id)
+    }, {
+      $addToSet: {
+        watch_list: movieId,
+      },
+    });
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },
   async updatePreferences(id, updatedPreferences) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne(
-      { _id: ObjectId(id) },
-      {
-        $set: {
-          preferences: updatedPreferences,
-        },
-      }
-    );
+    const updateInfo = await usersCollection.updateOne({
+      _id: ObjectId(id)
+    }, {
+      $set: {
+        preferences: updatedPreferences,
+      },
+    });
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },
   async removeFromWatchList(id, movieId) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne(
-      { _id: ObjectId(id) },
-      {
-        $pull: {
-          watch_list: movieId,
-        },
-      }
-    );
+    const updateInfo = await usersCollection.updateOne({
+      _id: ObjectId(id)
+    }, {
+      $pull: {
+        watch_list: movieId,
+      },
+    });
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   }

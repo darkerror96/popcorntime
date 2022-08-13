@@ -1,13 +1,17 @@
 const mongoCollections = require("../config/mongoCollections");
 const movies = mongoCollections.movies;
-const { ObjectId } = require("mongodb");
+const {
+    ObjectId
+} = require("mongodb");
 const axios = require("axios");
 const validation = require('./validation');
 
 const exportedMethods = {
     async getMovieById(id) {
         const moviesCollection = await movies();
-        const movie = await moviesCollection.findOne({ _id: ObjectId(id) });
+        const movie = await moviesCollection.findOne({
+            _id: ObjectId(id)
+        });
         return movie;
     },
     async getMoviesById(idArray) {
@@ -33,7 +37,9 @@ const exportedMethods = {
     },
     async updateReviewsAndRating(id, reviews, newAverage) {
         const moviesCollection = await movies();
-        const updateInfo = await moviesCollection.updateOne({ _id: ObjectId(id) }, {
+        const updateInfo = await moviesCollection.updateOne({
+            _id: ObjectId(id)
+        }, {
             $set: {
                 reviews: reviews,
                 avg_rating: newAverage,
@@ -44,7 +50,9 @@ const exportedMethods = {
     },
     async updateReviews(id, reviews) {
         const moviesCollection = await movies();
-        const updateInfo = await moviesCollection.updateOne({ _id: ObjectId(id) }, {
+        const updateInfo = await moviesCollection.updateOne({
+            _id: ObjectId(id)
+        }, {
             $set: {
                 reviews: reviews,
             },
@@ -75,7 +83,12 @@ const exportedMethods = {
     async searchCast(searchTerm) {
         validation.validateString("searchTerm", searchTerm);
         const moviesCollection = await movies();
-        const data = await moviesCollection.find({}, { cast: { $regex: searchTerm + '*', $options: 'i' } });
+        const data = await moviesCollection.find({}, {
+            cast: {
+                $regex: searchTerm + '*',
+                $options: 'i'
+            }
+        });
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -91,7 +104,12 @@ const exportedMethods = {
     async searchDirector(searchTerm) {
         validation.validateString("searchTerm", searchTerm);
         const moviesCollection = await movies();
-        const data = await moviesCollection.find({}, { director: { $regex: searchTerm + '*', $options: 'i' } });
+        const data = await moviesCollection.find({}, {
+            director: {
+                $regex: searchTerm + '*',
+                $options: 'i'
+            }
+        });
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -107,7 +125,12 @@ const exportedMethods = {
     async searchYear(searchTerm) {
         validation.validateNumber("searchTerm", searchTerm);
         const moviesCollection = await movies();
-        const data = await moviesCollection.find({}, { release_date: { $regex: '*' + searchTerm + '*', $options: 'i' } });
+        const data = await moviesCollection.find({}, {
+            release_date: {
+                $regex: '*' + searchTerm + '*',
+                $options: 'i'
+            }
+        });
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -123,7 +146,9 @@ const exportedMethods = {
     async searchMovieByAPI(searchTerm) {
         validation.validateString("searchTerm", searchTerm);
 
-        const { data } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+        const {
+            data
+        } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
 
         let movieResult = [];
         let movieCounter = 0;
@@ -168,7 +193,9 @@ const exportedMethods = {
 async function searchMovieByAPI(searchTerm) {
     validation.validateString("searchTerm", searchTerm);
 
-    const { data } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+    const {
+        data
+    } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
 
     let movieResult = [];
     let movieCounter = 0;

@@ -137,9 +137,9 @@ router.post("/prefs", async (req, res) => {
       }
 
       // Disallow liking and disliking the same item
-      let oppositeCategory = preferenceCategory.includes("disliked")
-        ? preferenceCategory.replace("disliked", "liked")
-        : preferenceCategory.replace("liked", "disliked");
+      let oppositeCategory = preferenceCategory.includes("disliked") ?
+        preferenceCategory.replace("disliked", "liked") :
+        preferenceCategory.replace("liked", "disliked");
 
       let preferenceSubSection = user.preferences[preferenceCategory];
       let oppositeSubSection = user.preferences[oppositeCategory];

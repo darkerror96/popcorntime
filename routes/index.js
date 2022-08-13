@@ -16,7 +16,6 @@ const constructorMethod = (app) => {
         });
     });
 
-
     app.use("/search", searchRoutes);
     app.use("/movies", movieRoutes);
     app.use("/signup", signupRoutes);

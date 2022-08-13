@@ -1,4 +1,6 @@
-const { ObjectId } = require("mongodb");
+const {
+  ObjectId
+} = require("mongodb");
 
 module.exports = {
   checkId(id, varName) {

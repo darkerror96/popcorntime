@@ -8,7 +8,7 @@ const validation = require("../utils/validation");
 
 router.get("/:id", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
-  req.session = {};
+  // req.session = {};
   req.session.user = "john_doe";
   req.session.user_id = "62edec84bcd3a79c27abaa0c";
   if (true || (req.session && req.session.user)) {
@@ -86,7 +86,7 @@ router.get("/:id", async (req, res) => {
 router.post("/:id/comment", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
   // TODO Cache both username and userid
-  req.session = {};
+  // req.session = {};
   req.session.user = "john_doe";
   req.session.user_id = "62edec84bcd3a79c27abaa0c";
   if (true || (req.session && req.session.user)) {
@@ -162,7 +162,7 @@ router.post("/:id/comment", async (req, res) => {
 router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
   // TODO Cache both username and userid
-  req.session = {};
+  // req.session = {};
   req.session.user = "john_doe";
   req.session.user_id = "62edec84bcd3a79c27abaa0c";
   if (true || (req.session && req.session.user)) {

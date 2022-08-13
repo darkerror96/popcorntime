@@ -1,38 +1,52 @@
+// const { default: axios } = require('axios');
 const express = require('express');
 const router = express.Router();
-const tvshows = require('../data/tvshows');
+const movies = require("../data/movies");
+const validation = require("../utils/validation");
+
 
 router.post('/', async(req, res) => {
     let searchTerm = req.body.searchTerm;
+    let searchType = req.body.options;
 
     if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length === 0) {
-        res.status(400).render('shows/error', {
-            title: "No Shows Found",
+        res.status(400).render('movies/error', {
+            title: "No Movies Found",
             hasErrors: true,
-            error: 'TV Show search term can not be blank / empty or just spaces. Please try entering valid string search term!'
+            error: 'Movie search term can not be blank / empty or just spaces. Please try entering valid string search term!'
         });
         return;
     }
 
     try {
-        let showList = await tvshows.searchTVShows(searchTerm);
-
-        if (showList.length == 0) {
-            res.status(404).render('shows/error', {
-                title: "No Shows Found",
+        let movieList = [];
+        if(searchType == "Movie"){
+            movieList = await movies.searchMovie(searchTerm);
+            if(movieList.length == 0){
+                movieList = await movies.searchMovieByAPI(searchTerm);
+            }
+        }else if(searchType == "Cast"){
+            movieList = await movies.searchCast(searchTerm);
+        }else if(searchType == "Director"){
+            movieList = await movies.searchDirector(searchTerm);
+        }
+        if (movieList.length == 0) {
+            res.status(404).render('movies/error', {
+                title: "No Movies Found",
                 hasSearchError: true,
                 searchTerm: searchTerm
             });
         } else {
-            res.render('shows/index', {
-                title: "Shows Found",
-                shows: showList,
+            res.render('movies/searchPage', {
+                title: "Movies Found",
+                movies: movieList,
                 searchTerm: searchTerm
-            });
+            }); 
+            
         }
     } catch (e) {
-        res.status(500).render('shows/error', {
-            title: "No Shows Found",
+        res.status(500).render('movies/error', {
+            title: "No Movies Found",
             hasErrors: true,
             error: e
         });

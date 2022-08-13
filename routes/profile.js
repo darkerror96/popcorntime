@@ -6,10 +6,10 @@ const validation = require("../utils/validation");
 
 router.get("/", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
-  req.session = {};
+  // req.session = {};
   req.session.user = "john_doe";
   if (true || (req.session && req.session.user)) {
-    const user = await users.getUsername(req.session.user);
+    const user = await users.getUser(req.session.user);
     let movieIds = [];
     pushToArray(movieIds, user.watch_list);
     pushToArray(movieIds, user.preferences.liked_movies);
@@ -93,7 +93,7 @@ router.post("/watchlist/:id", async (req, res) => {
 
 router.post("/prefs", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
-  req.session = {};
+  // req.session = {};
   req.session.user = "john_doe";
   req.session.user_id = "62edec84bcd3a79c27abaa0c";
   if (true || (req.session && req.session.user)) {
@@ -188,7 +188,7 @@ router.post("/prefs", async (req, res) => {
 
 router.delete("/watchlist/:id", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
-  req.session = {};
+  // req.session = {};
   req.session.user = "john_doe";
   req.session.user_id = "62edec84bcd3a79c27abaa0c";
   if (true || (req.session && req.session.user)) {
@@ -228,7 +228,7 @@ router.delete("/watchlist/:id", async (req, res) => {
 
 router.delete("/prefs", async (req, res) => {
   // TODO Stop non-users from accessing this, and remove this hard-coding
-  req.session = {};
+  // req.session = {};
   req.session.user = "john_doe";
   req.session.user_id = "62edec84bcd3a79c27abaa0c";
   if (true || (req.session && req.session.user)) {

@@ -187,7 +187,7 @@ async function getMovie(imdbID) {
 }
 
 module.exports = {
-    exportedMethods,
+    ...exportedMethods,
     searchMovie,
     searchCast,
     searchDirector,

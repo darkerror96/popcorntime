@@ -20,16 +20,21 @@ router.post('/', async(req, res) => {
 
     try {
         let movieList = [];
-        if(searchType == "Movie"){
+        if (searchType == "Movie") {
             movieList = await movies.searchMovie(searchTerm);
-            if(movieList.length == 0){
+            if (movieList.length == 0) {
                 movieList = await movies.searchMovieByAPI(searchTerm);
+                // await movies.createMovie("Titanic");
             }
-        }else if(searchType == "Cast"){
+        } else if (searchType == "Cast") {
+
             movieList = await movies.searchCast(searchTerm);
-        }else if(searchType == "Director"){
+        } else if (searchType == "Director") {
             movieList = await movies.searchDirector(searchTerm);
+        } else if (searchType == "Year") {
+            movieList = await movies.searchYear(searchTerm);
         }
+
         if (movieList.length == 0) {
             res.status(404).render('movies/error', {
                 title: "No Movies Found",
@@ -41,8 +46,8 @@ router.post('/', async(req, res) => {
                 title: "Movies Found",
                 movies: movieList,
                 searchTerm: searchTerm
-            }); 
-            
+            });
+
         }
     } catch (e) {
         res.status(500).render('movies/error', {

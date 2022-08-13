@@ -53,98 +53,118 @@ const exportedMethods = {
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
             throw "Update failed";
     },
+    async searchMovie(searchTerm) {
+        validation.validateString("searchTerm", searchTerm);
+
+        const moviesCollection = await movies();
+        const data = await moviesCollection.find({}).toArray();
+
+        let movieResult = [];
+        let movieCounter = 0;
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].name.includes(searchTerm)) {
+                movieResult.push(data[i]);
+                movieCounter++;
+                if (movieCounter === 10) {
+                    break;
+                }
+            }
+        }
+
+        return movieResult;
+    },
+    async searchCast(searchTerm) {
+        validation.validateString("searchTerm", searchTerm);
+        const moviesCollection = await movies();
+        const data = await moviesCollection.find({}, { cast: { $regex: searchTerm + '*', $options: 'i' } });
+        let movieResult = [];
+        let movieCounter = 0;
+        for (var i = 0; i < data.length; i++) {
+            movieResult.push(data[i].cast);
+            movieCounter++;
+            if (movieCounter === 10) {
+                break;
+            }
+        }
+
+        return movieResult;
+    },
+    async searchDirector(searchTerm) {
+        validation.validateString("searchTerm", searchTerm);
+        const moviesCollection = await movies();
+        const data = await moviesCollection.find({}, { director: { $regex: searchTerm + '*', $options: 'i' } });
+        let movieResult = [];
+        let movieCounter = 0;
+        for (var i = 0; i < data.length; i++) {
+            movieResult.push(data[i].director);
+            movieCounter++;
+            if (movieCounter === 10) {
+                break;
+            }
+        }
+
+        return movieResult;
+    },
+    async searchYear(searchTerm) {
+        validation.validateNumber("searchTerm", searchTerm);
+        const moviesCollection = await movies();
+        const data = await moviesCollection.find({}, { release_date: { $regex: '*' + searchTerm + '*', $options: 'i' } });
+        let movieResult = [];
+        let movieCounter = 0;
+        for (var i = 0; i < data.length; i++) {
+            movieResult.push(data[i].director);
+            movieCounter++;
+            if (movieCounter === 10) {
+                break;
+            }
+        }
+
+        return movieResult;
+    },
+    async searchMovieByAPI(searchTerm) {
+        validation.validateString("searchTerm", searchTerm);
+
+        const { data } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+
+        let movieResult = [];
+        let movieCounter = 0;
+        for (var i = 0; i < data.Search.length; i++) {
+
+            movieResult.push(data.Search[i]);
+            movieCounter++;
+
+            if (movieCounter === 10) {
+                break;
+            }
+        }
+
+        return movieResult;
+    }
 };
 
-//TODO: search for all movies with the search term of movies
-async function searchMovie(searchTerm) {
-    validation.validateString("searchTerm", searchTerm);
-    const moviesCollection = await movies();
-    const data = await moviesCollection.find({}, { name: { $regex: searchTerm + '*', $options: 'i' } });
-    let movieResult = [];
-    let movieCounter = 0;
-    for (var i = 0; i < data.length; i++) {
-        movieResult.push(data[i].name);
-        movieCounter++;
-        if (movieCounter === 10) {
-            break;
-        }
-    }
 
-    return movieResult;
-}
 
-//TODO: search for all movies with the search term of cast member
-async function searchCast(searchTerm) {
-    validation.validateString("searchTerm", searchTerm);
-    const moviesCollection = await movies();
-    const data = await moviesCollection.find({}, { cast: { $regex: searchTerm + '*', $options: 'i' } });
-    let movieResult = [];
-    let movieCounter = 0;
-    for (var i = 0; i < data.length; i++) {
-        movieResult.push(data[i].cast);
-        movieCounter++;
-        if (movieCounter === 10) {
-            break;
-        }
-    }
+// async function createMovie(movieData) {
+//     const moviesCollection = await movies();
+//     const movie = await moviesCollection.find({}).toArray();
+//     // for(var i = 0; i < movie.length; i++){
+//     //   if(movie[i].name === movieData.name){
+//     //     throw "Movie already exists in DB"
+//     //   }
+//     // }
 
-    return movieResult;
-}
+//     let newMovie = {
+//         name: movieData
+//     };
 
-//TODO: search for all movies with the search term of director
-async function searchDirector(searchTerm) {
-    validation.validateString("searchTerm", searchTerm);
-    const moviesCollection = await movies();
-    const data = await moviesCollection.find({}, { director: { $regex: searchTerm + '*', $options: 'i' } });
-    let movieResult = [];
-    let movieCounter = 0;
-    for (var i = 0; i < data.length; i++) {
-        movieResult.push(data[i].director);
-        movieCounter++;
-        if (movieCounter === 10) {
-            break;
-        }
-    }
+//     const insertInfo = await moviesCollection.insertOne(newMovie);
+//     const newId = insertInfo.insertedId.toString();
 
-    return movieResult;
-}
+//     const movieeee = await this.get(newId);
+//     movieeee._id = movieeee._id.toString();
 
-async function searchYear(searchTerm) {
-    validation.validateNumber("searchTerm", searchTerm);
-    const moviesCollection = await movies();
-    const data = await moviesCollection.find({}, { release_date: { $regex: '*' + searchTerm + '*', $options: 'i' } });
-    let movieResult = [];
-    let movieCounter = 0;
-    for (var i = 0; i < data.length; i++) {
-        movieResult.push(data[i].director);
-        movieCounter++;
-        if (movieCounter === 10) {
-            break;
-        }
-    }
-
-    return movieResult;
-}
-
-async function searchMovieByAPI(searchTerm) {
-    validation.validateString("searchTerm", searchTerm);
-
-    const { data } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
-
-    let movieResult = [];
-    let movieCounter = 0;
-    for (var i = 0; i < data.Search.length; i++) {
-
-        movieResult.push(data.Search[i]);
-        movieCounter++;
-
-        if (movieCounter === 10) {
-            break;
-        }
-    }
-
-    return movieResult;
-}
+//     return movieeee;
+// }
 
 async function getMovieAPI(imdbID) {
     const {
@@ -167,10 +187,6 @@ async function getMovie(imdbID) {
 }
 
 module.exports = {
-    exportedMethods,
-    searchMovie,
-    searchCast,
-    searchDirector,
-    searchYear,
-    searchMovieByAPI
+    ...exportedMethods,
+    // createMovie
 };

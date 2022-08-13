@@ -5,12 +5,21 @@
   <br />
 
   <form action="/search" method="POST" class="new-search-form">
+    Search Movies
+
+    <select id='movieInfo' name='options' placeholder="Choose from selection">
+        {{#each option}}
+        <option>{{this}}</option>
+        {{/each}}
+    </select>
+
     <label>
-      Search Movies
-      <input type="text" name="searchTerm" placeholder="Enter Movie Name" value="{{show.searchTerm}}" />
+      <input type="text" name="searchTerm" placeholder="Enter Movie Name" value="{{movies.searchTerm}}" />
     </label>
+
     <br />
     <br />
+
     <button type="submit">Search</button>
   </form>
 </main>

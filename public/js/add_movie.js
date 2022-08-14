@@ -6,7 +6,6 @@
         movieSummary = $('#movieSummary'),
         movieGenres = document.querySelectorAll('.genresCheckbox'),
         movieDuration = $('#movieDuration'),
-        moviePoster = $('#moviePoster'),
         movieReleaseDate = $('#movieReleaseDate'),
         movieCast = $('#movieCast'),
         movieDirector = $('#movieDirector');
@@ -30,20 +29,23 @@
         try {
             result.hide();
 
-            const movieNameVal = movieName.val().trim(),
-                movieSummaryVal = movieSummary.val().trim(),
-                movieDurationVal = parseInt(movieDuration.val().trim()),
-                movieReleaseDateVal = movieReleaseDate.val().trim();
+            let movieNameVal = movieName.val(),
+                movieSummaryVal = movieSummary.val(),
+                movieGenresVal = [],
+                movieDurationVal = movieDuration.val(),
+                movieReleaseDateVal = movieReleaseDate.val(),
+                movieCastArr = [],
+                movieDirectorArr = [];
 
             // validate user inputs on client side
-            validateString("Movie Name", movieNameVal);
-            validateString("Summary", movieSummaryVal);
-            const movieGenresVal = validateGenre("Genre", movieGenres);
-            validateNumber("Duration", movieDurationVal);
-            validatePoster("Poster", fileName);
-            validateString("Release Date", movieReleaseDateVal);
-            const movieCastArr = validateStringArrays("Cast", movieCast.val().trim());
-            const movieDirectorArr = validateStringArrays("Director", movieDirector.val().trim());
+            movieNameVal = checkStringNoRegex(movieNameVal, "Movie Name");
+            movieSummaryVal = checkStringNoRegex(movieSummaryVal, "Summary");
+            movieGenresVal = checkGenre(movieGenres, "Genre");
+            movieDurationVal = checkNumber(movieDurationVal, "Duration", 1, 5000);
+            checkPoster(fileName, "Poster");
+            movieReleaseDateVal = checkStringNoRegex(movieReleaseDateVal, "Release Date");
+            movieCastArr = checkStringArray(movieCast.val(), "Cast");
+            movieDirectorArr = checkStringArray(movieDirector.val(), "Director");
 
             const movieData = {
                 name: movieNameVal,
@@ -55,7 +57,7 @@
                 director: movieDirectorArr
             };
 
-            // POST movie data + poster to db
+            // POST movie data + poster to DB
             let formData = new FormData();
             formData.append('moviePoster', file);
             formData.append('movieData', JSON.stringify(movieData));
@@ -85,50 +87,76 @@
     });
 
     // validation functions
-    function validateString(argName, argValue) {
-        if (!argValue) throw 'User must provide valid ' + argName;
-        if (typeof argValue !== 'string') throw argName + ' must be a string';
-        if (!isNaN(argValue)) throw argName + ' must be a string';
-        if (argValue.trim().length === 0) throw argName + ' cannot be an empty string or just spaces';
+    function checkString(strVal, varName) {
+        if (!strVal) throw `Error: You must supply value for ${varName}!`;
+        if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
+        strVal = strVal.trim();
+        if (strVal.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+        if (!isNaN(strVal)) throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
+        const regex = /^[a-zA-Z0-9.\-_ ']*$/;
+        if (!regex.test(strVal)) throw `Only Alphabets, Numbers, Dot and Underscore allowed for ${varName}`;
+        return strVal;
     }
 
-    function validateGenre(argName, argValue) {
+    function checkStringNoRegex(strVal, varName) {
+        if (!strVal) throw `Error: You must supply value for ${varName}!`;
+        if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
+        strVal = strVal.trim();
+        if (strVal.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+        return strVal;
+    }
+
+    function checkNumber(val, varName, minValue, maxValue) {
+        if (!val) throw `Error: You must supply value for ${varName}!`;
+
+        try {
+            val = parseInt(val, 10);
+        } catch (e) {
+            throw `${varName || "provided variable"} can't be parsed to a number`;
+        }
+
+        if (typeof val !== "number") throw `Error: ${varName} must be a number!`;
+        if (val < minValue) throw `${varName || "provided variable"} must not be lesser than ${minValue}`;
+        if (val > maxValue) throw `${varName || "provided variable"} must not be greater than ${maxValue}`;
+
+        return val;
+    }
+
+    function checkStringArray(arr, varName) {
+        if (!arr) throw `You must provide an array of ${varName}`;
+        if (arr.length == 0) throw `Error: User must provide at least one ${varName}`;
+
+        let array = [];
+        for (let temp of arr.split(",")) {
+            checkString(temp.trim(), varName + " name");
+            array.push(temp.trim());
+        }
+
+        return array;
+    }
+
+    function checkGenre(genre, varName) {
         let genres = [];
-        argValue.forEach(function (elem) {
+        genre.forEach(function (elem) {
             if (elem.checked) {
                 genres.push(elem.name.trim());
             }
         });
 
         if (genres.length === 0) {
-            throw 'User must select at least one ' + argName;
+            throw `Error: You must select at least one ${varName}`;
         }
 
         return genres;
     }
 
-    function validateNumber(argName, argValue) {
-        if (!argValue) throw 'User must provide valid ' + argName;
-        if (typeof argValue !== 'number') throw argName + ' must be a number';
-        if (argValue <= 0) throw argName + ' must be a positive number';
+    function checkPoster(poster, varName) {
+        if (!poster) throw `Error: You must supply value for ${varName}!`;
+        if (typeof poster !== "string") throw `Error: ${varName} must be a string!`;
+        poster = poster.trim();
+        if (poster.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+
+        if (fileSizeMB > 2) throw `Error: You must select image with size less than 2 MB`;
     }
 
-    function validatePoster(argName, argValue) {
-        if (!argValue) throw 'User must select valid ' + argName;
-        if (argValue.trim().length === 0) throw argName + ' file name cannot be an empty string or just spaces';
-        if (fileSizeMB > 2) throw 'User must select image with size less than 2 MB';
-    }
-
-    function validateStringArrays(argName, argValue) {
-        if (!argValue) throw 'User must provide valid ' + argName;
-        if (argValue.length === 0) throw 'User must provide at least one ' + argName;
-
-        let array = [];
-        for (let temp of argValue.split(",")) {
-            validateString(argName + " name", temp.trim());
-            array.push(temp.trim());
-        }
-
-        return array;
-    }
 })(window.jQuery);

@@ -1,4 +1,6 @@
-const { v4 } = require("uuid");
+const {
+  v4
+} = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -26,6 +28,7 @@ const Data = multer({
 });
 
 router.post("/add", Data.any("poster"), async (req, res) => {
+
   // if (req.session.user) {
   //     logger(req.method, req.originalUrl, true);
   //     res.render('../views/movies/add_movie', {});
@@ -35,22 +38,27 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   //     return;
   // }
 
-  const { name, summary, genres, duration, release_date, cast, director } =
-    JSON.parse(req.body.movieData);
+  let {
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } = JSON.parse(req.body.movieData);
 
-  const poster = req.files[0].path;
+  let poster = req.files[0].path;
 
   try {
-    validation.validateMovieData(
-      name,
-      summary,
-      genres,
-      duration,
-      release_date,
-      cast,
-      director
-    );
-    validation.validatePosterFilePath("Poster", poster);
+    name = validation.checkStringNoRegex(name, "Movie Name");
+    summary = validation.checkStringNoRegex(summary, "Summary");
+    genres = validation.checkStringArray(genres, "Genre");
+    duration = validation.checkNumber(duration, "Duration", 1, 5000);
+    poster = validation.checkPosterFilePath(poster, "Poster file path");
+    release_date = validation.checkDate(release_date, "Release Date");
+    cast = validation.checkStringArray(cast, "Cast");
+    director = validation.checkStringArray(director, "Director");
   } catch (e) {
     console.log(e);
     return res.status(400).json({
@@ -59,16 +67,7 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   }
 
   try {
-    const newMovie = await movies.addMovie(
-      name,
-      summary,
-      genres,
-      duration,
-      poster,
-      release_date,
-      cast,
-      director
-    );
+    const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director);
     return res.status(201).json({
       status: 201,
       movieID: newMovie._id,
@@ -82,6 +81,7 @@ router.post("/add", Data.any("poster"), async (req, res) => {
 });
 
 router.get("/add", async (req, res) => {
+
   // if (req.session.user) {
   //     logger(req.method, req.originalUrl, true);
   //     res.render('../views/movies/add_movie', {});

@@ -207,7 +207,7 @@ const exportedMethods = {
             summary: summary,
             genres: genres,
             duration: duration,
-            poster: poster,
+            poster: "/" + poster,
             release_date: release_date,
             cast: cast,
             director: director,

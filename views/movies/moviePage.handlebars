@@ -5,6 +5,8 @@
     <dl>
       <dt>Release date</dt>
       <dd>{{movie.release_date}}</dd>
+      <dt>Duration</dt>
+      <dd>{{movie.duration}}</dd>
       <dt>Genres</dt>
       {{#each movie.genres}}
       <dd>
@@ -42,9 +44,10 @@
         </span>
       </dd>
 
-      <dt>Reviews</dt>
-      <dd id="reviews_dd">
+      <dt id="reviewsHeader">Reviews</dt>
+   
         {{#if reviewsWithUserName }}
+        <dd id="reviewsPresent">
         {{#each reviewsWithUserName}}
 
         {{!-- Note: Any updates to this must be copied to the createCommentBlock() function --}}
@@ -89,11 +92,15 @@
           <div id="errorActionDiv_{{this.commentId}}" class="alert alert-danger hidden" role="alert">
           </div>
         </div>
+        
         {{/each}}
+        </dd>
         {{else}}
+        <dd id="reviewsAbsent">
         No reviews yet
+        </dd>
         {{/if}}
-      </dd>
+      
       <dt style="border-bottom: 1px solid #afafaf">Add your review</dt>
       <dd style="margin: 0em; padding-top: 1em;">
         <div id="errorMessageDiv" class="alert alert-danger hidden" role="alert">
@@ -128,5 +135,5 @@
   </dd>
   </dl>
   </div>
-  <script src="/public/js/movies-single.js"></script>
+  <script src="/public/js/moviePage.js"></script>
 </main>

@@ -8,12 +8,14 @@ const movies = require("../data/movies");
 const users = require("../data/users");
 const validation = require("../utils/validation");
 
-var multer = require('multer');
-let fs = require('fs-extra');
+var multer = require("multer");
+let fs = require("fs-extra");
+
+require('dotenv').config();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let path = `./public/posters/` + Date.now() + `/`;
+    let path = process.env.POSTER_FILE_PATH + Date.now() + `/`;
     fs.mkdirsSync(path);
     cb(null, path);
   },
@@ -24,10 +26,10 @@ const storage = multer.diskStorage({
 
 // for parsing multipart/form-data and storing files
 const Data = multer({
-  storage: storage
+  storage: storage,
 });
 
-router.post('/add', Data.any("poster"), async (req, res) => {
+router.post("/add", Data.any("poster"), async (req, res) => {
 
   // if (req.session.user) {
   //     logger(req.method, req.originalUrl, true);
@@ -38,7 +40,7 @@ router.post('/add', Data.any("poster"), async (req, res) => {
   //     return;
   // }
 
-  const {
+  let {
     name,
     summary,
     genres,
@@ -48,15 +50,21 @@ router.post('/add', Data.any("poster"), async (req, res) => {
     director
   } = JSON.parse(req.body.movieData);
 
-  const poster = req.files[0].path;
+  let poster = req.files[0].path;
 
   try {
-    validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
-    validation.validatePosterFilePath("Poster", poster);
+    name = validation.checkStringNoRegex(name, "Movie Name");
+    summary = validation.checkStringNoRegex(summary, "Summary");
+    genres = validation.checkStringArray(genres, "Genre");
+    duration = validation.checkNumber(duration, "Duration", 1, 5000);
+    poster = validation.checkPosterFilePath(poster, "Poster file path");
+    release_date = validation.checkDate(release_date, "Release Date");
+    cast = validation.checkStringArray(cast, "Cast");
+    director = validation.checkStringArray(director, "Director");
   } catch (e) {
     console.log(e);
     return res.status(400).json({
-      error: e
+      error: e,
     });
   }
 
@@ -64,17 +72,17 @@ router.post('/add', Data.any("poster"), async (req, res) => {
     const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director);
     return res.status(201).json({
       status: 201,
-      movieID: newMovie._id
+      movieID: newMovie._id,
     });
   } catch (e) {
     console.log(e);
     return res.status(500).json({
-      error: e
+      error: e,
     });
   }
 });
 
-router.get('/add', async (req, res) => {
+router.get("/add", async (req, res) => {
 
   // if (req.session.user) {
   //     logger(req.method, req.originalUrl, true);
@@ -85,17 +93,13 @@ router.get('/add', async (req, res) => {
   //     return;
   // }
 
-  res.render('../views/movies/add_movie', {
-    title: "Add Movie"
+  res.render("../views/movies/add_movie", {
+    title: "Add Movie",
   });
 });
 
 router.get("/:id", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  // req.session = {};
-  req.session.user = "john_doe";
-  req.session.user_id = "62edec84bcd3a79c27abaa0c";
-  if (true || (req.session && req.session.user)) {
+  if (req.session && req.session.user && req.session.user.id) {
     let id = req.params.id;
     id = validation.checkId(id, "Id url param");
     const movie = await movies.getMovieById(id);
@@ -131,10 +135,10 @@ router.get("/:id", async (req, res) => {
       );
       let timestampIso = new Date(review.timestamp);
       let currentUserInLikes = review.likes.filter(
-        (like) => like === req.session.user_id
+        (like) => like === req.session.user.id
       );
       let currentUserInDislikes = review.dislikes.filter(
-        (dislike) => dislike === req.session.user_id
+        (dislike) => dislike === req.session.user.id
       );
       reviewsWithUserName.push({
         user: usersResultMap[review.user_id],
@@ -153,13 +157,16 @@ router.get("/:id", async (req, res) => {
     });
     movie.avg_rating = movie.avg_rating.toFixed(1);
 
+    movie.duration = `${Math.floor(movie.duration / 60)} hours, ${
+      movie.duration % 60
+    } minutes`;
+
     res.render("movies/moviePage", {
       title: movie.name,
       movie: movie,
       reviewsWithUserName: reviewsWithUserName,
     });
   } else {
-    //TODO Add a section to display errors in the signup page
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -168,12 +175,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/:id/comment", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  // TODO Cache both username and userid
-  // req.session = {};
-  req.session.user = "john_doe";
-  req.session.user_id = "62edec84bcd3a79c27abaa0c";
-  if (true || (req.session && req.session.user)) {
+  if (req.session && req.session.user && req.session.user.id) {
     let id = req.params.id;
     id = validation.checkId(id, "Id url param");
     const requestBody = req.body;
@@ -181,7 +183,7 @@ router.post("/:id/comment", async (req, res) => {
     try {
       requestBody.rating = validation.checkNumber(
         requestBody.rating,
-        "rating",
+        "Rating",
         1,
         10
       );
@@ -203,7 +205,7 @@ router.post("/:id/comment", async (req, res) => {
     let uuid = v4();
     const currentReview = {
       comment_id: uuid,
-      user_id: req.session.user_id,
+      user_id: req.session.user.id,
       timestamp: new Date().toISOString(),
       rating: requestBody.rating,
       comment: requestBody.comment,
@@ -235,7 +237,6 @@ router.post("/:id/comment", async (req, res) => {
       return;
     }
   } else {
-    //TODO Add a section to display errors in the signup page
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -244,12 +245,7 @@ router.post("/:id/comment", async (req, res) => {
 });
 
 router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  // TODO Cache both username and userid
-  // req.session = {};
-  req.session.user = "john_doe";
-  req.session.user_id = "62edec84bcd3a79c27abaa0c";
-  if (true || (req.session && req.session.user)) {
+  if (req.session && req.session.user && req.session.user.id) {
     const movieId = req.params.movieId;
     const commentId = req.params.commentId;
     const action = req.params.action;
@@ -287,20 +283,20 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
 
     if (action === "like") {
       const currentUserInLikes = review.likes.find(
-        (likedUser) => likedUser === req.session.user_id
+        (likedUser) => likedUser === req.session.user.id
       );
       if (currentUserInLikes) {
         res.status(304).send();
         return;
       } else {
         const currentUserInDislikes = review.dislikes.find(
-          (dislikedUser) => dislikedUser === req.session.user_id
+          (dislikedUser) => dislikedUser === req.session.user.id
         );
         if (currentUserInDislikes) {
           res.status(409).json("Cannot like a disliked comment").send();
           return;
         }
-        review.likes.push(req.session.user_id);
+        review.likes.push(req.session.user.id);
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
         );
@@ -319,11 +315,11 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
 
     if (action === "unlike") {
       const currentUserInLikes = review.likes.find(
-        (likedUser) => likedUser === req.session.user_id
+        (likedUser) => likedUser === req.session.user.id
       );
       if (currentUserInLikes) {
         review.likes = review.likes.filter(
-          (likedUser) => likedUser !== req.session.user_id
+          (likedUser) => likedUser !== req.session.user.id
         );
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
@@ -349,20 +345,20 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
 
     if (action === "dislike") {
       const currentUserInDislikes = review.dislikes.find(
-        (dislikedUser) => dislikedUser === req.session.user_id
+        (dislikedUser) => dislikedUser === req.session.user.id
       );
       if (currentUserInDislikes) {
         res.status(304).send();
         return;
       } else {
         const currentUserInLikes = review.likes.find(
-          (likedUser) => likedUser === req.session.user_id
+          (likedUser) => likedUser === req.session.user.id
         );
         if (currentUserInLikes) {
           res.status(409).json("Cannot dislike a liked comment").send();
           return;
         }
-        review.dislikes.push(req.session.user_id);
+        review.dislikes.push(req.session.user.id);
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
         );
@@ -381,11 +377,11 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
 
     if (action === "undislike") {
       const currentUserInDislikes = review.dislikes.find(
-        (dislikedUser) => dislikedUser === req.session.user_id
+        (dislikedUser) => dislikedUser === req.session.user.id
       );
       if (currentUserInDislikes) {
         review.dislikes = review.dislikes.filter(
-          (dislikedUser) => dislikedUser !== req.session.user_id
+          (dislikedUser) => dislikedUser !== req.session.user.id
         );
         movie.reviews.map((currReview) =>
           currReview.comment_id === commentId ? review : currReview
@@ -409,7 +405,6 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
       }
     }
   } else {
-    //TODO Add a section to display errors in the signup page
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });

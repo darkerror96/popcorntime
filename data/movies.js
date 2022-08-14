@@ -4,7 +4,7 @@ const {
     ObjectId
 } = require("mongodb");
 const axios = require("axios");
-const validation = require('./validation');
+const validation = require("../utils/validation");
 
 const exportedMethods = {
     async getMovieById(id) {
@@ -61,7 +61,8 @@ const exportedMethods = {
             throw "Update failed";
     },
     async searchMovie(searchTerm) {
-        validation.validateString("searchTerm", searchTerm);
+
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
 
         const moviesCollection = await movies();
@@ -87,8 +88,7 @@ const exportedMethods = {
         return movieResult;
     },
     async searchCast(searchTerm) {
-
-        validation.validateString("searchTerm", searchTerm);
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
@@ -117,10 +117,11 @@ const exportedMethods = {
         return movieResult;
     },
     async searchDirector(searchTerm) {
-        validation.validateString("searchTerm", searchTerm);
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
+
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -143,7 +144,7 @@ const exportedMethods = {
         return movieResult;
     },
     async searchYear(searchTerm) {
-        validation.validateString("searchTerm", searchTerm);
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
 
         const moviesCollection = await movies();
@@ -169,7 +170,7 @@ const exportedMethods = {
         return movieResult;
     },
     async searchMovieByAPI(searchTerm) {
-        validation.validateString("searchTerm", searchTerm);
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
 
         const {
             data
@@ -191,15 +192,21 @@ const exportedMethods = {
     },
 
     async addMovie(name, summary, genres, duration, poster, release_date, cast, director) {
-        validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
-        validation.validatePosterFilePath("Poster", poster);
+        name = validation.checkStringNoRegex(name, "Movie Name");
+        summary = validation.checkStringNoRegex(summary, "Summary");
+        genres = validation.checkStringArray(genres, "Genre");
+        duration = validation.checkNumber(duration, "Duration", 1, 5000);
+        poster = validation.checkPosterFilePath(poster, "Poster file path");
+        release_date = validation.checkDate(release_date, "Release Date");
+        cast = validation.checkStringArray(cast, "Cast");
+        director = validation.checkStringArray(director, "Director");
 
         const newMovie = {
             name: name,
             summary: summary,
             genres: genres,
             duration: duration,
-            poster: poster,
+            poster: "/" + poster,
             release_date: release_date,
             cast: cast,
             director: director,
@@ -215,8 +222,7 @@ const exportedMethods = {
     },
 
     async removeMovie(id) {
-        validation.validateID('id', id);
-        id = id.trim();
+        id = validation.checkId(id, 'Movie ID');
 
         const moviesCollection = await movies();
         const deletionInfo = await moviesCollection.deleteOne({
@@ -228,13 +234,18 @@ const exportedMethods = {
     },
 
     async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, avg_rating, reviews) {
-        validation.validateID('id', id);
-        id = id.trim();
+        id = validation.checkId(id, 'Movie ID');
 
-        validation.validateMovieData(name, summary, genres, duration, release_date, cast, director);
-        validation.validatePosterFilePath("Poster", poster);
-        validation.validateAvgRating("Avg Rating", avg_rating);
-        validation.validateReviews("Reviews", reviews);
+        name = validation.checkStringNoRegex(name, "Movie Name");
+        summary = validation.checkStringNoRegex(summary, "Summary");
+        genres = validation.checkStringArray(genres, "Genre");
+        duration = validation.checkNumber(duration, "Duration", 1, 5000);
+        poster = validation.checkPosterFilePath(poster, "Poster file path");
+        release_date = validation.checkDate(release_date, "Release Date");
+        cast = validation.checkStringArray(cast, "Cast");
+        director = validation.checkStringArray(director, "Director");
+        avg_rating = validation.checkNumber(avg_rating, "Avg Rating", 1, 10);
+        reviews = validation.checkReviews(reviews, "Reviews");
 
         const updatedMovie = {
             name: name,
@@ -259,6 +270,7 @@ const exportedMethods = {
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
         return this.getMovieById(id);
     }
+
 };
 
 // async function createMovie(movieData) {
@@ -284,7 +296,7 @@ const exportedMethods = {
 // }
 
 async function searchMovieByAPI(searchTerm) {
-    validation.validateString("searchTerm", searchTerm);
+    searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
 
     const {
         data
@@ -314,7 +326,7 @@ async function getMovieAPI(imdbID) {
 
 async function getMovie(imdbID) {
 
-    validation.validateString("imdbID", imdbID);
+    imdbID = validation.checkStringNoRegex(imdbID, "imdbID");
 
     const data = await getMovieAPI(imdbID);
 

@@ -18,9 +18,9 @@
         </span>
       </span>
       <p>        
-        <span class="review_action" style="color: green" id="like_${postCommentResponse.commentId}" 
+        <span class="review_action" style="color: rgb(0, 100, 0)" id="like_${postCommentResponse.commentId}" 
           onclick="reviewAction('like', '${postCommentResponse.commentId}', this)">Like</span>
-        <span class="review_action" style="color: red" id="dislike_${postCommentResponse.commentId}">Dislike</span>    
+        <span class="review_action" style="color: rgb(200, 0, 0)" id="dislike_${postCommentResponse.commentId}">Dislike</span>    
       </p>
       <div id="errorActionDiv_${postCommentResponse.commentId}" class="alert alert-danger hidden" role="alert"></div>
     </div>
@@ -60,7 +60,7 @@
 
         if (action === "like") {
           reviewActionButton.innerHTML = "Undo 'Like'";
-          reviewActionButton.style = "color: orange";
+          reviewActionButton.style = "color: rgb(160, 60, 0)";
           reviewActionButton.id = `unlike_${commentId}`;
 
           let currentCommentLikes =
@@ -76,7 +76,7 @@
         }
         if (action === "unlike") {
           reviewActionButton.innerHTML = "Like";
-          reviewActionButton.style = "color: green";
+          reviewActionButton.style = "color: rgb(0, 100, 0)";
           reviewActionButton.id = `like_${commentId}`;
 
           let currentCommentLikes =
@@ -92,7 +92,7 @@
         }
         if (action === "dislike") {
           reviewActionButton.innerHTML = "Undo 'Dislike";
-          reviewActionButton.style = "color: orange";
+          reviewActionButton.style = "color: rgb(160, 60, 0)";
           reviewActionButton.id = `undislike_${commentId}`;
 
           let currentCommentDislikes =
@@ -109,7 +109,7 @@
         }
         if (action === "undislike") {
           reviewActionButton.innerHTML = "Dislike";
-          reviewActionButton.style = "color: red";
+          reviewActionButton.style = "color: rgb(200, 0, 0)";
           reviewActionButton.id = `dislike_${commentId}`;
 
           let currentCommentDislikes =

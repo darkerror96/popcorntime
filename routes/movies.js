@@ -11,9 +11,11 @@ const validation = require("../utils/validation");
 var multer = require("multer");
 let fs = require("fs-extra");
 
+require('dotenv').config();
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let path = `./public/posters/` + Date.now() + `/`;
+    let path = process.env.POSTER_FILE_PATH + Date.now() + `/`;
     fs.mkdirsSync(path);
     cb(null, path);
   },

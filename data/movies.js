@@ -93,6 +93,8 @@ const exportedMethods = {
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
 
+
+
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {

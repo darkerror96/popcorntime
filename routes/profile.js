@@ -5,11 +5,8 @@ const movies = require("../data/movies");
 const validation = require("../utils/validation");
 
 router.get("/", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  // req.session = {};
-  req.session.user = "john_doe";
-  if (true || (req.session && req.session.user)) {
-    const user = await users.getUser(req.session.user);
+  if (req.session && req.session.user && req.session.user.id) {
+    const user = await users.getUserById(req.session.user.id);
     let movieIds = [];
     pushToArray(movieIds, user.watch_list);
     pushToArray(movieIds, user.preferences.liked_movies);
@@ -42,8 +39,7 @@ router.get("/", async (req, res) => {
       likedMovies: likedMovies,
       dislikedMovies: dislikedMovies,
     });
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -52,11 +48,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/watchlist/:id", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  req.session = {};
-  req.session.user = "john_doe";
-  req.session.user_id = "62edec84bcd3a79c27abaa0c";
-  if (true || (req.session && req.session.user)) {
+  if (req.session && req.session.user && req.session.user.id) {
     let movieId = req.params.id;
     try {
       movieId = validation.checkId(movieId, "Id url param");
@@ -71,7 +63,7 @@ router.post("/watchlist/:id", async (req, res) => {
         (watchListMovieId) => movieId === watchListMovieId
       );
       if (index === -1) {
-        users.addToWatchList(req.session.user_id, movieId);
+        users.addToWatchList(req.session.user.id, movieId);
         res.status(200).send();
       } else {
         res.status(304).send();
@@ -82,8 +74,7 @@ router.post("/watchlist/:id", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -92,11 +83,7 @@ router.post("/watchlist/:id", async (req, res) => {
 });
 
 router.post("/prefs", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  // req.session = {};
-  req.session.user = "john_doe";
-  req.session.user_id = "62edec84bcd3a79c27abaa0c";
-  if (true || (req.session && req.session.user)) {
+  if (req.session && req.session.user && req.session.user.id) {
     let requestBody = undefined;
     let preferenceCategory = undefined;
     let preferenceValue = undefined;
@@ -131,15 +118,15 @@ router.post("/prefs", async (req, res) => {
     }
 
     try {
-      const user = await users.getUserById(req.session.user_id);
+      const user = await users.getUserById(req.session.user.id);
       if (!user.preferences) {
         user.preferences = {};
       }
 
       // Disallow liking and disliking the same item
-      let oppositeCategory = preferenceCategory.includes("disliked") ?
-        preferenceCategory.replace("disliked", "liked") :
-        preferenceCategory.replace("liked", "disliked");
+      let oppositeCategory = preferenceCategory.includes("disliked")
+        ? preferenceCategory.replace("disliked", "liked")
+        : preferenceCategory.replace("liked", "disliked");
 
       let preferenceSubSection = user.preferences[preferenceCategory];
       let oppositeSubSection = user.preferences[oppositeCategory];
@@ -166,7 +153,7 @@ router.post("/prefs", async (req, res) => {
       if (index === -1) {
         preferenceSubSection.push(preferenceValue);
         user.preferences[preferenceCategory] = preferenceSubSection;
-        users.updatePreferences(req.session.user_id, user.preferences);
+        users.updatePreferences(req.session.user.id, user.preferences);
         res.status(200).send();
       } else {
         res.status(304).send();
@@ -177,8 +164,7 @@ router.post("/prefs", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -187,11 +173,7 @@ router.post("/prefs", async (req, res) => {
 });
 
 router.delete("/watchlist/:id", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  // req.session = {};
-  req.session.user = "john_doe";
-  req.session.user_id = "62edec84bcd3a79c27abaa0c";
-  if (true || (req.session && req.session.user)) {
+  if (req.session && req.session.user && req.session.user.id) {
     let movieId = req.params.id;
     try {
       movieId = validation.checkId(movieId, "Id url param");
@@ -208,7 +190,7 @@ router.delete("/watchlist/:id", async (req, res) => {
       if (index === -1) {
         res.status(404).send();
       } else {
-        users.removeFromWatchList(req.session.user_id, movieId);
+        users.removeFromWatchList(req.session.user.id, movieId);
         res.status(200).send();
       }
       return;
@@ -217,8 +199,7 @@ router.delete("/watchlist/:id", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -227,11 +208,7 @@ router.delete("/watchlist/:id", async (req, res) => {
 });
 
 router.delete("/prefs", async (req, res) => {
-  // TODO Stop non-users from accessing this, and remove this hard-coding
-  // req.session = {};
-  req.session.user = "john_doe";
-  req.session.user_id = "62edec84bcd3a79c27abaa0c";
-  if (true || (req.session && req.session.user)) {
+  if (req.session && req.session.user && req.session.user.id) {
     let requestBody = undefined;
     let preferenceCategory = undefined;
     let preferenceValue = undefined;
@@ -266,7 +243,7 @@ router.delete("/prefs", async (req, res) => {
     }
 
     try {
-      const user = await users.getUserById(req.session.user_id);
+      const user = await users.getUserById(req.session.user.id);
       if (!user.preferences) {
         user.preferences = {};
       }
@@ -285,7 +262,7 @@ router.delete("/prefs", async (req, res) => {
           (value) => value != preferenceValue
         );
         user.preferences[preferenceCategory] = preferenceSubSection;
-        users.updatePreferences(req.session.user_id, user.preferences);
+        users.updatePreferences(req.session.user.id, user.preferences);
         res.status(200).send();
       }
       return;
@@ -294,8 +271,7 @@ router.delete("/prefs", async (req, res) => {
       return;
     }
     return;
-  } else {
-    //TODO Add a section to display errors in the signup page
+  } else {    
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });

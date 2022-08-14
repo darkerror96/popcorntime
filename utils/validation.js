@@ -21,7 +21,7 @@ module.exports = {
   },
 
   checkStringNoRegex(strVal, varName) {
-    if (!strVal) throw `Error: You must supply value for ${varName}!`;
+    if (!strVal) throw `Error: You must provide value for ${varName}!`;
     if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
     strVal = strVal.trim();
     if (strVal.length === 0)
@@ -32,16 +32,16 @@ module.exports = {
   },
 
   checkString(strVal, varName) {
-    if (!strVal) throw `Error: You must supply value for ${varName}!`;
+    if (!strVal) throw `Error: You must provide value for ${varName}!`;
     if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
     strVal = strVal.trim();
     if (strVal.length === 0)
-      throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+      throw `Error: Empty text or text with just spaces is not valid for ${varName}`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-    const regex = /^[a-zA-Z0-9.-_ ]*$/;
+    const regex = /^[a-zA-Z0-9.\-\'_! ]*$/;
     if (!regex.test(strVal)) {
-      throw `Only alphabets, numbers, period, dash, and underscore are allowed`;
+      throw `Error: Only alphabets, numbers, period, dash, and underscore are allowed`;
     }
     return strVal;
   },

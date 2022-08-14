@@ -39,7 +39,7 @@ router.get("/", async (req, res) => {
       likedMovies: likedMovies,
       dislikedMovies: dislikedMovies,
     });
-  } else {    
+  } else {
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -74,7 +74,7 @@ router.post("/watchlist/:id", async (req, res) => {
       return;
     }
     return;
-  } else {    
+  } else {
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -124,9 +124,9 @@ router.post("/prefs", async (req, res) => {
       }
 
       // Disallow liking and disliking the same item
-      let oppositeCategory = preferenceCategory.includes("disliked")
-        ? preferenceCategory.replace("disliked", "liked")
-        : preferenceCategory.replace("liked", "disliked");
+      let oppositeCategory = preferenceCategory.includes("disliked") ?
+        preferenceCategory.replace("disliked", "liked") :
+        preferenceCategory.replace("liked", "disliked");
 
       let preferenceSubSection = user.preferences[preferenceCategory];
       let oppositeSubSection = user.preferences[oppositeCategory];
@@ -164,7 +164,7 @@ router.post("/prefs", async (req, res) => {
       return;
     }
     return;
-  } else {    
+  } else {
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -199,7 +199,7 @@ router.delete("/watchlist/:id", async (req, res) => {
       return;
     }
     return;
-  } else {    
+  } else {
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });
@@ -271,7 +271,7 @@ router.delete("/prefs", async (req, res) => {
       return;
     }
     return;
-  } else {    
+  } else {
     res.status(403).render("../views/users/signup", {
       message: "You need to be signed up to access this page",
     });

@@ -1,13 +1,13 @@
 (function () {
   function createCommentBlock(postCommentResponse) {
     let newCommentBlock = `
-    <div class="review_block">
+    <div class="review_block" style="border: 1px solid orange">
       <span class="review_comment"> ${postCommentResponse.comment} </span>
       <span class="review_rating"> Rated:
         <span class="rating">${postCommentResponse.rating}</span>
       </span>
       <br />
-      <span class="review_author">added by ${postCommentResponse.user.username} on ${postCommentResponse.date}</span>
+      <span class="review_author">added by ${postCommentResponse.user.username} on ${postCommentResponse.timestamp}</span>
       <span class="review_likes_and_dislikes">
         <span title="${postCommentResponse.likes}" class="review_likes" id="likesCount_${postCommentResponse.commentId}">
           Likes: 0        
@@ -128,6 +128,9 @@
         if (data.status == 409) {
           errorActionDiv.text("You cannot like and dislike the same message");
           errorActionDiv.removeClass("hidden");
+        } else if (data.status == 403) {
+          errorActionDiv.text("You need to be logged in to react to reviews");
+          errorActionDiv.removeClass("hidden");
         } else {
           errorActionDiv.text(
             "Unable to connect to server. Please try again later."
@@ -157,7 +160,7 @@
 
     let avg_ratingsSpan = $("#avg_rating");
     let total_reviewsSpan = $("#total_reviews");
-    let noReviewsYetBlock = $("#reviewsAbsent");
+
     let reviewsHeader = $("#reviewsHeader");
 
     let postCommentCallInfo = {
@@ -176,11 +179,11 @@
         submitReviewForm.reset();
         errorMessageDiv.text();
         errorMessageDiv.addClass("hidden");
-        let newCommentBlock = createCommentBlock(postCommentResponse);
+        let newCommentBlock = createCommentBlock(postCommentResponse);        
 
+        let noReviewsYetBlock = document.getElementById("reviewsAbsent");
         if (noReviewsYetBlock) {
           noReviewsYetBlock.remove();
-
           reviewsHeader.after(`<dd id="reviewsPresent"></dd>`);
         }
         let existingReviews = $("#reviewsPresent");
@@ -195,8 +198,18 @@
         total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
       })
       .fail(function (data, textStatus, xhr) {
-        errorMessageDiv.text(data.responseText);
-        errorMessageDiv.removeClass("hidden");
+        if (data.status == 403) {
+          errorMessageDiv.text("You need to be logged in to post reviews");
+          errorMessageDiv.removeClass("hidden");
+        } else if (data.status == 400) {
+          errorMessageDiv.text(data.responseText);
+          errorMessageDiv.removeClass("hidden");
+        } else {
+          errorMessageDiv.text(
+            "Unable to connect to server. Please try again later."
+          );
+          errorMessageDiv.removeClass("hidden");
+        }
       });
 
     $("body").css("cursor", "default");

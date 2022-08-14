@@ -1,6 +1,4 @@
-const {
-  v4
-} = require("uuid");
+const { v4 } = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -11,7 +9,7 @@ const validation = require("../utils/validation");
 var multer = require("multer");
 let fs = require("fs-extra");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -30,7 +28,6 @@ const Data = multer({
 });
 
 router.post("/add", Data.any("poster"), async (req, res) => {
-
   // if (req.session.user) {
   //     logger(req.method, req.originalUrl, true);
   //     res.render('../views/movies/add_movie', {});
@@ -40,15 +37,8 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   //     return;
   // }
 
-  let {
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } = JSON.parse(req.body.movieData);
+  let { name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -69,7 +59,16 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   }
 
   try {
-    const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director);
+    const newMovie = await movies.addMovie(
+      name,
+      summary,
+      genres,
+      duration,
+      poster,
+      release_date,
+      cast,
+      director
+    );
     return res.status(201).json({
       status: 201,
       movieID: newMovie._id,
@@ -83,7 +82,6 @@ router.post("/add", Data.any("poster"), async (req, res) => {
 });
 
 router.get("/add", async (req, res) => {
-
   // if (req.session.user) {
   //     logger(req.method, req.originalUrl, true);
   //     res.render('../views/movies/add_movie', {});
@@ -127,23 +125,36 @@ router.get("/:id", async (req, res) => {
       usersResultMap[user._id.toString()] = user.username;
     });
     let reviewsWithUserName = [];
+    let wordMap = new Map();
     movie.reviews.forEach((review) => {
       let likesWithUserName = getLikesWithUserName(review, usersResultMap);
       let dislikesWithUserName = getDislikesWithUserName(
         review,
         usersResultMap
       );
-      let timestampIso = new Date(review.timestamp);
       let currentUserInLikes = review.likes.filter(
         (like) => like === req.session.user.id
       );
       let currentUserInDislikes = review.dislikes.filter(
         (dislike) => dislike === req.session.user.id
       );
+
+      let timestamp = createTimestampWithElapsedTime(review.timestamp);
+
+      review.comment.split(" ").forEach((word) => {
+        let wordLowerCase = word.toLowerCase();
+        if (wordMap.get(wordLowerCase)) {
+          let count = parseInt(wordMap.get(wordLowerCase), 10);
+          wordMap.set(wordLowerCase, count + 1);
+        } else {
+          wordMap.set(wordLowerCase, 1);
+        }
+      });
+
       reviewsWithUserName.push({
         user: usersResultMap[review.user_id],
         // TODO Change this today-n days|weeks|months|years ago
-        timestamp: timestampIso.toISOString().substring(0, 10),
+        timestamp: timestamp,
         rating: review.rating.toFixed(0),
         comment: review.comment,
         commentId: review.comment_id,
@@ -155,6 +166,12 @@ router.get("/:id", async (req, res) => {
         dislikedByCurrentUser: currentUserInDislikes.length > 0 ? true : false,
       });
     });
+
+    topWordsArray = getTop5Keywords(wordMap);
+
+    reviewsWithUserName = reviewsWithUserName.sort((a, b) => {
+      return b.likesCount - b.dislikesCount - (a.likesCount - a.dislikesCount);
+    });
     movie.avg_rating = movie.avg_rating.toFixed(1);
 
     movie.duration = `${Math.floor(movie.duration / 60)} hours, ${
@@ -165,6 +182,7 @@ router.get("/:id", async (req, res) => {
       title: movie.name,
       movie: movie,
       reviewsWithUserName: reviewsWithUserName,
+      topWordsArray: topWordsArray,
     });
   } else {
     res.status(403).render("../views/users/signup", {
@@ -195,6 +213,7 @@ router.post("/:id/comment", async (req, res) => {
       res.status(400).json(e).send();
       return;
     }
+
     const movie = await movies.getMovieById(id);
     const currAverage = movie.avg_rating;
     const numOfReviews =
@@ -217,14 +236,16 @@ router.post("/:id/comment", async (req, res) => {
       movie.reviews = [];
     }
     movie.reviews.push(currentReview);
+
     try {
       await movies.updateReviewsAndRating(id, movie.reviews, newAverage);
+      let timestamp = createTimestampWithElapsedTime(new Date().toISOString());
       let responseBody = {
         commentId: uuid,
         comment: requestBody.comment,
         rating: requestBody.rating,
         user: req.session.user,
-        date: new Date().toJSON().slice(0, 10),
+        timestamp: timestamp,
         likes: getLikesWithUserName({}, {}),
         dislikes: getDislikesWithUserName({}, {}),
         newAverage: newAverage.toFixed(1),
@@ -412,6 +433,68 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
   }
 });
 
+function createTimestampWithElapsedTime(reviewTimestamp) {
+  let currentTime = new Date();
+  let reviewDateTimestamp = new Date(reviewTimestamp);
+  let secondsPassed = Math.round(
+    (currentTime.getTime() - reviewDateTimestamp.getTime()) / 1000
+  );
+
+  let timePassed = "";
+  if (secondsPassed < 60) {
+    timePassed = `Just now`;
+  } else if (secondsPassed < 3600) {
+    timePassedPrefix = Math.floor(secondsPassed / 60);
+    if (timePassedPrefix == 1) {
+      timePassed = `about ${timePassedPrefix} minute ago`;
+    } else {
+      timePassed = `about ${timePassedPrefix} minutes ago`;
+    }
+  } else if (secondsPassed < 3600 * 24) {
+    timePassedPrefix = Math.floor(secondsPassed / 3600);
+    if (timePassedPrefix == 1) {
+      timePassed = `about ${timePassedPrefix} hour ago`;
+    } else {
+      timePassed = `about ${timePassedPrefix} hours ago`;
+    }
+  } else if (secondsPassed < 3600 * 24 * 7) {
+    timePassedPrefix = Math.floor(secondsPassed / (3600 * 24));
+    if (timePassedPrefix == 1) {
+      timePassed = `about ${timePassedPrefix} day ago`;
+    } else {
+      timePassed = `about ${timePassedPrefix} days ago`;
+    }
+  } else if (secondsPassed < 3600 * 24 * 30) {
+    timePassedPrefix = Math.floor(secondsPassed / (3600 * 24 * 7));
+    if (timePassedPrefix == 1) {
+      timePassed = `about ${timePassedPrefix} week ago`;
+    } else {
+      timePassed = `about ${timePassedPrefix} weeks ago`;
+    }
+  } else if (secondsPassed < 3600 * 24 * 365) {
+    timePassedPrefix = Math.floor(secondsPassed / (3600 * 24 * 30));
+    if (timePassedPrefix == 1) {
+      timePassed = `about ${timePassedPrefix} month ago`;
+    } else {
+      timePassed = `about ${timePassedPrefix} months ago`;
+    }
+  } else {
+    timePassedPrefix = Math.floor(secondsPassed / (3600 * 24 * 365));
+    if (timePassedPrefix == 1) {
+      timePassed = `about ${timePassedPrefix} year ago`;
+    } else {
+      timePassed = `about ${timePassedPrefix} years ago`;
+    }
+  }
+  let time = new Date(reviewTimestamp).toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+  let timestamp = `${time} (${timePassed})`;
+  return timestamp;
+}
+
 function pushFieldToArray(targetArray, inputArray, fieldInArrayElement) {
   if (inputArray) {
     inputArray.forEach((input) => {
@@ -475,6 +558,36 @@ function getDislikesWithUserName(review, usersResultMap) {
     dislikesWithUserName = "No dislikes yet";
   }
   return dislikesWithUserName;
+}
+
+function getTop5Keywords(wordMap) {
+  // Remove common words
+  wordMap.delete("but", 0);
+  wordMap.delete("film", 0);
+  wordMap.delete("how", 0);
+  wordMap.delete("i", 0);
+  wordMap.delete("is", 0);
+  wordMap.delete("movie", 0);
+  wordMap.delete("sometimes", 0);
+  wordMap.delete("that", 0);
+  wordMap.delete("the", 0);
+  wordMap.delete("this", 0);
+  wordMap.delete("too", 0);
+
+  wordMap = new Map([...wordMap.entries()].sort((a, b) => b[1] - a[1]));
+
+  let arrayLength = 0;
+  let wordMapArray = [];
+  for (let [keyword, count] of wordMap.entries()) {
+    if (arrayLength < 5) {
+      wordMapArray.push(`${keyword} (${count} entries)`);
+      arrayLength++;
+    } else {
+      break;
+    }
+  }
+
+  return wordMapArray;
 }
 
 module.exports = router;

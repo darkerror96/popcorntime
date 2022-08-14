@@ -18,6 +18,9 @@
                     <a href="/wishlist">Wishlist</a>
                     <a href="/profile">Profile</a>
                     <a href="/logout">Logout</a>
+                    {{#ifEquals role "admin"}}
+                    <a href="/admin">Admin</a>
+                    {{/ifEquals}}
                     {{else}}
                     <a href="/login">Login</a>
                     <a href="/signup">Sign Up</a>

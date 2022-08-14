@@ -5,6 +5,7 @@ const router = express.Router();
 const movies = require("../data/movies");
 const users = require("../data/users");
 const validation = require("../utils/validation");
+const wordCheck = require("../utils/wordCheck");
 
 var multer = require("multer");
 let fs = require("fs-extra");
@@ -142,12 +143,20 @@ router.get("/:id", async (req, res) => {
       let timestamp = createTimestampWithElapsedTime(review.timestamp);
 
       review.comment.split(" ").forEach((word) => {
-        let wordLowerCase = word.toLowerCase();
-        if (wordMap.get(wordLowerCase)) {
-          let count = parseInt(wordMap.get(wordLowerCase), 10);
-          wordMap.set(wordLowerCase, count + 1);
-        } else {
-          wordMap.set(wordLowerCase, 1);
+        let wordLowerCase = word
+          .trim()
+          .replace(".", "")
+          .replace(",", "")
+          .replace("_", "")
+          .replace("!", "")
+          .toLowerCase();
+        if (wordLowerCase && wordLowerCase.length > 0) {
+          if (wordMap.get(wordLowerCase)) {
+            let count = parseInt(wordMap.get(wordLowerCase), 10);
+            wordMap.set(wordLowerCase, count + 1);
+          } else {
+            wordMap.set(wordLowerCase, 1);
+          }
         }
       });
 
@@ -562,17 +571,19 @@ function getDislikesWithUserName(review, usersResultMap) {
 
 function getTop5Keywords(wordMap) {
   // Remove common words
-  wordMap.delete("but", 0);
-  wordMap.delete("film", 0);
-  wordMap.delete("how", 0);
-  wordMap.delete("i", 0);
-  wordMap.delete("is", 0);
-  wordMap.delete("movie", 0);
-  wordMap.delete("sometimes", 0);
-  wordMap.delete("that", 0);
-  wordMap.delete("the", 0);
-  wordMap.delete("this", 0);
-  wordMap.delete("too", 0);
+  wordMap = wordCheck.removePrepositions(wordMap);
+
+  wordMap.delete("but");
+  wordMap.delete("film");
+  wordMap.delete("how");
+  wordMap.delete("i");
+  wordMap.delete("is");
+  wordMap.delete("movie");
+  wordMap.delete("sometimes");
+  wordMap.delete("that");
+  wordMap.delete("the");
+  wordMap.delete("this");
+  wordMap.delete("too");
 
   wordMap = new Map([...wordMap.entries()].sort((a, b) => b[1] - a[1]));
 

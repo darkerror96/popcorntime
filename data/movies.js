@@ -61,6 +61,7 @@ const exportedMethods = {
             throw "Update failed";
     },
     async searchMovie(searchTerm) {
+
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
 
@@ -87,11 +88,11 @@ const exportedMethods = {
         return movieResult;
     },
     async searchCast(searchTerm) {
-
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
+
 
 
         let movieResult = [];

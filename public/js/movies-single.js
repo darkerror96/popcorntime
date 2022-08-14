@@ -149,9 +149,11 @@
     let comment = $("#textAreaComment").val();
     let movieId = movieIdField.value;
     let errorMessageDiv = $("#errorMessageDiv");
-    let reviews_dd = $("#reviews_dd");
+    
     let avg_ratingsSpan = $("#avg_rating");
     let total_reviewsSpan = $("#total_reviews");
+    let noReviewsYetBlock = $("#reviewsAbsent");
+    let reviewsHeader = $("#reviewsHeader");
 
     let postCommentCallInfo = {
       method: "POST",
@@ -170,7 +172,14 @@
         errorMessageDiv.text();
         errorMessageDiv.addClass("hidden");
         let newCommentBlock = createCommentBlock(postCommentResponse);
-        reviews_dd.append(newCommentBlock);
+
+        if (noReviewsYetBlock) {
+          noReviewsYetBlock.remove();          
+          
+          reviewsHeader.after(`<dd id="reviewsPresent"></dd>`);
+        }
+        let existingReviews = $("#reviewsPresent");
+        existingReviews.append(newCommentBlock);
 
         addEventListenersToActionButtons();
 

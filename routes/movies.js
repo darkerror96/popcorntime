@@ -155,6 +155,10 @@ router.get("/:id", async (req, res) => {
     });
     movie.avg_rating = movie.avg_rating.toFixed(1);
 
+    movie.duration = `${Math.floor(movie.duration / 60)} hours, ${
+      movie.duration % 60
+    } minutes`;
+
     res.render("movies/moviePage", {
       title: movie.name,
       movie: movie,

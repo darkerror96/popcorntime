@@ -1,6 +1,4 @@
-const {
-  ObjectId
-} = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 module.exports = {
   checkId(id, varName) {
@@ -18,7 +16,7 @@ module.exports = {
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-    const regex = /^[a-zA-Z0-9.-_ ]*$/;
+    const regex = /^[a-zA-Z0-9.\-\'_! ]*$/;
     if (!regex.test(strVal)) {
       throw `Only alphabets, numbers, period, dash, and underscore are allowed`;
     }
@@ -36,6 +34,10 @@ module.exports = {
   },
 
   checkNumber(val, variableName, minValue, maxValue) {
+    if (!val) {
+      throw `You must provide a value for variableName`;
+    }
+
     try {
       val = parseInt(val, 10);
     } catch (e) {

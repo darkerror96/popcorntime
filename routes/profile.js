@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
 
     res.render("users/profile", {
       title: "Profile",
-      first_name: user.first_name,
+      username: user.username,
       preferences: user.preferences,
       watchList: watchList,
       likedMovies: likedMovies,

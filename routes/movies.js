@@ -181,7 +181,7 @@ router.post("/:id/comment", async (req, res) => {
     try {
       requestBody.rating = validation.checkNumber(
         requestBody.rating,
-        "rating",
+        "Rating",
         1,
         10
       );

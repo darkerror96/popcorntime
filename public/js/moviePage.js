@@ -128,6 +128,11 @@
         if (data.status == 409) {
           errorActionDiv.text("You cannot like and dislike the same message");
           errorActionDiv.removeClass("hidden");
+        } else {
+          errorActionDiv.text(
+            "Unable to connect to server. Please try again later."
+          );
+          errorActionDiv.removeClass("hidden");
         }
       });
 
@@ -149,7 +154,7 @@
     let comment = $("#textAreaComment").val();
     let movieId = movieIdField.value;
     let errorMessageDiv = $("#errorMessageDiv");
-    
+
     let avg_ratingsSpan = $("#avg_rating");
     let total_reviewsSpan = $("#total_reviews");
     let noReviewsYetBlock = $("#reviewsAbsent");
@@ -174,8 +179,8 @@
         let newCommentBlock = createCommentBlock(postCommentResponse);
 
         if (noReviewsYetBlock) {
-          noReviewsYetBlock.remove();          
-          
+          noReviewsYetBlock.remove();
+
           reviewsHeader.after(`<dd id="reviewsPresent"></dd>`);
         }
         let existingReviews = $("#reviewsPresent");

@@ -1,4 +1,6 @@
-const { v4 } = require("uuid");
+const {
+  v4
+} = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -38,8 +40,16 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   //     return;
   // }
 
-  let { name, summary, genres, duration, release_date, cast, director } =
-    JSON.parse(req.body.movieData);
+  let {
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } =
+  JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -94,6 +104,22 @@ router.get("/add", async (req, res) => {
 
   res.render("../views/movies/add_movie", {
     title: "Add Movie",
+  });
+});
+
+router.get("/edit", async (req, res) => {
+
+  // if (req.session.user) {
+  //     logger(req.method, req.originalUrl, true);
+  //     res.render('../views/movies/add_movie', {});
+  // } else {
+  //     logger(req.method, req.originalUrl, false);
+  //     res.status(401).render('../views/login_logout/login', {});
+  //     return;
+  // }
+
+  res.render("../views/movies/edit_movie", {
+    title: "Edit Movie",
   });
 });
 

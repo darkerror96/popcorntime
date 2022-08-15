@@ -1,0 +1,148 @@
+<form id="addMovieForm">
+  <h1><u>Add Movie</u></h1>
+  <br />
+  <br />
+
+  <label for="movieName">
+    Movie Name:
+    <input type="text" id="movieName" />
+  </label>
+  <br />
+  <br />
+
+  <label for="movieSummary">
+    Summary:
+    <textarea id="movieSummary" rows="3" cols="80"></textarea>
+  </label>
+  <br />
+  <br />
+
+  <label for="Genres"> Genres:</label><br />
+  <input class="genresCheckbox" type="checkbox" name="Action" value="Action" />
+  <label for="Action"> Action</label><br />
+  <input
+    class="genresCheckbox"
+    type="checkbox"
+    name="Adventure"
+    value="Adventure"
+  />
+  <label for="Adventure"> Adventure</label><br />
+  <input
+    class="genresCheckbox"
+    type="checkbox"
+    name="Biographical"
+    value="Biographical"
+  />
+  <label for="Biographical"> Biographical</label><br />
+  <input class="genresCheckbox" type="checkbox" name="Comedy" value="Comedy" />
+  <label for="Comedy"> Comedy</label><br />
+  <input class="genresCheckbox" type="checkbox" name="Crime" value="Crime" />
+  <label for="Crime"> Crime</label><br />
+  <input
+    class="genresCheckbox"
+    type="checkbox"
+    name="Documentary"
+    value="Documentary"
+  />
+  <label for="Documentary"> Documentary</label><br />
+  <input class="genresCheckbox" type="checkbox" name="Drama" value="Drama" />
+  <label for="Drama"> Drama</label><br />
+  <input
+    class="genresCheckbox"
+    type="checkbox"
+    name="Fantasy"
+    value="Fantasy"
+  />
+  <label for="Fantasy"> Fantasy</label><br />
+  <input class="genresCheckbox" type="checkbox" name="Horror" value="Horror" />
+  <label for="Horror"> Horror</label><br />
+  <input
+    class="genresCheckbox"
+    type="checkbox"
+    name="Mystery"
+    value="Mystery"
+  />
+  <label for="Mystery"> Mystery</label><br />
+  <input
+    class="genresCheckbox"
+    type="checkbox"
+    name="Romance"
+    value="Romance"
+  />
+  <label for="Romance"> Romance</label><br />
+  <input class="genresCheckbox" type="checkbox" name="Sci-Fi" value="Sci-Fi" />
+  <label for="Sci-Fi"> Sci-Fi</label><br />
+  <input
+    class="genresCheckbox"
+    type="checkbox"
+    name="Thriller"
+    value="Thriller"
+  />
+  <label for="Thriller"> Thriller</label><br />
+  <input class="genresCheckbox" type="checkbox" name="Others" value="Others" />
+  <label for="Others"> Others</label><br />
+  <br />
+
+  <label for="movieDuration">
+    Duration (in mins):
+    <input type="number" id="movieDuration" min="1" max="5000" />
+  </label>
+  <br />
+  <br />
+
+  <label for="moviePoster">
+    Poster:
+    <input type="file" name="moviePoster" id="moviePoster" accept="image/*" />
+  </label>
+  <br />
+  <br />
+
+  <label for="movieReleaseDate">
+    Release Date:
+    <input
+      type="date"
+      id="movieReleaseDate"
+      min="1888-01-01"
+      max="2030-12-31"
+    />
+  </label>
+  <br />
+  <br />
+
+  <label for="movieCast">
+    Cast:
+    <textarea
+      id="movieCast"
+      placeholder="Enter Actor Name/s followed by `,`"
+      rows="2"
+      cols="60"
+    ></textarea>
+  </label>
+  <br />
+  <br />
+
+  <label for="movieDirector">
+    Director:
+    <textarea
+      id="movieDirector"
+      placeholder="Enter Director Name/s followed by `,`"
+      rows="2"
+      cols="50"
+    ></textarea>
+  </label>
+  <br />
+  <br />
+
+  <button type="submit">Add Movie</button>
+</form>
+
+<br />
+<div id="result"></div>
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"
+></script>
+
+<script src="/public/js/add_movie.js"></script>

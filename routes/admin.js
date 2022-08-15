@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   const option = req.body.admin_radio;
   if (option === "edit" || option === "delete") {
-    res.redirect("/search");
+    res.redirect("/");
   } else if (option === "add") {
     res.redirect("/admin/add");
   }

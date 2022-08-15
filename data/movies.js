@@ -101,6 +101,7 @@ const exportedMethods = {
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
 
+
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -118,11 +119,19 @@ const exportedMethods = {
             }
         }
 
-        if (movieResult.length == 0) {
+        let uniqueMovies = [];
+        movieResult.forEach((c) => {
+            if (!uniqueMovies.includes(c)) {
+                uniqueMovies.push(c);
+            }
+        });
+
+        if (uniqueMovies.length == 0) {
             throw "No results found for " + searchTerm;
         }
 
-        return movieResult;
+
+        return uniqueMovies;
     },
     async searchDirector(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");

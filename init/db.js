@@ -88,12 +88,16 @@ async function searchMovieByAPI(searchTerm) {
         data
     } = await axios.get(`https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&type=movie&s=${searchTerm}`);
 
-    let movieResult = [];
-    for (var i = 0; i < data.Search.length; i++) {
-        movieResult.push(data.Search[i]);
+    if (data.Search) {
+        let movieResult = [];
+        for (var i = 0; i < data.Search.length; i++) {
+            movieResult.push(data.Search[i]);
+        }
+
+        return movieResult;
     }
 
-    return movieResult;
+    return [];
 }
 
 async function getMovieByIMDbID(imdbID) {

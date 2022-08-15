@@ -190,7 +190,6 @@ a {
 
 form {
     padding-top: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display:contents;
+
 }

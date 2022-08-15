@@ -2,6 +2,7 @@ require('dotenv').config();
 const users = require("../data/users");
 const movies = require("../data/movies");
 const axios = require("axios");
+const mongoConnection = require("../config/mongoConnection");
 
 async function main() {
     // Add Dummy User Account
@@ -40,6 +41,9 @@ async function main() {
 
     const movie = await movies.getAllMovies();
     console.log(`Total Movies in DB : ${movie.length}`);
+
+    // Close mongodb connection explicitly
+    mongoConnection.closeConnection();
 }
 
 async function addUserAccount(email, hashedPassword, username, first_name, last_name, role) {

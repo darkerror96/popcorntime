@@ -47,7 +47,18 @@
       <dt id="reviewsHeader">Reviews</dt>
    
         {{#if reviewsWithUserName }}
-        <dd id="reviewsPresent">
+        <dd id="reviewsPresent">          
+            
+            {{#if topWordsArray}}            
+            <ul id="reviewGist" class="well well-lg" style="font-style: italic; text-align: center; 
+                color:#666600; background-color: #eeeeee">
+              <span id="reviewGistTitle" style="text-decoration: underline">Review Gist</span>
+            {{#each topWordsArray}}              
+              <li>{{this}}</li>
+            {{/each}}
+            </ul>       
+            {{/if}}
+         
         {{#each reviewsWithUserName}}
 
         {{!-- Note: Any updates to this must be copied to the createCommentBlock() function --}}

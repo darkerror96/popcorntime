@@ -39,9 +39,9 @@ module.exports = {
       throw `Error: Empty text or text with just spaces is not valid for ${varName}`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-    const regex = /^[a-zA-Z0-9.\-\'_! ]*$/;
+    const regex = /^[a-zA-Z0-9.,\-\'_! ]*$/;
     if (!regex.test(strVal)) {
-      throw `Error: Only alphabets, numbers, period, dash, and underscore are allowed`;
+      throw `Error: Only alphabets, numbers, period, dash, and underscore are allowed for ${varName} : ${strVal}`;
     }
     return strVal;
   },
@@ -107,10 +107,14 @@ module.exports = {
     if (!isNaN(filePath))
       throw `Error: "${filePath}" is not a valid value for ${varName} as it only contains digits`;
 
-    try {
-      if (!fs.existsSync(filePath)) throw `Error: Image file does not exists at "${filePath}"`;
-    } catch (e) {
-      throw `Error: Image file does not exists at "${filePath}" : ${e}`;
+    if (this.isValidHttpUrl(filePath)) {
+      return filePath;
+    } else {
+      try {
+        if (!fs.existsSync(filePath)) throw `Error: Image file does not exists at "${filePath}"`;
+      } catch (e) {
+        throw `Error: Image file does not exists at "${filePath}" : ${e}`;
+      }
     }
     return filePath;
   },
@@ -147,5 +151,16 @@ module.exports = {
     return reviews;
   },
 
+  isValidHttpUrl(string) {
+    let url;
+
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+
+    return url.protocol === "http:" || url.protocol === "https:";
+  },
 
 };

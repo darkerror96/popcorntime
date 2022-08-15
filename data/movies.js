@@ -5,8 +5,16 @@ const {
 } = require("mongodb");
 const axios = require("axios");
 const validation = require("../utils/validation");
+const {
+    isValidHttpUrl
+} = require("../utils/validation");
 
 const exportedMethods = {
+    async getAllMovies() {
+        const moviesCollection = await movies();
+        const movie = await moviesCollection.find({}).toArray();
+        return movie;
+    },
     async getMovieById(id) {
         const moviesCollection = await movies();
         const movie = await moviesCollection.findOne({
@@ -94,7 +102,6 @@ const exportedMethods = {
         const data = await moviesCollection.find({}).toArray();
 
 
-
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -111,12 +118,20 @@ const exportedMethods = {
                 }
             }
         }
-        if (movieResult.length == 0) {
+
+        let uniqueMovies = [];
+        movieResult.forEach((c) => {
+            if (!uniqueMovies.includes(c)) {
+                uniqueMovies.push(c);
+            }
+        });
+
+        if (uniqueMovies.length == 0) {
             throw "No results found for " + searchTerm;
         }
 
 
-        return movieResult;
+        return uniqueMovies;
     },
     async searchDirector(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
@@ -163,7 +178,6 @@ const exportedMethods = {
                     break;
                 }
             }
-
         }
         if (movieResult.length == 0) {
             throw "No results found for " + searchTerm;
@@ -203,12 +217,17 @@ const exportedMethods = {
         cast = validation.checkStringArray(cast, "Cast");
         director = validation.checkStringArray(director, "Director");
 
+        // Add extra '/' to specify file path if poster value is not URL
+        if (!isValidHttpUrl(poster)) {
+            poster = "/" + poster;
+        }
+
         const newMovie = {
             name: name,
             summary: summary,
             genres: genres,
             duration: duration,
-            poster: "/" + poster,
+            poster: poster,
             release_date: release_date,
             cast: cast,
             director: director,
@@ -217,6 +236,15 @@ const exportedMethods = {
         };
 
         const moviesCollection = await movies();
+
+        // Check for Duplicate Movies by exact name and release_date
+        const movie = await moviesCollection.find({}).toArray();
+        for (var i = 0; i < movie.length; i++) {
+            if (movie[i].name === newMovie.name && movie[i].release_date === newMovie.release_date) {
+                throw "'" + newMovie.name + "' Movie already exists in DB"
+            }
+        }
+
         const newInsertInformation = await moviesCollection.insertOne(newMovie);
         if (!newInsertInformation.insertedId) throw 'Insert failed!';
 
@@ -274,28 +302,6 @@ const exportedMethods = {
     }
 
 };
-
-// async function createMovie(movieData) {
-//     const moviesCollection = await movies();
-//     const movie = await moviesCollection.find({}).toArray();
-//     // for(var i = 0; i < movie.length; i++){
-//     //   if(movie[i].name === movieData.name){
-//     //     throw "Movie already exists in DB"
-//     //   }
-//     // }
-
-//     let newMovie = {
-//         name: movieData
-//     };
-
-//     const insertInfo = await moviesCollection.insertOne(newMovie);
-//     const newId = insertInfo.insertedId.toString();
-
-//     const movieeee = await this.get(newId);
-//     movieeee._id = movieeee._id.toString();
-
-//     return movieeee;
-// }
 
 async function searchMovieByAPI(searchTerm) {
     searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");

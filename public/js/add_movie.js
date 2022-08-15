@@ -77,7 +77,7 @@
                         result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully added!</p>');
                     } else {
                         result.show();
-                        result.html('<p class="error">Error adding movie. Please try again!</p>');
+                        result.html('<p class="error">Error adding movie : ' + json.error + '</p>');
                     }
                 });
         } catch (e) {

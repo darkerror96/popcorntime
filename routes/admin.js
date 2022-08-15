@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/add", async (req, res) => {
-  res.render("users/addMovie", { title: "Add Movie" });
+  res.render("movies/add_movie", { title: "Add Movie" });
 });
 
 router.post("/add", async (req, res) => {

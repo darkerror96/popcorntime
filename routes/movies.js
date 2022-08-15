@@ -63,7 +63,6 @@ router.post("/add", Data.any("poster"), async (req, res) => {
     cast = validation.checkStringArray(cast, "Cast");
     director = validation.checkStringArray(director, "Director");
   } catch (e) {
-    console.log(e);
     return res.status(400).json({
       error: e,
     });
@@ -85,7 +84,6 @@ router.post("/add", Data.any("poster"), async (req, res) => {
       movieID: newMovie._id,
     });
   } catch (e) {
-    console.log(e);
     return res.status(500).json({
       error: e,
     });
@@ -107,7 +105,7 @@ router.get("/add", async (req, res) => {
   });
 });
 
-router.get("/edit", async (req, res) => {
+router.get("/edit/:id", async (req, res) => {
 
   // if (req.session.user) {
   //     logger(req.method, req.originalUrl, true);
@@ -118,9 +116,21 @@ router.get("/edit", async (req, res) => {
   //     return;
   // }
 
-  res.render("../views/movies/edit_movie", {
-    title: "Edit Movie",
-  });
+  let id = req.params.id;
+
+  try {
+    id = validation.checkId(id, "Movie ID");
+    const movie = await movies.getMovieById(id);
+
+    res.render("../views/movies/edit_movie", {
+      title: "Edit Movie",
+      movie: movie,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      error: e,
+    });
+  }
 });
 
 router.get("/:id", async (req, res) => {

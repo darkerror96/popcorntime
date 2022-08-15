@@ -2,6 +2,12 @@
   <div>
     <h1>{{movie.name}}</h1>
     <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src="{{movie.poster}}" />
+    {{#ifEquals role "admin"}}
+      <form id="admin-form" action="/movies/edit/{{movie._id}}" method="POST">
+        <button type="submit" value="editDelete">Edit/Delete</button>    
+      </form>
+    {{/ifEquals}}
+    
     <dl>
       <dt>Release date</dt>
       <dd>{{movie.release_date}}</dd>

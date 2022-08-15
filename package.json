@@ -5,6 +5,7 @@
     "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "seed": "node init/db.js",
         "start": "node app.js"
     },
     "author": "Team Flicker",

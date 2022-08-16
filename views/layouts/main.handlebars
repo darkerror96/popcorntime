@@ -11,8 +11,6 @@
 
 <body>
      <nav>
-            <ul>
-                <li>
                     <a href="/">Home</a>
                     <a href="/halloffame">Hall of Fame</a>
                     {{#if username}}
@@ -25,9 +23,7 @@
                     {{else}}
                     <a href="/login">Login</a>
                     <a href="/signup">Sign Up</a>
-                    {{/if}}
-                </li>
-            </ul>
+                    {{/if}}       
         </nav>
     <main>
         {{{body}}}

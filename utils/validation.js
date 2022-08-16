@@ -1,5 +1,7 @@
 const fs = require("fs");
-const { ObjectId } = require("mongodb");
+const {
+  ObjectId
+} = require("mongodb");
 
 module.exports = {
   checkId(id, varName) {
@@ -47,7 +49,7 @@ module.exports = {
 
   checkNumber(val, variableName, minValue, maxValue) {
     try {
-      val = parseInt(val, 10);
+      val = parseFloat(val);
     } catch (e) {
       throw `${
         variableName || "provided variable"

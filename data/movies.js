@@ -207,7 +207,7 @@ const exportedMethods = {
         return movieResult;
     },
 
-    async addMovie(name, summary, genres, duration, poster, release_date, cast, director) {
+    async addMovie(name, summary, genres, duration, poster, release_date, cast, director, avg_rating) {
         name = validation.checkStringNoRegex(name, "Movie Name");
         summary = validation.checkStringNoRegex(summary, "Summary");
         genres = validation.checkStringArray(genres, "Genre");
@@ -216,6 +216,10 @@ const exportedMethods = {
         release_date = validation.checkDate(release_date, "Release Date");
         cast = validation.checkStringArray(cast, "Cast");
         director = validation.checkStringArray(director, "Director");
+
+        if (avg_rating !== 0) {
+            avg_rating = validation.checkNumber(avg_rating, "Rating", 1, 10);
+        }
 
         // Add extra '/' to specify file path if poster value is not URL
         if (!isValidHttpUrl(poster)) {
@@ -231,7 +235,7 @@ const exportedMethods = {
             release_date: release_date,
             cast: cast,
             director: director,
-            avg_rating: 0,
+            avg_rating: avg_rating,
             reviews: []
         };
 

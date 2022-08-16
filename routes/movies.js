@@ -65,7 +65,7 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   }
 
   try {
-    const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director);
+    const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director, 0);
 
     return res.status(201).json({
       status: 201,

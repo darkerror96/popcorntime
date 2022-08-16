@@ -49,7 +49,7 @@ module.exports = {
 
   checkNumber(val, variableName, minValue, maxValue) {
     try {
-      val = parseFloat(val, 10);
+      val = parseFloat(val);
     } catch (e) {
       throw `${
         variableName || "provided variable"

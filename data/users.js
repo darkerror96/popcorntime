@@ -1,23 +1,32 @@
 const mongoCollections = require("../config/mongoCollections");
+const validate = require("../utils/validation");
 const users = mongoCollections.users;
-const {
-  ObjectId
-} = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 const exportedMethods = {
   async getUser(username) {
-    const usersCollection = await users();
-    const user = await usersCollection.findOne({
-      username: username
-    });
-    return user;
+    try {
+      username = validate.checkUsername(username);
+      const usersCollection = await users();
+      const user = await usersCollection.findOne({
+        username: username,
+      });
+      return user;
+    } catch (e) {
+      throw "Error: Could not get user";
+    }
   },
   async getUserByEmail(email) {
-    const usersCollection = await users();
-    const user = await usersCollection.findOne({
-      email: email
-    });
-    return user;
+    try {
+      email = validate.checkEmail(email);
+      const usersCollection = await users();
+      const user = await usersCollection.findOne({
+        email: email,
+      });
+      return user;
+    } catch (e) {
+      throw "Error: Could not get user";
+    }
   },
   async insertUser(user) {
     const usersCollection = await users();
@@ -27,7 +36,7 @@ const exportedMethods = {
   async getUserById(id) {
     const usersCollection = await users();
     const user = await usersCollection.findOne({
-      _id: ObjectId(id)
+      _id: ObjectId(id),
     });
     return user;
   },
@@ -54,40 +63,49 @@ const exportedMethods = {
   },
   async addToWatchList(id, movieId) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne({
-      _id: ObjectId(id)
-    }, {
-      $addToSet: {
-        watch_list: movieId,
+    const updateInfo = await usersCollection.updateOne(
+      {
+        _id: ObjectId(id),
       },
-    });
+      {
+        $addToSet: {
+          watch_list: movieId,
+        },
+      }
+    );
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },
   async updatePreferences(id, updatedPreferences) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne({
-      _id: ObjectId(id)
-    }, {
-      $set: {
-        preferences: updatedPreferences,
+    const updateInfo = await usersCollection.updateOne(
+      {
+        _id: ObjectId(id),
       },
-    });
+      {
+        $set: {
+          preferences: updatedPreferences,
+        },
+      }
+    );
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },
   async removeFromWatchList(id, movieId) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne({
-      _id: ObjectId(id)
-    }, {
-      $pull: {
-        watch_list: movieId,
+    const updateInfo = await usersCollection.updateOne(
+      {
+        _id: ObjectId(id),
       },
-    });
+      {
+        $pull: {
+          watch_list: movieId,
+        },
+      }
+    );
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
-  }
+  },
 };
 
 module.exports = exportedMethods;

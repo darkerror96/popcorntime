@@ -81,13 +81,11 @@
                 }).then(response => response.json())
                 .then(json => {
 
-                    editMovieForm.trigger('reset');
-
                     if (json.status === 200) {
                         const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
                         result.show();
-                        result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully updated! Click on movie name to see updated page...</p>');
+                        result.html('<p class="success">Movie successfully updated! Click <a href=' + movieURL + '>here</a> to see updated page...</p>');
                     } else {
                         result.show();
                         result.html('<p class="error">Error updating movie : ' + json.error + '</p>');

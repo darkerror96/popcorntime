@@ -286,7 +286,7 @@ const exportedMethods = {
             director: director
         };
 
-        if (posterUpdate) updatedMovie.poster = poster;
+        if (posterUpdate) updatedMovie.poster = "/" + poster;
 
         const moviesCollection = await movies();
         const updateInfo = await moviesCollection.updateOne({

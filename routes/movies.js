@@ -1,6 +1,4 @@
-const {
-  v4
-} = require("uuid");
+const { v4 } = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -31,21 +29,18 @@ const Data = multer({
 });
 
 router.post("/add", Data.any("poster"), async (req, res) => {
-  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+  if (
+    !req.session ||
+    !req.session.user ||
+    !req.session.user.id ||
+    req.session.user.role !== "admin"
+  ) {
     res.redirect("/");
     return;
   }
 
-  let {
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -65,7 +60,17 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   }
 
   try {
-    const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director, 0);
+    const newMovie = await movies.addMovie(
+      name,
+      summary,
+      genres,
+      duration,
+      poster,
+      release_date,
+      cast,
+      director,
+      0
+    );
 
     return res.status(201).json({
       status: 201,
@@ -79,22 +84,18 @@ router.post("/add", Data.any("poster"), async (req, res) => {
 });
 
 router.post("/edit", Data.any("poster"), async (req, res) => {
-  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+  if (
+    !req.session ||
+    !req.session.user ||
+    !req.session.user.id ||
+    req.session.user.role !== "admin"
+  ) {
     res.redirect("/");
     return;
   }
 
-  let {
-    id,
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { id, name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let posterUpdate = false;
   let poster = "";
@@ -110,7 +111,8 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
     genres = validation.checkStringArray(genres, "Genre");
     duration = validation.checkNumber(duration, "Duration", 1, 5000);
 
-    if (posterUpdate) poster = validation.checkPosterFilePath(poster, "Poster file path");
+    if (posterUpdate)
+      poster = validation.checkPosterFilePath(poster, "Poster file path");
 
     release_date = validation.checkDate(release_date, "Release Date");
     cast = validation.checkStringArray(cast, "Cast");
@@ -122,7 +124,18 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
   }
 
   try {
-    const existingMovie = await movies.updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, posterUpdate);
+    const existingMovie = await movies.updateMovie(
+      id,
+      name,
+      summary,
+      genres,
+      duration,
+      poster,
+      release_date,
+      cast,
+      director,
+      posterUpdate
+    );
 
     return res.status(201).json({
       status: 200,
@@ -136,7 +149,12 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
 });
 
 router.get("/add", async (req, res) => {
-  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+  if (
+    !req.session ||
+    !req.session.user ||
+    !req.session.user.id ||
+    req.session.user.role !== "admin"
+  ) {
     res.redirect("/");
     return;
   }
@@ -147,7 +165,12 @@ router.get("/add", async (req, res) => {
 });
 
 router.get("/edit/:id", async (req, res) => {
-  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+  if (
+    !req.session ||
+    !req.session.user ||
+    !req.session.user.id ||
+    req.session.user.role !== "admin"
+  ) {
     res.redirect("/");
     return;
   }
@@ -645,7 +668,6 @@ function getDislikesWithUserName(review, usersResultMap) {
 function getTop5Keywords(wordMap) {
   // Remove common words
   wordMap = wordCheck.removePrepositions(wordMap);
-
   wordMap.delete("but");
   wordMap.delete("film");
   wordMap.delete("how");
@@ -657,6 +679,13 @@ function getTop5Keywords(wordMap) {
   wordMap.delete("the");
   wordMap.delete("this");
   wordMap.delete("too");
+
+  // Remove 1, 2 letter words
+  for (let [keyword, count] of wordMap.entries()) {
+    if (keyword && keyword.length < 3) {
+      wordMap.delete(keyword);
+    }
+  }
 
   wordMap = new Map([...wordMap.entries()].sort((a, b) => b[1] - a[1]));
 

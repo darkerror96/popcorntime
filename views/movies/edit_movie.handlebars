@@ -1,5 +1,5 @@
 <form id="editMovieForm">
-  <h1><u>Edit Movie</u></h1>
+  <h1><u>Edit / Delete Movie</u></h1>
   <br> <br>
 
   <label for="movieName">
@@ -43,8 +43,14 @@
   </label>
   <br> <br>
 
-  <button type="submit">Edit Movie</button>
+  <button type="submit" class="btn btn-info">
+    <i class="glyphicon glyphicon-edit"></i> Edit Movie
+  </button>
 </form>
+
+<button id="deleteBtn" class="btn btn-danger">
+  <i class="glyphicon glyphicon-trash"></i> Delete Movie
+</button>
 
 <br> <br>
 <div id="result"></div>

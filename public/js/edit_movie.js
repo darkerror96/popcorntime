@@ -22,6 +22,11 @@
         fileSizeMB = fileList[0].size / 1048000;
     });
 
+    // delete movie button
+    $('#deleteBtn').click(function () {
+        console.log("DELETE");
+    });
+
     // form submit event
     editMovieForm.submit(function (event) {
         event.preventDefault();

@@ -1,10 +1,10 @@
 (function ($) {
 
-    const addMovieForm = $('#addMovieForm'),
+    const editMovieForm = $('#editMovieForm'),
         result = $('#result'),
         movieName = $('#movieName'),
         movieSummary = $('#movieSummary'),
-        movieGenres = document.querySelectorAll('.genresCheckbox'),
+        movieGenres = $('#movieGenres'),
         movieDuration = $('#movieDuration'),
         movieReleaseDate = $('#movieReleaseDate'),
         movieCast = $('#movieCast'),
@@ -12,7 +12,7 @@
 
     var file = "",
         fileName = "",
-        fileSizeMB = 0;
+        fileSizeMB = -1;
 
     // image select event listener - triggers when user selects new image
     document.getElementById('moviePoster').addEventListener('change', (e) => {
@@ -23,7 +23,7 @@
     });
 
     // form submit event
-    addMovieForm.submit(function (event) {
+    editMovieForm.submit(function (event) {
         event.preventDefault();
 
         try {
@@ -31,7 +31,7 @@
 
             let movieNameVal = movieName.val(),
                 movieSummaryVal = movieSummary.val(),
-                movieGenresVal = [],
+                movieGenresVal = movieGenres.val(),
                 movieDurationVal = movieDuration.val(),
                 movieReleaseDateVal = movieReleaseDate.val(),
                 movieCastArr = [],
@@ -40,7 +40,7 @@
             // validate user inputs on client side
             movieNameVal = checkStringNoRegex(movieNameVal, "Movie Name");
             movieSummaryVal = checkStringNoRegex(movieSummaryVal, "Summary");
-            movieGenresVal = checkGenre(movieGenres, "Genre");
+            movieGenresVal = checkStringArray(movieGenresVal, "Genre");
             movieDurationVal = checkNumber(movieDurationVal, "Duration", 1, 5000);
             checkPoster(fileName, "Poster");
             movieReleaseDateVal = checkStringNoRegex(movieReleaseDateVal, "Release Date");
@@ -48,6 +48,7 @@
             movieDirectorArr = checkStringArray(movieDirector.val(), "Director");
 
             const movieData = {
+                id: movieID,
                 name: movieNameVal,
                 summary: movieSummaryVal,
                 genres: movieGenresVal,
@@ -59,25 +60,28 @@
 
             // POST movie data + poster to DB
             let formData = new FormData();
-            formData.append('moviePoster', file);
             formData.append('movieData', JSON.stringify(movieData));
 
-            fetch('http://localhost:3000/movies/add', {
+            if (fileSizeMB !== -1) {
+                formData.append('moviePoster', file);
+            }
+
+            fetch('http://localhost:3000/movies/edit', {
                     method: 'POST',
                     body: formData
                 }).then(response => response.json())
                 .then(json => {
 
-                    addMovieForm.trigger('reset');
+                    editMovieForm.trigger('reset');
 
                     if (json.status === 201) {
                         const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
                         result.show();
-                        result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully added!</p>');
+                        result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully updated!</p>');
                     } else {
                         result.show();
-                        result.html('<p class="error">Error adding movie : ' + json.error + '</p>');
+                        result.html('<p class="error">Error updating movie : ' + json.error + '</p>');
                     }
                 });
         } catch (e) {
@@ -124,39 +128,26 @@
 
     function checkStringArray(arr, varName) {
         if (!arr) throw `You must provide an array of ${varName}`;
-        if (arr.length == 0) throw `Error: User must provide at least one ${varName}`;
+        if (arr.length == 0) throw `Error: You must provide at least one ${varName}`;
 
         let array = [];
         for (let temp of arr.split(",")) {
-            checkString(temp.trim(), varName + " name");
+            checkString(temp.trim(), varName + " element");
             array.push(temp.trim());
         }
 
         return array;
     }
 
-    function checkGenre(genre, varName) {
-        let genres = [];
-        genre.forEach(function (elem) {
-            if (elem.checked) {
-                genres.push(elem.name.trim());
-            }
-        });
-
-        if (genres.length === 0) {
-            throw `Error: You must select at least one ${varName}`;
-        }
-
-        return genres;
-    }
-
     function checkPoster(poster, varName) {
-        if (!poster) throw `Error: You must supply value for ${varName}!`;
-        if (typeof poster !== "string") throw `Error: ${varName} must be a string!`;
-        poster = poster.trim();
-        if (poster.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+        if (fileSizeMB !== -1) {
+            if (!poster) throw `Error: You must supply value for ${varName}!`;
+            if (typeof poster !== "string") throw `Error: ${varName} must be a string!`;
+            poster = poster.trim();
+            if (poster.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
 
-        if (fileSizeMB > 2) throw `Error: You must select image with size less than 2 MB`;
+            if (fileSizeMB > 2) throw `Error: You must select image with size less than 2 MB`;
+        }
     }
 
 })(window.jQuery);

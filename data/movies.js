@@ -263,32 +263,30 @@ const exportedMethods = {
         return true;
     },
 
-    async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, avg_rating, reviews) {
+    async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, posterUpdate) {
         id = validation.checkId(id, 'Movie ID');
-
         name = validation.checkStringNoRegex(name, "Movie Name");
         summary = validation.checkStringNoRegex(summary, "Summary");
         genres = validation.checkStringArray(genres, "Genre");
         duration = validation.checkNumber(duration, "Duration", 1, 5000);
-        poster = validation.checkPosterFilePath(poster, "Poster file path");
+
+        if (posterUpdate) poster = validation.checkPosterFilePath(poster, "Poster file path");
+
         release_date = validation.checkDate(release_date, "Release Date");
         cast = validation.checkStringArray(cast, "Cast");
         director = validation.checkStringArray(director, "Director");
-        avg_rating = validation.checkNumber(avg_rating, "Avg Rating", 1, 10);
-        reviews = validation.checkReviews(reviews, "Reviews");
 
         const updatedMovie = {
             name: name,
             summary: summary,
             genres: genres,
             duration: duration,
-            poster: poster,
             release_date: release_date,
             cast: cast,
-            director: director,
-            avg_rating: avg_rating,
-            reviews: reviews
+            director: director
         };
+
+        if (posterUpdate) updatedMovie.poster = poster;
 
         const moviesCollection = await movies();
         const updateInfo = await moviesCollection.updateOne({

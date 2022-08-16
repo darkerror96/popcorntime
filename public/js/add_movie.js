@@ -12,7 +12,7 @@
 
     var file = "",
         fileName = "",
-        fileSizeMB = 0;
+        fileSizeMB = -1;
 
     // image select event listener - triggers when user selects new image
     document.getElementById('moviePoster').addEventListener('change', (e) => {

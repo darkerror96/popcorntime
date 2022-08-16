@@ -29,6 +29,14 @@
         try {
             result.hide();
 
+            const pathname = window.location.pathname;
+            let movieID = pathname.split("/movies/edit/");
+            if (movieID.length == 2) {
+                movieID = movieID[1].trim();
+            } else {
+                throw `Invalid Movie URL : ${pathname}`;
+            }
+
             let movieNameVal = movieName.val(),
                 movieSummaryVal = movieSummary.val(),
                 movieGenresVal = movieGenres.val(),
@@ -38,6 +46,7 @@
                 movieDirectorArr = [];
 
             // validate user inputs on client side
+            movieID = checkString(movieID, "Movie ID");
             movieNameVal = checkStringNoRegex(movieNameVal, "Movie Name");
             movieSummaryVal = checkStringNoRegex(movieSummaryVal, "Summary");
             movieGenresVal = checkStringArray(movieGenresVal, "Genre");
@@ -74,11 +83,11 @@
 
                     editMovieForm.trigger('reset');
 
-                    if (json.status === 201) {
+                    if (json.status === 200) {
                         const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
                         result.show();
-                        result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully updated!</p>');
+                        result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully updated! Click on movie name to see updated page...</p>');
                     } else {
                         result.show();
                         result.html('<p class="error">Error updating movie : ' + json.error + '</p>');

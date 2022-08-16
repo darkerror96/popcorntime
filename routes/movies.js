@@ -31,14 +31,10 @@ const Data = multer({
 });
 
 router.post("/add", Data.any("poster"), async (req, res) => {
-  // if (req.session.user) {
-  //     logger(req.method, req.originalUrl, true);
-  //     res.render('../views/movies/add_movie', {});
-  // } else {
-  //     logger(req.method, req.originalUrl, false);
-  //     res.status(401).render('../views/login_logout/login', {});
-  //     return;
-  // }
+  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+    res.redirect("/");
+    return;
+  }
 
   let {
     name,
@@ -91,14 +87,10 @@ router.post("/add", Data.any("poster"), async (req, res) => {
 });
 
 router.get("/add", async (req, res) => {
-  // if (req.session.user) {
-  //     logger(req.method, req.originalUrl, true);
-  //     res.render('../views/movies/add_movie', {});
-  // } else {
-  //     logger(req.method, req.originalUrl, false);
-  //     res.status(401).render('../views/login_logout/login', {});
-  //     return;
-  // }
+  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+    res.redirect("/");
+    return;
+  }
 
   res.render("../views/movies/add_movie", {
     title: "Add Movie",
@@ -106,28 +98,26 @@ router.get("/add", async (req, res) => {
 });
 
 router.get("/edit/:id", async (req, res) => {
+  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+    res.redirect("/");
+    return;
+  }
 
-  // if (req.session.user) {
-  //     logger(req.method, req.originalUrl, true);
-  //     res.render('../views/movies/add_movie', {});
-  // } else {
-  //     logger(req.method, req.originalUrl, false);
-  //     res.status(401).render('../views/login_logout/login', {});
-  //     return;
-  // }
-  let id = req.params.id;
   try {
+    let id = req.params.id;
     id = validation.checkId(id, "Movie ID");
     const movie = await movies.getMovieById(id);
 
-    res.render("../views/movies/edit_movie", {
-      title: "Edit Movie",
-      movie: movie,
-    });
+    if (movie) {
+      res.render("../views/movies/edit_movie", {
+        title: "Edit Movie",
+        movie: movie,
+      });
+    } else {
+      res.redirect("/");
+    }
   } catch (e) {
-    return res.status(500).json({
-      error: e,
-    });
+    res.redirect("/");
   }
 });
 

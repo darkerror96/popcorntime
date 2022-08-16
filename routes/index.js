@@ -6,6 +6,7 @@ const loginRoutes = require("./login");
 const logoutRoutes = require("./logout");
 const adminRoutes = require("./admin");
 const path = require("path");
+const hallOfFameRoutes = require("./hall_of_fame");
 
 const constructorMethod = (app) => {
   var movieOption = ["Movie", "Cast", "Director", "Year"];
@@ -23,6 +24,7 @@ const constructorMethod = (app) => {
   app.use("/login", loginRoutes);
   app.use("/logout", logoutRoutes);
   app.use("/admin", adminRoutes);
+  app.use("/halloffame", hallOfFameRoutes);
 
   app.use("*", (req, res) => {
     res.sendFile(path.resolve("static/404.html"));

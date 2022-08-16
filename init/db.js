@@ -11,7 +11,7 @@ async function main() {
 
     // Add Dummy Admin Account
     const admin = await addUserAccount(process.env.DUMMY_ADMIN_EMAIL, process.env.DUMMY_ADMIN_PWD_HASHED, process.env.DUMMY_ADMIN_USERNAME, "Admin", "Geek", "admin");
-    console.log(`Dummy Admin created : ${admin}`);
+    console.log(`Dummy Admin created : ${admin}\n`);
 
     // Add Movies - Read search term list from .env file
     const movieSearchTermList = process.env.MOVIE_SEARCH_TERM_LIST;
@@ -35,15 +35,17 @@ async function main() {
                 rt += r.getDate();
             }
 
-            await addMovie(m.Title.trim(), m.Plot.trim(), m.Genre.split(", "), m.Runtime.split(" min")[0], m.Poster.trim(), rt, m.Actors.split(", "), m.Director.split(", "));
+            await addMovie(m.Title.trim(), m.Plot.trim(), m.Genre.split(", "), m.Runtime.split(" min")[0], m.Poster.trim(), rt, m.Actors.split(", "), m.Director.split(", "), m.imdbRating);
         }
     }
 
     const movie = await movies.getAllMovies();
-    console.log(`Total Movies in DB : ${movie.length}`);
+    console.log(`\nTotal Movies in DB : ${movie.length}`);
 
     // Close mongodb connection explicitly
     mongoConnection.closeConnection();
+
+    console.log("\nDB Seeding completed!");
 }
 
 async function addUserAccount(email, hashedPassword, username, first_name, last_name, role) {
@@ -75,11 +77,11 @@ async function addUserAccount(email, hashedPassword, username, first_name, last_
     }
 }
 
-async function addMovie(name, summary, genres, duration, poster, release_date, cast, director) {
+async function addMovie(name, summary, genres, duration, poster, release_date, cast, director, avg_rating) {
     try {
-        return await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director);
+        return await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director, avg_rating);
     } catch (e) {
-        // console.log(e);
+        console.log(e);
     }
 }
 

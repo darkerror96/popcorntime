@@ -170,7 +170,8 @@ const exportedMethods = {
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
             if (data[i].release_date !== undefined) {
-                if(data[i].release_date.replace(/-/g, '').slice(0, 4).includes(searchTerm)){
+
+                if (data[i].release_date.replace(/-/g, '').slice(0, 4).includes(searchTerm)) {
                     movieResult.push(data[i]);
                     movieCounter++;
                     if (movieCounter === 10) {
@@ -208,7 +209,7 @@ const exportedMethods = {
         return movieResult;
     },
 
-    async addMovie(name, summary, genres, duration, poster, release_date, cast, director) {
+    async addMovie(name, summary, genres, duration, poster, release_date, cast, director, avg_rating) {
         name = validation.checkStringNoRegex(name, "Movie Name");
         summary = validation.checkStringNoRegex(summary, "Summary");
         genres = validation.checkStringArray(genres, "Genre");
@@ -217,6 +218,10 @@ const exportedMethods = {
         release_date = validation.checkDate(release_date, "Release Date");
         cast = validation.checkStringArray(cast, "Cast");
         director = validation.checkStringArray(director, "Director");
+
+        if (avg_rating !== 0) {
+            avg_rating = validation.checkNumber(avg_rating, "Rating", 1, 10);
+        }
 
         // Add extra '/' to specify file path if poster value is not URL
         if (!isValidHttpUrl(poster)) {
@@ -232,7 +237,7 @@ const exportedMethods = {
             release_date: release_date,
             cast: cast,
             director: director,
-            avg_rating: 0,
+            avg_rating: avg_rating,
             reviews: []
         };
 
@@ -264,32 +269,30 @@ const exportedMethods = {
         return true;
     },
 
-    async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, avg_rating, reviews) {
+    async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, posterUpdate) {
         id = validation.checkId(id, 'Movie ID');
-
         name = validation.checkStringNoRegex(name, "Movie Name");
         summary = validation.checkStringNoRegex(summary, "Summary");
         genres = validation.checkStringArray(genres, "Genre");
         duration = validation.checkNumber(duration, "Duration", 1, 5000);
-        poster = validation.checkPosterFilePath(poster, "Poster file path");
+
+        if (posterUpdate) poster = validation.checkPosterFilePath(poster, "Poster file path");
+
         release_date = validation.checkDate(release_date, "Release Date");
         cast = validation.checkStringArray(cast, "Cast");
         director = validation.checkStringArray(director, "Director");
-        avg_rating = validation.checkNumber(avg_rating, "Avg Rating", 1, 10);
-        reviews = validation.checkReviews(reviews, "Reviews");
 
         const updatedMovie = {
             name: name,
             summary: summary,
             genres: genres,
             duration: duration,
-            poster: poster,
             release_date: release_date,
             cast: cast,
-            director: director,
-            avg_rating: avg_rating,
-            reviews: reviews
+            director: director
         };
+
+        if (posterUpdate) updatedMovie.poster = "/" + poster;
 
         const moviesCollection = await movies();
         const updateInfo = await moviesCollection.updateOne({

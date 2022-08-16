@@ -31,14 +31,10 @@ const Data = multer({
 });
 
 router.post("/add", Data.any("poster"), async (req, res) => {
-  // if (req.session.user) {
-  //     logger(req.method, req.originalUrl, true);
-  //     res.render('../views/movies/add_movie', {});
-  // } else {
-  //     logger(req.method, req.originalUrl, false);
-  //     res.status(401).render('../views/login_logout/login', {});
-  //     return;
-  // }
+  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+    res.redirect("/");
+    return;
+  }
 
   let {
     name,
@@ -69,16 +65,8 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   }
 
   try {
-    const newMovie = await movies.addMovie(
-      name,
-      summary,
-      genres,
-      duration,
-      poster,
-      release_date,
-      cast,
-      director
-    );
+    const newMovie = await movies.addMovie(name, summary, genres, duration, poster, release_date, cast, director, 0);
+
     return res.status(201).json({
       status: 201,
       movieID: newMovie._id,
@@ -90,15 +78,68 @@ router.post("/add", Data.any("poster"), async (req, res) => {
   }
 });
 
+router.post("/edit", Data.any("poster"), async (req, res) => {
+  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+    res.redirect("/");
+    return;
+  }
+
+  let {
+    id,
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } =
+  JSON.parse(req.body.movieData);
+
+  let posterUpdate = false;
+  let poster = "";
+  if (req.files && req.files.length > 0 && req.files[0] && req.files[0].path) {
+    poster = req.files[0].path;
+    posterUpdate = true;
+  }
+
+  try {
+    id = validation.checkId(id, "Movie ID");
+    name = validation.checkStringNoRegex(name, "Movie Name");
+    summary = validation.checkStringNoRegex(summary, "Summary");
+    genres = validation.checkStringArray(genres, "Genre");
+    duration = validation.checkNumber(duration, "Duration", 1, 5000);
+
+    if (posterUpdate) poster = validation.checkPosterFilePath(poster, "Poster file path");
+
+    release_date = validation.checkDate(release_date, "Release Date");
+    cast = validation.checkStringArray(cast, "Cast");
+    director = validation.checkStringArray(director, "Director");
+  } catch (e) {
+    return res.status(400).json({
+      error: e,
+    });
+  }
+
+  try {
+    const existingMovie = await movies.updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, posterUpdate);
+
+    return res.status(201).json({
+      status: 200,
+      movieID: existingMovie._id,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      error: e,
+    });
+  }
+});
+
 router.get("/add", async (req, res) => {
-  // if (req.session.user) {
-  //     logger(req.method, req.originalUrl, true);
-  //     res.render('../views/movies/add_movie', {});
-  // } else {
-  //     logger(req.method, req.originalUrl, false);
-  //     res.status(401).render('../views/login_logout/login', {});
-  //     return;
-  // }
+  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+    res.redirect("/");
+    return;
+  }
 
   res.render("../views/movies/add_movie", {
     title: "Add Movie",
@@ -106,28 +147,26 @@ router.get("/add", async (req, res) => {
 });
 
 router.get("/edit/:id", async (req, res) => {
+  if (!req.session || !req.session.user || !req.session.user.id || req.session.user.role !== "admin") {
+    res.redirect("/");
+    return;
+  }
 
-  // if (req.session.user) {
-  //     logger(req.method, req.originalUrl, true);
-  //     res.render('../views/movies/add_movie', {});
-  // } else {
-  //     logger(req.method, req.originalUrl, false);
-  //     res.status(401).render('../views/login_logout/login', {});
-  //     return;
-  // }
-  let id = req.params.id;
   try {
+    let id = req.params.id;
     id = validation.checkId(id, "Movie ID");
     const movie = await movies.getMovieById(id);
 
-    res.render("../views/movies/edit_movie", {
-      title: "Edit Movie",
-      movie: movie,
-    });
+    if (movie) {
+      res.render("../views/movies/edit_movie", {
+        title: "Edit Movie",
+        movie: movie,
+      });
+    } else {
+      res.redirect("/");
+    }
   } catch (e) {
-    return res.status(500).json({
-      error: e,
-    });
+    res.redirect("/");
   }
 });
 

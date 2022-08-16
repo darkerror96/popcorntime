@@ -1,6 +1,6 @@
 (function ($) {
 
-    const addMovieForm = $('#addMovieForm'),
+    const editMovieForm = $('#editMovieForm'),
         result = $('#result'),
         movieName = $('#movieName'),
         movieSummary = $('#movieSummary'),
@@ -23,11 +23,19 @@
     });
 
     // form submit event
-    addMovieForm.submit(function (event) {
+    editMovieForm.submit(function (event) {
         event.preventDefault();
 
         try {
             result.hide();
+
+            const pathname = window.location.pathname;
+            let movieID = pathname.split("/movies/edit/");
+            if (movieID.length == 2) {
+                movieID = movieID[1].trim();
+            } else {
+                throw `Invalid Movie URL : ${pathname}`;
+            }
 
             let movieNameVal = movieName.val(),
                 movieSummaryVal = movieSummary.val(),
@@ -38,6 +46,7 @@
                 movieDirectorArr = [];
 
             // validate user inputs on client side
+            movieID = checkString(movieID, "Movie ID");
             movieNameVal = checkStringNoRegex(movieNameVal, "Movie Name");
             movieSummaryVal = checkStringNoRegex(movieSummaryVal, "Summary");
             movieGenresVal = checkStringArray(movieGenresVal, "Genre");
@@ -48,6 +57,7 @@
             movieDirectorArr = checkStringArray(movieDirector.val(), "Director");
 
             const movieData = {
+                id: movieID,
                 name: movieNameVal,
                 summary: movieSummaryVal,
                 genres: movieGenresVal,
@@ -59,25 +69,26 @@
 
             // POST movie data + poster to DB
             let formData = new FormData();
-            formData.append('moviePoster', file);
             formData.append('movieData', JSON.stringify(movieData));
 
-            fetch('http://localhost:3000/movies/add', {
+            if (fileSizeMB !== -1) {
+                formData.append('moviePoster', file);
+            }
+
+            fetch('http://localhost:3000/movies/edit', {
                     method: 'POST',
                     body: formData
                 }).then(response => response.json())
                 .then(json => {
 
-                    addMovieForm.trigger('reset');
-
-                    if (json.status === 201) {
+                    if (json.status === 200) {
                         const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
                         result.show();
-                        result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully added!</p>');
+                        result.html('<p class="success">Movie successfully updated! Click <a href=' + movieURL + '>here</a> to see updated page...</p>');
                     } else {
                         result.show();
-                        result.html('<p class="error">Error adding movie : ' + json.error + '</p>');
+                        result.html('<p class="error">Error updating movie : ' + json.error + '</p>');
                     }
                 });
         } catch (e) {
@@ -136,12 +147,14 @@
     }
 
     function checkPoster(poster, varName) {
-        if (!poster) throw `Error: You must supply value for ${varName}!`;
-        if (typeof poster !== "string") throw `Error: ${varName} must be a string!`;
-        poster = poster.trim();
-        if (poster.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+        if (fileSizeMB !== -1) {
+            if (!poster) throw `Error: You must supply value for ${varName}!`;
+            if (typeof poster !== "string") throw `Error: ${varName} must be a string!`;
+            poster = poster.trim();
+            if (poster.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
 
-        if (fileSizeMB > 2) throw `Error: You must select image with size less than 2 MB`;
+            if (fileSizeMB > 2) throw `Error: You must select image with size less than 2 MB`;
+        }
     }
 
 })(window.jQuery);

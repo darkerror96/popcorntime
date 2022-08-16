@@ -14,13 +14,14 @@
             <ul>
                 <li>
                     <a href="/">Home</a>
+                    <a href="/halloffame">Hall of Fame</a>
                     {{#if username}}
                     <a href="/wishlist">Wishlist</a>
                     <a href="/profile">Profile</a>
-                    <a href="/logout">Logout</a>
                     {{#ifEquals role "admin"}}
-                    <a href="/admin">Admin</a>
+                    <a href="/admin">Manage Movies</a>
                     {{/ifEquals}}
+                    <a href="/logout">Logout</a>
                     {{else}}
                     <a href="/login">Login</a>
                     <a href="/signup">Sign Up</a>

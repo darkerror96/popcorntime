@@ -84,6 +84,10 @@ const main = async () => {
     return arg1 == arg2 ? options.fn(this) : options.inverse(this);
   });
 
+  hbs.handlebars.registerHelper("increment", function (arg1, options) {
+    return arg1 + 1;
+  });
+
   configRoutes(app);
 
   app.listen(3000, () => {

@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require("fs");
 const {
   ObjectId
 } = require("mongodb");
@@ -9,15 +9,6 @@ module.exports = {
     if (!ObjectId.isValid(id))
       throw `Error: ${varName} is an invalid object ID`;
     return id;
-  },
-
-  checkIdArray(arr, varName) {
-    if (!arr || !Array.isArray(arr)) throw `You must provide an array of ${varName}`;
-    if (arr.length == 0) throw `Error: The ${varName} array is empty`;
-    for (i in arr) {
-      arr[i] = this.checkId(arr[i], `${varName}[${i}]`);
-    }
-    return arr;
   },
 
   checkStringNoRegex(strVal, varName) {
@@ -58,7 +49,7 @@ module.exports = {
 
   checkNumber(val, variableName, minValue, maxValue) {
     try {
-      val = parseInt(val, 10);
+      val = parseFloat(val);
     } catch (e) {
       throw `${
         variableName || "provided variable"
@@ -100,7 +91,8 @@ module.exports = {
 
   checkPosterFilePath(filePath, varName) {
     if (!filePath) throw `Error: You must supply value for ${varName}!`;
-    if (typeof filePath !== "string") throw `Error: ${varName} must be a string!`;
+    if (typeof filePath !== "string")
+      throw `Error: ${varName} must be a string!`;
     filePath = filePath.trim();
     if (filePath.length === 0)
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
@@ -111,7 +103,8 @@ module.exports = {
       return filePath;
     } else {
       try {
-        if (!fs.existsSync(filePath)) throw `Error: Image file does not exists at "${filePath}"`;
+        if (!fs.existsSync(filePath))
+          throw `Error: Image file does not exists at "${filePath}"`;
       } catch (e) {
         throw `Error: Image file does not exists at "${filePath}" : ${e}`;
       }
@@ -135,22 +128,6 @@ module.exports = {
     return strVal;
   },
 
-  checkReviews(reviews, varName) {
-    if (!reviews || !Array.isArray(reviews)) throw `You must provide an array of ${varName}`;
-    if (reviews.length == 0) throw `Error: The ${varName} array is empty`;
-
-    for (i in reviews) {
-      reviews[i].user_id = this.checkId(reviews[i].user_id, "User ID");
-      reviews[i].timestamp = this.checkStringNoRegex(reviews[i].timestamp, "Timestamp");
-      reviews[i].rating = this.checkNumber(reviews[i].rating, "Rating", 1, 10);
-      reviews[i].comment = this.checkString(reviews[i].comment, "Comment");
-      reviews[i].likes = this.checkIdArray(reviews[i].likes, "Likes");
-      reviews[i].dislikes = this.checkIdArray(reviews[i].dislikes, "Dislikes");
-    }
-
-    return reviews;
-  },
-
   isValidHttpUrl(string) {
     let url;
 
@@ -163,4 +140,46 @@ module.exports = {
     return url.protocol === "http:" || url.protocol === "https:";
   },
 
+  checkUsername(username) {
+    if (!username) throw `Error: You must supply value for username!`;
+    if (typeof username !== "string") throw `Error: username must be a string!`;
+    username = username.trim();
+    if (username.length === 0)
+      throw `Error: username cannot be an empty string or string with just spaces`;
+    if (username.length < 4)
+      throw `Error: username must be at least 4 characters long`;
+    if (!isNaN(username))
+      throw `Error: "${username}" is not a valid value for username as it only contains digits`;
+    const regex = /^[a-zA-Z0-9_]*$/;
+    if (!regex.test(username)) {
+      throw `Error: Only letters, numbers, and underscore are allowed for username : ${username}`;
+    }
+    return username;
+  },
+
+  checkPassword(password) {
+    if (!password) throw `Error: You must supply value for password!`;
+    if (typeof password !== "string") throw `Error: password must be a string!`;
+    password = password.trim();
+    if (password.length === 0)
+      throw `Error: password cannot be an empty string or string with just spaces`;
+    if (password.length < 4)
+      throw `Error: password must be at least 4 characters long`;
+    if (!isNaN(password)) throw `Error: Password only contains digits`;
+    return password;
+  },
+
+  checkEmail(email) {
+    if (!email) throw `Error: You must supply value for email!`;
+    if (typeof email !== "string") throw `Error: email must be a string!`;
+    email = email.trim();
+    if (email.length === 0)
+      throw `Error: email cannot be an empty string or string with just spaces`;
+    if (!isNaN(email)) throw `Error: Email only contains digits`;
+    const regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    if (!regex.test(email)) {
+      throw `Error: Invalid email format : ${email}`;
+    }
+    return email;
+  },
 };

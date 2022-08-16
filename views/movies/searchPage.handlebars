@@ -5,13 +5,20 @@
   <h2>Top 10 list of Movies based on your search for `{{searchTerm}}`</h2>
   <br />
 
+  <div class="cards-list">
   {{#each movies}}
-  <ul>
-    <li>
-      <a href="/movies/{{_id}}">{{name}}</a>
-    </li>
-  </ul>
-  {{/each}}
+    <a href="/movies/{{_id}}">
+      <div class="card 1">
+        <div class="card_image">
+          <img alt="Poster for {{movie.name}}" src="{{poster}}"/>
+        </div>
+      </div>
+      <div class="card_title title-black">
+        <p>{{name}}</p>
+      </div>
+    </a>
+  {{/each}}  
+  </div>
 
   <br />
   <br />

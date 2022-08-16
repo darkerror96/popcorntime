@@ -164,10 +164,6 @@ module.exports = {
     if (password.length < 4)
       throw `Error: password must be at least 4 characters long`;
     if (!isNaN(password)) throw `Error: Password only contains digits`;
-    const regex = /^[a-zA-Z0-9_]*$/;
-    if (!regex.test(password)) {
-      throw `Error: Only alphabets, numbers, and underscore are allowed for password : ${password}`;
-    }
     return password;
   },
 

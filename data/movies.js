@@ -170,14 +170,13 @@ const exportedMethods = {
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
             if (data[i].release_date !== undefined) {
-                if(data[i].release_date.replace(/-/g, '').slice(0, 4).includes(searchTerm)){
+                if (data[i].release_date.replace(/-/g, '').slice(0, 4).includes(searchTerm)) {
                     movieResult.push(data[i]);
                     movieCounter++;
                     if (movieCounter === 10) {
                         break;
                     }
                 }
-                
             }
         }
         if (movieResult.length == 0) {

@@ -197,3 +197,9 @@ form {
         flex-direction: column;
    }
 }
+.hallOfFameDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

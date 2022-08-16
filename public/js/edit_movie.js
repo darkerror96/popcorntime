@@ -4,7 +4,7 @@
         result = $('#result'),
         movieName = $('#movieName'),
         movieSummary = $('#movieSummary'),
-        movieGenres = $('#movieGenres'),
+        movieGenres = document.querySelectorAll('.genresCheckbox'),
         movieDuration = $('#movieDuration'),
         movieReleaseDate = $('#movieReleaseDate'),
         movieCast = $('#movieCast'),
@@ -31,7 +31,7 @@
 
             let movieNameVal = movieName.val(),
                 movieSummaryVal = movieSummary.val(),
-                movieGenresVal = movieGenres.val(),
+                movieGenresVal = [],
                 movieDurationVal = movieDuration.val(),
                 movieReleaseDateVal = movieReleaseDate.val(),
                 movieCastArr = [],
@@ -40,7 +40,7 @@
             // validate user inputs on client side
             movieNameVal = checkStringNoRegex(movieNameVal, "Movie Name");
             movieSummaryVal = checkStringNoRegex(movieSummaryVal, "Summary");
-            movieGenresVal = checkStringArray(movieGenresVal, "Genre");
+            movieGenresVal = checkGenre(movieGenres, "Genre");
             movieDurationVal = checkNumber(movieDurationVal, "Duration", 1, 5000);
             checkPoster(fileName, "Poster");
             movieReleaseDateVal = checkStringNoRegex(movieReleaseDateVal, "Release Date");
@@ -124,15 +124,30 @@
 
     function checkStringArray(arr, varName) {
         if (!arr) throw `You must provide an array of ${varName}`;
-        if (arr.length == 0) throw `Error: You must provide at least one ${varName}`;
+        if (arr.length == 0) throw `Error: User must provide at least one ${varName}`;
 
         let array = [];
         for (let temp of arr.split(",")) {
-            checkString(temp.trim(), varName + " element");
+            checkString(temp.trim(), varName + " name");
             array.push(temp.trim());
         }
 
         return array;
+    }
+
+    function checkGenre(genre, varName) {
+        let genres = [];
+        genre.forEach(function (elem) {
+            if (elem.checked) {
+                genres.push(elem.name.trim());
+            }
+        });
+
+        if (genres.length === 0) {
+            throw `Error: You must select at least one ${varName}`;
+        }
+
+        return genres;
     }
 
     function checkPoster(poster, varName) {

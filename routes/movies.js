@@ -115,9 +115,7 @@ router.get("/edit/:id", async (req, res) => {
   //     res.status(401).render('../views/login_logout/login', {});
   //     return;
   // }
-
   let id = req.params.id;
-
   try {
     id = validation.checkId(id, "Movie ID");
     const movie = await movies.getMovieById(id);

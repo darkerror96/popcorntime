@@ -101,6 +101,7 @@ const exportedMethods = {
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
 
+
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
@@ -118,11 +119,19 @@ const exportedMethods = {
             }
         }
 
-        if (movieResult.length == 0) {
+        let uniqueMovies = [];
+        movieResult.forEach((c) => {
+            if (!uniqueMovies.includes(c)) {
+                uniqueMovies.push(c);
+            }
+        });
+
+        if (uniqueMovies.length == 0) {
             throw "No results found for " + searchTerm;
         }
 
-        return movieResult;
+
+        return uniqueMovies;
     },
     async searchDirector(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
@@ -152,8 +161,7 @@ const exportedMethods = {
         return movieResult;
     },
     async searchYear(searchTerm) {
-        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
-        searchTerm = searchTerm.toLowerCase();
+        searchTerm = validation.checkNumber(searchTerm, "Year", 1850, 2023);
 
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
@@ -161,13 +169,15 @@ const exportedMethods = {
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-            if (data[i].release_date.toLowerCase().replace(/-/g, '').slice(0, 4).includes(searchTerm) && data[i].release_date !== undefined) {
-
-                movieResult.push(data[i]);
-                movieCounter++;
-                if (movieCounter === 10) {
-                    break;
+            if (data[i].release_date !== undefined) {
+                if(data[i].release_date.replace(/-/g, '').slice(0, 4).includes(searchTerm)){
+                    movieResult.push(data[i]);
+                    movieCounter++;
+                    if (movieCounter === 10) {
+                        break;
+                    }
                 }
+                
             }
         }
         if (movieResult.length == 0) {

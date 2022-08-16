@@ -11,15 +11,6 @@ module.exports = {
     return id;
   },
 
-  checkIdArray(arr, varName) {
-    if (!arr || !Array.isArray(arr)) throw `You must provide an array of ${varName}`;
-    if (arr.length == 0) throw `Error: The ${varName} array is empty`;
-    for (i in arr) {
-      arr[i] = this.checkId(arr[i], `${varName}[${i}]`);
-    }
-    return arr;
-  },
-
   checkStringNoRegex(strVal, varName) {
     if (!strVal) throw `Error: You must provide value for ${varName}!`;
     if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
@@ -133,22 +124,6 @@ module.exports = {
       throw `Error: Valid ${varName} format = yyyy-MM-dd`;
     }
     return strVal;
-  },
-
-  checkReviews(reviews, varName) {
-    if (!reviews || !Array.isArray(reviews)) throw `You must provide an array of ${varName}`;
-    if (reviews.length == 0) throw `Error: The ${varName} array is empty`;
-
-    for (i in reviews) {
-      reviews[i].user_id = this.checkId(reviews[i].user_id, "User ID");
-      reviews[i].timestamp = this.checkStringNoRegex(reviews[i].timestamp, "Timestamp");
-      reviews[i].rating = this.checkNumber(reviews[i].rating, "Rating", 1, 10);
-      reviews[i].comment = this.checkString(reviews[i].comment, "Comment");
-      reviews[i].likes = this.checkIdArray(reviews[i].likes, "Likes");
-      reviews[i].dislikes = this.checkIdArray(reviews[i].dislikes, "Dislikes");
-    }
-
-    return reviews;
   },
 
   isValidHttpUrl(string) {

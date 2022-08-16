@@ -23,6 +23,8 @@ router.post("/", async (req, res) => {
     res.redirect("/");
   } else if (option === "add") {
     res.redirect("/movies/add");
+  } else {
+    res.redirect("/admin");
   }
 });
 

@@ -10,12 +10,11 @@
     <a href="/movies/{{_id}}">
       <div class="card 1">
         <div class="card_image">
-          <img alt="Poster for {{movie.name}}" src="{{poster}}"/>
+          <img alt="Poster for {{movie.name}}" src="{{poster}}" title="{{name}}"/>
+          <div class="title-black"> {{name}}</div>
         </div>
       </div>
-      <div class="card_title title-black">
-        <p>{{name}}</p>
-      </div>
+      <br>
     </a>
   {{/each}}  
   </div>
@@ -24,6 +23,9 @@
   <br />
 
   <nav>
-    <a href="/" class="back">Make another search</a>
+    <button class="btn btn-info">
+      <i class="glyphicon glyphicon-search"></i>
+      <a href="/" class="back">Make another search</a>
+    </button>
   </nav>
 </main>

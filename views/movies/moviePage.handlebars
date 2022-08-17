@@ -2,21 +2,23 @@
   <div>
     <h1>{{movie.name}}</h1>
     <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src="{{movie.poster}}" />
+    <br>
+
     {{#ifEquals role "admin"}}
       <form id="admin-form" action="/movies/edit/{{movie._id}}" method="GET">
-        <button type="submit" value="editDelete">Edit / Delete Movie</button>    
+        <button type="submit" class="btn btn-info" value="editDelete">
+          <i class="glyphicon glyphicon-pencil"></i> Edit / Delete Movie
+        </button>
       </form>
     {{/ifEquals}}
 
     {{!-- add watchlist button here  --}}
     {{#ifEquals role "admin" }}
-        <button type="submit" value="watch_list">Add to watchlist</button>    
-    </form>
+      <button type="submit" class="btn btn-success">
+        <i class="glyphicon glyphicon-heart"></i> Add to Watchlist
+      </button>
     {{/ifEquals}}
 
-  
-
-    
     <dl>
       <dt>Release date</dt>
       <dd>{{movie.release_date}}</dd>

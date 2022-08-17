@@ -10,21 +10,22 @@
 </head>
 
 <body>
-     <nav>
-                    <a href="/">Home</a>
-                    <a href="/halloffame">Hall of Fame</a>
-                    {{#if username}}
-                    <a href="/watchlist">Watchlist</a>
-                    <a href="/profile">Profile</a>
-                    {{#ifEquals role "admin"}}
-                    <a href="/admin">Manage Movies</a>
-                    {{/ifEquals}}
-                    <a href="/logout">Logout</a>
-                    {{else}}
-                    <a href="/login">Login</a>
-                    <a href="/signup">Sign Up</a>
-                    {{/if}}       
-        </nav>
+    <div class="topnav" id="myTopnav">
+        <a href="/">Home</a>
+        <a href="/halloffame">Hall of Fame</a>
+        {{#if username}}
+        <a href="/watchlist">Watchlist</a>
+        <a href="/profile">Profile</a>
+        {{#ifEquals role "admin"}}
+        <a href="/admin">Manage Movies</a>
+        {{/ifEquals}}
+        <a href="/logout">Logout</a>
+        {{else}}
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+        {{/if}}       
+    </div>
+
     <main>
         {{{body}}}
     </main>

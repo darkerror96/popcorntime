@@ -149,6 +149,9 @@ form {
     padding-top: 5px;
     display:contents;
 }
+nav {
+    text-align: center;
+}
 .cards-list {
     z-index: 0;
     width: 100%;

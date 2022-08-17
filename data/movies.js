@@ -98,7 +98,7 @@ const exportedMethods = {
     async searchCast(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
-        searchTerm = searchTerm.replace(/\s/g,'');
+        searchTerm = searchTerm.replace(/\s/g, '');
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
 
@@ -137,7 +137,7 @@ const exportedMethods = {
     async fetchCast(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
-        searchTerm = searchTerm.replace(/\s/g,'');
+        searchTerm = searchTerm.replace(/\s/g, '');
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
 
@@ -218,7 +218,7 @@ const exportedMethods = {
                         break;
                     }
                 }
-                
+
             }
         }
         if (movieResult.length == 0) {
@@ -297,7 +297,7 @@ const exportedMethods = {
         return this.getMovieById(newInsertInformation.insertedId.toString());
     },
 
-    async removeMovie(id) {
+    async deleteMovie(id) {
         id = validation.checkId(id, 'Movie ID');
 
         const moviesCollection = await movies();

@@ -40,12 +40,12 @@
             };
 
             // DEL movie from DB
-            let formData = new FormData();
-            formData.append('movieData', JSON.stringify(movieData));
-
             fetch('http://localhost:3000/movies/delete', {
                     method: 'DELETE',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(movieData)
                 }).then(response => response.json())
                 .then(json => {
 

@@ -24,10 +24,8 @@ router.post('/', async (req, res) => {
             movieList = await movies.searchMovie(searchTerm);
             if (movieList.length == 0) {
                 movieList = await movies.searchMovieByAPI(searchTerm);
-                // await movies.createMovie("Titanic");
             }
         } else if (searchType == "Cast") {
-
             movieList = await movies.searchCast(searchTerm);
         } else if (searchType == "Director") {
             movieList = await movies.searchDirector(searchTerm);

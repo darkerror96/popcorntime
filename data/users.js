@@ -16,6 +16,15 @@ const exportedMethods = {
       throw "Error: Could not get user";
     }
   },
+  async getAllUser() {
+    try {
+      const userCollection = await users();
+      const user = await userCollection.find({}).toArray();
+      return user;  
+    } catch (e) {
+      throw "Error: Could not get users";
+    }
+  },
   async getUserByEmail(email) {
     try {
       email = validate.checkEmail(email);

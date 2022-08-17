@@ -3,6 +3,7 @@ const users = require("../data/users");
 const movies = require("../data/movies");
 const axios = require("axios");
 const mongoConnection = require("../config/mongoConnection");
+const tmdb_movies = require("./tmdb_movies");
 
 async function main() {
     // Add Dummy User Account
@@ -11,9 +12,10 @@ async function main() {
 
     // Add Dummy Admin Account
     const admin = await addUserAccount(process.env.DUMMY_ADMIN_EMAIL, process.env.DUMMY_ADMIN_PWD_HASHED, process.env.DUMMY_ADMIN_USERNAME, "Admin", "Geek", "admin");
-    console.log(`Dummy Admin created : ${admin}\n`);
+    console.log(`Dummy Admin created : ${admin}`);
 
     // Add Movies - Read search term list from .env file
+    console.log("\n--- Adding Movies using OMDB API ---");
     const movieSearchTermList = process.env.MOVIE_SEARCH_TERM_LIST;
     for (let searchTerm of movieSearchTermList.split(",")) {
         const movies = await searchMovieByAPI(searchTerm.trim());
@@ -38,6 +40,10 @@ async function main() {
             await addMovie(m.Title.trim(), m.Plot.trim(), m.Genre.split(", "), m.Runtime.split(" min")[0], m.Poster.trim(), rt, m.Actors.split(", "), m.Director.split(", "), m.imdbRating);
         }
     }
+
+    // Add Movies from tmdb_movies.json file
+    console.log("\n--- Adding Movies using TMDB Movies JSON file ---");
+    await addTMDBMovies();
 
     const movie = await movies.getAllMovies();
     console.log(`\nTotal Movies in DB : ${movie.length}`);
@@ -108,6 +114,41 @@ async function getMovieByIMDbID(imdbID) {
     } = await axios.get(`https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&type=movie&i=${imdbID}`);
 
     return data;
+}
+
+async function addTMDBMovies() {
+    try {
+        for (let movie in tmdb_movies) {
+
+            let name = tmdb_movies[movie].title;
+            let summary = tmdb_movies[movie].overview;
+            let duration = tmdb_movies[movie].runtime;
+            let poster = "https://image.tmdb.org/t/p/w300_and_h450_bestv2" + tmdb_movies[movie].poster_path;
+            let release_date = tmdb_movies[movie].release_date;
+            let avg_rating = tmdb_movies[movie].vote_average;
+
+            let genres = tmdb_movies[movie].genres;
+            if (genres.length > 0) {
+                if (!Array.isArray(genres)) {
+                    genres = [genres];
+                }
+            }
+
+            let cast = [];
+            for (let i = 0; i < tmdb_movies[movie].cast.length; i++) {
+                cast.push(tmdb_movies[movie].cast[i].name);
+            }
+
+            let director = [];
+            for (let i = 0; i < tmdb_movies[movie].directors.length; i++) {
+                director.push(tmdb_movies[movie].directors[i].name);
+            }
+
+            await addMovie(name, summary, genres, duration, poster, release_date, cast, director, avg_rating);
+        }
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 main();

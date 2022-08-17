@@ -1,4 +1,6 @@
-const { v4 } = require("uuid");
+const {
+  v4
+} = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -39,8 +41,16 @@ router.post("/add", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let { name, summary, genres, duration, release_date, cast, director } =
-    JSON.parse(req.body.movieData);
+  let {
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } =
+  JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -94,8 +104,17 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let { id, name, summary, genres, duration, release_date, cast, director } =
-    JSON.parse(req.body.movieData);
+  let {
+    id,
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } =
+  JSON.parse(req.body.movieData);
 
   let posterUpdate = false;
   let poster = "";
@@ -137,9 +156,44 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
       posterUpdate
     );
 
-    return res.status(201).json({
+    return res.status(200).json({
       status: 200,
       movieID: existingMovie._id,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      error: e,
+    });
+  }
+});
+
+router.delete("/delete", async (req, res) => {
+  if (
+    !req.session ||
+    !req.session.user ||
+    !req.session.user.id ||
+    req.session.user.role !== "admin"
+  ) {
+    res.redirect("/");
+    return;
+  }
+
+  let id = "";
+
+  try {
+    id = req.body.id;
+    id = validation.checkId(id, "Movie ID");
+  } catch (e) {
+    return res.status(400).json({
+      error: e,
+    });
+  }
+
+  try {
+    await movies.deleteMovie(id);
+
+    return res.status(200).json({
+      status: 200,
     });
   } catch (e) {
     return res.status(500).json({

@@ -23,10 +23,24 @@
         value="{{movies.searchTerm}}"
       />
     </label>
-
-    <br />
-    <br />
-
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-info">
+      <i class="glyphicon glyphicon-search"></i>
+      Search
+    </button>
   </form>
+
+  <h3>
+    Recommendations
+  </h3>
+  By Preferred Actor or Director:
+  {{#each preference}}
+    <a href="/movies/{{_id}}">
+      <li>
+        {{name}}
+      </li>
+    </a>
+  {{/each}}
+
+  By Preferred 
+
 </main>

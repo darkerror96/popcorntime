@@ -98,6 +98,7 @@ const exportedMethods = {
     async searchCast(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
+        searchTerm = searchTerm.replace(/\s/g,'');
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
 
@@ -129,6 +130,45 @@ const exportedMethods = {
         if (uniqueMovies.length == 0) {
             throw "No results found for " + searchTerm;
         }
+
+
+        return uniqueMovies;
+    },
+    async fetchCast(searchTerm) {
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
+        searchTerm = searchTerm.toLowerCase();
+        searchTerm = searchTerm.replace(/\s/g,'');
+        const moviesCollection = await movies();
+        const data = await moviesCollection.find({}).toArray();
+
+
+        let movieResult = [];
+        let movieCounter = 0;
+        for (var i = 0; i < data.length; i++) {
+
+            if (data[i].cast !== undefined) {
+                for (var j = 0; j < data[i].cast.length; j++) {
+                    if (data[i].cast[j].toLowerCase().replace(/\s/g, '').includes(searchTerm)) {
+                        movieResult.push(data[i]);
+                        movieCounter++;
+                        if (movieCounter === 10) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        let uniqueMovies = [];
+        movieResult.forEach((c) => {
+            if (!uniqueMovies.includes(c)) {
+                uniqueMovies.push(c);
+            }
+        });
+
+        // if (uniqueMovies.length == 0) {
+        //     throw "No results found for " + searchTerm;
+        // }
 
 
         return uniqueMovies;
@@ -170,6 +210,7 @@ const exportedMethods = {
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
             if (data[i].release_date !== undefined) {
+
                 if (data[i].release_date.replace(/-/g, '').slice(0, 4).includes(searchTerm)) {
                     movieResult.push(data[i]);
                     movieCounter++;
@@ -177,6 +218,7 @@ const exportedMethods = {
                         break;
                     }
                 }
+                
             }
         }
         if (movieResult.length == 0) {

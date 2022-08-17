@@ -182,7 +182,7 @@ router.get("/edit/:id", async (req, res) => {
 
     if (movie) {
       res.render("../views/movies/edit_movie", {
-        title: "Edit Movie",
+        title: "Edit / Delete Movie",
         movie: movie,
       });
     } else {

@@ -14,6 +14,13 @@ async function main() {
     const admin = await addUserAccount(process.env.DUMMY_ADMIN_EMAIL, process.env.DUMMY_ADMIN_PWD_HASHED, process.env.DUMMY_ADMIN_USERNAME, "Admin", "Geek", "admin");
     console.log(`Dummy Admin created : ${admin}`);
 
+    // Add Movies from tmdb_movies.json file
+    console.log("\n--- Adding Movies using TMDB Movies JSON file ---");
+    await addTMDBMovies();
+
+    let moviesDB = await movies.getAllMovies();
+    console.log(`\nTotal Movies in DB : ${moviesDB.length}`);
+
     // Add Movies - Read search term list from .env file
     console.log("\n--- Adding Movies using OMDB API ---");
     const movieSearchTermList = process.env.MOVIE_SEARCH_TERM_LIST;
@@ -41,12 +48,8 @@ async function main() {
         }
     }
 
-    // Add Movies from tmdb_movies.json file
-    console.log("\n--- Adding Movies using TMDB Movies JSON file ---");
-    await addTMDBMovies();
-
-    const movie = await movies.getAllMovies();
-    console.log(`\nTotal Movies in DB : ${movie.length}`);
+    moviesDB = await movies.getAllMovies();
+    console.log(`\nTotal Movies in DB : ${moviesDB.length}`);
 
     // Close mongodb connection explicitly
     mongoConnection.closeConnection();

@@ -1,4 +1,5 @@
 const searchRoutes = require("./search");
+const homeRoutes = require("./home");
 const movieRoutes = require("./movies");
 const signupRoutes = require("./signup");
 const profileRoutes = require("./profile");
@@ -10,14 +11,7 @@ const hallOfFameRoutes = require("./hall_of_fame");
 const watchlistRoutes = require("./watchlist");
 
 const constructorMethod = (app) => {
-  var movieOption = ["Movie", "Cast", "Director", "Year"];
-  app.get("/", (req, res) => {
-    res.render("movies/homePage", {
-      title: "Flick Finder",
-      option: movieOption,
-    });
-  });
-
+  app.use("/", homeRoutes);
   app.use("/search", searchRoutes);
   app.use("/movies", movieRoutes);
   app.use("/signup", signupRoutes);

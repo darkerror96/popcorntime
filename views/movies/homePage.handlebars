@@ -24,15 +24,23 @@
       />
     </label>
     <button type="submit" class="btn btn-info">
-      <i class="glyphicon glyphicon-search"></i> Search
+      <i class="glyphicon glyphicon-search"></i>
+      Search
     </button>
   </form>
 
-  <form action="/index" method="POST" class="recommendations-form">
+  <h3>
     Recommendations
+  </h3>
+  By Preferred Actor or Director:
+  {{#each preference}}
+    <a href="/movies/{{_id}}">
+      <li>
+        {{name}}
+      </li>
+    </a>
+  {{/each}}
 
-    <ul>
-      
-    </ul>
-  </form>
+  By Preferred 
+
 </main>

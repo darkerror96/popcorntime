@@ -18,7 +18,7 @@ const exportedMethods = {
     async getMovieById(id) {
         const moviesCollection = await movies();
         const movie = await moviesCollection.findOne({
-            _id: ObjectId(id)
+            _id: ObjectId(id),
         });
         return movie;
     },
@@ -46,7 +46,7 @@ const exportedMethods = {
     async updateReviewsAndRating(id, reviews, newAverage) {
         const moviesCollection = await movies();
         const updateInfo = await moviesCollection.updateOne({
-            _id: ObjectId(id)
+            _id: ObjectId(id),
         }, {
             $set: {
                 reviews: reviews,
@@ -59,7 +59,7 @@ const exportedMethods = {
     async updateReviews(id, reviews) {
         const moviesCollection = await movies();
         const updateInfo = await moviesCollection.updateOne({
-            _id: ObjectId(id)
+            _id: ObjectId(id),
         }, {
             $set: {
                 reviews: reviews,
@@ -69,7 +69,6 @@ const exportedMethods = {
             throw "Update failed";
     },
     async searchMovie(searchTerm) {
-
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
 
@@ -79,15 +78,16 @@ const exportedMethods = {
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-            if (data[i].name.toLowerCase().replace(/\s/g, '').includes(searchTerm) && data[i].name !== undefined) {
-
+            if (
+                data[i].name.toLowerCase().replace(/\s/g, "").includes(searchTerm) &&
+                data[i].name !== undefined
+            ) {
                 movieResult.push(data[i]);
                 movieCounter++;
                 if (movieCounter === 10) {
                     break;
                 }
             }
-
         }
         if (movieResult.length == 0) {
             throw "No results found for " + searchTerm;
@@ -98,18 +98,21 @@ const exportedMethods = {
     async searchCast(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
-        searchTerm = searchTerm.replace(/\s/g, '');
+        searchTerm = searchTerm.replace(/\s/g, "");
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
-
 
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-
             if (data[i].cast !== undefined) {
                 for (var j = 0; j < data[i].cast.length; j++) {
-                    if (data[i].cast[j].toLowerCase().replace(/\s/g, '').includes(searchTerm)) {
+                    if (
+                        data[i].cast[j]
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes(searchTerm)
+                    ) {
                         movieResult.push(data[i]);
                         movieCounter++;
                         if (movieCounter === 10) {
@@ -131,24 +134,26 @@ const exportedMethods = {
             throw "No results found for " + searchTerm;
         }
 
-
         return uniqueMovies;
     },
     async fetchCast(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
-        searchTerm = searchTerm.replace(/\s/g, '');
+        searchTerm = searchTerm.replace(/\s/g, "");
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
-
 
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
-
             if (data[i].cast !== undefined) {
                 for (var j = 0; j < data[i].cast.length; j++) {
-                    if (data[i].cast[j].toLowerCase().replace(/\s/g, '').includes(searchTerm)) {
+                    if (
+                        data[i].cast[j]
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes(searchTerm)
+                    ) {
                         movieResult.push(data[i]);
                         movieCounter++;
                         if (movieCounter === 10) {
@@ -166,11 +171,6 @@ const exportedMethods = {
             }
         });
 
-        // if (uniqueMovies.length == 0) {
-        //     throw "No results found for " + searchTerm;
-        // }
-
-
         return uniqueMovies;
     },
     async searchDirector(searchTerm) {
@@ -184,7 +184,12 @@ const exportedMethods = {
         for (var i = 0; i < data.length; i++) {
             if (data[i].director !== undefined) {
                 for (var j = 0; j < data[i].director.length; j++) {
-                    if (data[i].director[j].toLowerCase().replace(/\s/g, '').includes(searchTerm)) {
+                    if (
+                        data[i].director[j]
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes(searchTerm)
+                    ) {
                         movieResult.push(data[i]);
                         movieCounter++;
                         if (movieCounter === 10) {
@@ -200,6 +205,37 @@ const exportedMethods = {
 
         return movieResult;
     },
+    async fetchDirector(searchTerm) {
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
+        searchTerm = searchTerm.toLowerCase();
+        searchTerm = searchTerm.replace(/\s/g, "");
+
+        const moviesCollection = await movies();
+        const data = await moviesCollection.find({}).toArray();
+
+        let movieResult = [];
+        let movieCounter = 0;
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].director !== undefined) {
+                for (var j = 0; j < data[i].director.length; j++) {
+                    if (
+                        data[i].director[j]
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes(searchTerm)
+                    ) {
+                        movieResult.push(data[i]);
+                        movieCounter++;
+                        if (movieCounter === 10) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return movieResult;
+    },
     async searchYear(searchTerm) {
         searchTerm = validation.checkNumber(searchTerm, "Year", 1850, 2023);
 
@@ -210,15 +246,18 @@ const exportedMethods = {
         let movieCounter = 0;
         for (var i = 0; i < data.length; i++) {
             if (data[i].release_date !== undefined) {
-
-                if (data[i].release_date.replace(/-/g, '').slice(0, 4).includes(searchTerm)) {
+                if (
+                    data[i].release_date
+                    .replace(/-/g, "")
+                    .slice(0, 4)
+                    .includes(searchTerm)
+                ) {
                     movieResult.push(data[i]);
                     movieCounter++;
                     if (movieCounter === 10) {
                         break;
                     }
                 }
-
             }
         }
         if (movieResult.length == 0) {
@@ -232,12 +271,13 @@ const exportedMethods = {
 
         const {
             data
-        } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+        } = await axios.get(
+            "https://www.omdbapi.com/?apikey=58db0176&s=" + searchTerm
+        );
 
         let movieResult = [];
         let movieCounter = 0;
         for (var i = 0; i < data.Search.length; i++) {
-
             movieResult.push(data.Search[i]);
             movieCounter++;
 
@@ -248,7 +288,38 @@ const exportedMethods = {
 
         return movieResult;
     },
+    async fetchGenre(searchTerm) {
+        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
+        searchTerm = searchTerm.toLowerCase();
+        searchTerm = searchTerm.replace(/\s/g, "");
+        const moviesCollection = await movies();
+        const data = await moviesCollection.find({}).toArray();
 
+        let movieResult = [];
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].genres !== undefined) {
+                for (var j = 0; j < data[i].genres.length; j++) {
+                    if (
+                        data[i].genres[j]
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes(searchTerm)
+                    ) {
+                        movieResult.push(data[i]);
+                    }
+                }
+            }
+        }
+
+        let uniqueMovies = [];
+        movieResult.forEach((c) => {
+            if (!uniqueMovies.includes(c)) {
+                uniqueMovies.push(c);
+            }
+        });
+
+        return uniqueMovies;
+    },
     async addMovie(name, summary, genres, duration, poster, release_date, cast, director, avg_rating) {
         name = validation.checkStringNoRegex(name, "Movie Name");
         summary = validation.checkStringNoRegex(summary, "Summary");
@@ -278,7 +349,7 @@ const exportedMethods = {
             cast: cast,
             director: director,
             avg_rating: avg_rating,
-            reviews: []
+            reviews: [],
         };
 
         const moviesCollection = await movies();
@@ -286,37 +357,42 @@ const exportedMethods = {
         // Check for Duplicate Movies by exact name and release_date
         const movie = await moviesCollection.find({}).toArray();
         for (var i = 0; i < movie.length; i++) {
-            if (movie[i].name === newMovie.name && movie[i].release_date === newMovie.release_date) {
-                throw "'" + newMovie.name + "' Movie already exists in DB"
+            if (
+                movie[i].name === newMovie.name &&
+                movie[i].release_date === newMovie.release_date
+            ) {
+                throw "'" + newMovie.name + "' Movie already exists in DB";
             }
         }
 
         const newInsertInformation = await moviesCollection.insertOne(newMovie);
-        if (!newInsertInformation.insertedId) throw 'Insert failed!';
+        if (!newInsertInformation.insertedId) throw "Insert failed!";
 
         return this.getMovieById(newInsertInformation.insertedId.toString());
     },
 
     async deleteMovie(id) {
-        id = validation.checkId(id, 'Movie ID');
+        id = validation.checkId(id, "Movie ID");
 
         const moviesCollection = await movies();
         const deletionInfo = await moviesCollection.deleteOne({
-            _id: ObjectId(id)
+            _id: ObjectId(id),
         });
 
-        if (deletionInfo.deletedCount === 0) throw `Could not delete movie with id of ${id}`;
+        if (deletionInfo.deletedCount === 0)
+            throw `Could not delete movie with id of ${id}`;
         return true;
     },
 
     async updateMovie(id, name, summary, genres, duration, poster, release_date, cast, director, posterUpdate) {
-        id = validation.checkId(id, 'Movie ID');
+        id = validation.checkId(id, "Movie ID");
         name = validation.checkStringNoRegex(name, "Movie Name");
         summary = validation.checkStringNoRegex(summary, "Summary");
         genres = validation.checkStringArray(genres, "Genre");
         duration = validation.checkNumber(duration, "Duration", 1, 5000);
 
-        if (posterUpdate) poster = validation.checkPosterFilePath(poster, "Poster file path");
+        if (posterUpdate)
+            poster = validation.checkPosterFilePath(poster, "Poster file path");
 
         release_date = validation.checkDate(release_date, "Release Date");
         cast = validation.checkStringArray(cast, "Cast");
@@ -329,22 +405,22 @@ const exportedMethods = {
             duration: duration,
             release_date: release_date,
             cast: cast,
-            director: director
+            director: director,
         };
 
         if (posterUpdate) updatedMovie.poster = "/" + poster;
 
         const moviesCollection = await movies();
         const updateInfo = await moviesCollection.updateOne({
-            _id: ObjectId(id)
+            _id: ObjectId(id),
         }, {
-            $set: updatedMovie
+            $set: updatedMovie,
         });
 
-        if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
+            throw "Update failed";
         return this.getMovieById(id);
-    }
-
+    },
 };
 
 async function searchMovieByAPI(searchTerm) {
@@ -352,12 +428,13 @@ async function searchMovieByAPI(searchTerm) {
 
     const {
         data
-    } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&s=' + searchTerm);
+    } = await axios.get(
+        "https://www.omdbapi.com/?apikey=58db0176&s=" + searchTerm
+    );
 
     let movieResult = [];
     let movieCounter = 0;
     for (var i = 0; i < data.Search.length; i++) {
-
         movieResult.push(data.Search[i]);
         movieCounter++;
 
@@ -372,12 +449,13 @@ async function searchMovieByAPI(searchTerm) {
 async function getMovieAPI(imdbID) {
     const {
         data
-    } = await axios.get('https://www.omdbapi.com/?apikey=58db0176&i=' + imdbID);
+    } = await axios.get(
+        "https://www.omdbapi.com/?apikey=58db0176&i=" + imdbID
+    );
     return data;
 }
 
 async function getMovie(imdbID) {
-
     imdbID = validation.checkStringNoRegex(imdbID, "imdbID");
 
     const data = await getMovieAPI(imdbID);

@@ -1,7 +1,5 @@
 const fs = require("fs");
-const {
-  ObjectId
-} = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 module.exports = {
   checkId(id, varName) {
@@ -28,9 +26,13 @@ module.exports = {
       throw `Error: Empty text or text with just spaces is not valid for ${varName}`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-    const regex = /^[a-zA-Z0-9À-ÖØ-öø-ÿ.,\-\'_! ]*$/;
-    if (!regex.test(strVal)) {
-      throw `Error: Only alphabets, numbers, period, dash, and underscore are allowed for ${varName} : ${strVal}`;
+    const regexNoSymbols = /^[a-zA-Z0-9À-ÖØ-öø-ÿ.,\-\'_! ]*$/;
+    const regexHasAlphabets = /[a-zA-Z]/;
+    if (!regexNoSymbols.test(strVal)) {
+      throw `Error: Only alphabets, numbers, period, dash, and underscore are allowed for ${varName}`;
+    }
+    if (!regexHasAlphabets.test(strVal)) {
+      throw `Error: No alphabets found in ${varName}`;
     }
     return strVal;
   },
@@ -46,22 +48,26 @@ module.exports = {
   },
 
   checkNumber(val, variableName, minValue, maxValue) {
+    if (!val) {
+      throw `Error: You must provide a number for ${variableName} between ${minValue} and ${maxValue}!`;
+    }
+
     try {
       val = parseFloat(val);
     } catch (e) {
-      throw `${
+      throw `Error: ${
         variableName || "provided variable"
       } can't be parsed to a number`;
     }
 
     if (val < minValue) {
-      throw `${
+      throw `Error: ${
         variableName || "provided variable"
       } must not be lesser than ${minValue}`;
     }
 
     if (val > maxValue) {
-      throw `${
+      throw `Error: ${
         variableName || "provided variable"
       } must not be greater than ${maxValue}`;
     }

@@ -93,7 +93,7 @@
         strVal = strVal.trim();
         if (strVal.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
         if (!isNaN(strVal)) throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-        const regex = /^[a-zA-Z0-9.\-_ ']*$/;
+        const regex = /^[a-zA-Z0-9À-ÖØ-öø-ÿ.,\-\'_! ]*$/;
         if (!regex.test(strVal)) throw `Only Alphabets, Numbers, Dot and Underscore allowed for ${varName}`;
         return strVal;
     }

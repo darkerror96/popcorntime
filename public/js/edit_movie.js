@@ -24,7 +24,43 @@
 
     // delete movie button
     $('#deleteBtn').click(function () {
-        console.log("DELETE");
+        try {
+            result.hide();
+
+            const pathname = window.location.pathname;
+            let movieID = pathname.split("/movies/edit/");
+            if (movieID.length == 2) {
+                movieID = movieID[1].trim();
+            } else {
+                throw `Invalid Movie URL : ${pathname}`;
+            }
+
+            const movieData = {
+                id: movieID
+            };
+
+            // DEL movie from DB
+            let formData = new FormData();
+            formData.append('movieData', JSON.stringify(movieData));
+
+            fetch('http://localhost:3000/movies/delete', {
+                    method: 'DELETE',
+                    body: formData
+                }).then(response => response.json())
+                .then(json => {
+
+                    if (json.status === 200) {
+                        result.show();
+                        result.html('<p class="success">Movie successfully deleted!</p>');
+                    } else {
+                        result.show();
+                        result.html('<p class="error">Error deleting movie : ' + json.error + '</p>');
+                    }
+                });
+        } catch (e) {
+            result.show();
+            result.html('<p class="error">' + e + '</p>');
+        }
     });
 
     // form submit event
@@ -109,7 +145,7 @@
         strVal = strVal.trim();
         if (strVal.length === 0) throw `Error: ${varName} cannot be an empty string or string with just spaces`;
         if (!isNaN(strVal)) throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-        const regex = /^[a-zA-Z0-9.\-_ ']*$/;
+        const regex = /^[a-zA-Z0-9À-ÖØ-öø-ÿ.,\-\'_! ]*$/;
         if (!regex.test(strVal)) throw `Only Alphabets, Numbers, Dot and Underscore allowed for ${varName}`;
         return strVal;
     }

@@ -6,7 +6,6 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "seed": "node init/db.js",
-        "tmdb_seed": "node init/tmdb_seed.js",
         "start": "node app.js"
     },
     "author": "Team Flicker",

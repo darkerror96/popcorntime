@@ -8,10 +8,13 @@
       </form>
     {{/ifEquals}}
 
-    {{!-- add watchlist button here 
-    <form id="admin-form" action="/movies/edit/{{movie._id}}" method="GET">
-        <button type="submit" value="editDelete">Edit / Delete Movie</button>    
-        --}}
+    {{!-- add watchlist button here  --}}
+    {{#ifEquals role "admin" }}
+        <button type="submit" value="watch_list">Add to watchlist</button>    
+    </form>
+    {{/ifEquals}}
+
+  
 
     
     <dl>

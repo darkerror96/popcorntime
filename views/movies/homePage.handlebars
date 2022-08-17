@@ -5,7 +5,6 @@
   <p>This application is the one-stop shop for anything related to Movies! You
     can search for any movie, actor, director, etc. and get the information you
     are looking for.</p>
-  <br />
 
   <form action="/search" method="POST" class="new-search-form">
     Search by 
@@ -15,7 +14,7 @@
         <option>{{this}}</option>
       {{/each}}
     </select>
-    <br /> <br />
+    <br />
 
     <label>
       <input type="text" name="searchTerm" placeholder="Enter Movie Name" value="{{movies.searchTerm}}" />

@@ -2,8 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const movies = require("../data/movies");
-const validation = require("../utils/validation");
-
 
 router.post('/', async (req, res) => {
     let searchTerm = req.body.searchTerm;

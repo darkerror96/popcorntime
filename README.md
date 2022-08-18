@@ -2,17 +2,23 @@
 
 ## Set up
 
-- Clone the project using `git clone <github-link>` (The link can be found in the Github [link](#github-link) section below)
-- Run `npm install` to download dependencies
-- If database connection details are to be changed, open config/settings.json and update connection settings (By default, the app looks for a MongoDB instance on the same host)
+- Clone the project using `git clone https://github.com/darkerror96/popcorntime.git`
+- Open terminal or command prompt inside `popcorntime` directory
+- Run `npm install` to download node dependencies
+- If database connection details are to be changed, open `config/settings.json` and update connection settings (By default, the app looks for a MongoDB instance on the same host)
 
 ## Run database seeding
 
+- Open terminal or command prompt inside `popcorntime` directory
+- Run `npm run seed` : This command will add a user, an admin and around 1900+ movies to MongoDB
+- Dummy User : `johndoe` (pwd - `johndoe!Xop`)
+- Dummy Admin : `admin` (pwd - `admin$Sgl`)
+
 ## Run project
 
-- Open terminal or command prompt
-- Run `npm start`. The command starts the app and returns its endpoint (Usually http://localhost:3000)
-- Open this endpoint on a browser to use the app
+- Open terminal or command prompt inside `popcorntime` directory
+- Run `npm start` : This command starts the app and returns its endpoint (Usually http://localhost:3000)
+- Open this endpoint on any web browser to use the app
 
 ## How to use the app
 

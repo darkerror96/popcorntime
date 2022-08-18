@@ -1,6 +1,4 @@
-const {
-  v4
-} = require("uuid");
+const { v4 } = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -11,6 +9,7 @@ const wordCheck = require("../utils/wordCheck");
 
 var multer = require("multer");
 let fs = require("fs-extra");
+const e = require("express");
 
 require("dotenv").config();
 
@@ -41,16 +40,8 @@ router.post("/add", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let {
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -104,17 +95,8 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let {
-    id,
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { id, name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let posterUpdate = false;
   let poster = "";
@@ -249,20 +231,103 @@ router.get("/edit/:id", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   let id = req.params.id;
-  id = validation.checkId(id, "Id url param");
-  const movie = await movies.getMovieById(id);
 
-  let userIds = [];
-  pushFieldToArray(userIds, movie.reviews, "user_id");
-  pushFieldsToArray(userIds, movie.reviews, "likes");
-  pushFieldsToArray(userIds, movie.reviews, "dislikes");
-
-  let userIdsResult = undefined;
   try {
-    userIdsResult = await users.getUsersById(userIds);
-    if (!userIdsResult) {
-      throw `No movie found with id ${id}`;
+    id = validation.checkId(id, "Id url param");
+    const movie = await movies.getMovieById(id);
+
+    let userIds = [];
+    pushFieldToArray(userIds, movie.reviews, "user_id");
+    pushFieldsToArray(userIds, movie.reviews, "likes");
+    pushFieldsToArray(userIds, movie.reviews, "dislikes");
+
+    let userIdsResult = undefined;
+
+    try {
+      userIdsResult = await users.getUsersById(userIds);
+      if (!userIdsResult) {
+        throw `No movie found with id ${id}`;
+      }
+    } catch (e) {
+      res.status(404).render("movies/error", {
+        title: "No Movie Found",
+        hasErrors: true,
+        error: "No Movie Found with Movie ID = `" + req.params.id + "`",
+      });
     }
+
+    let usersResultMap = {};
+    userIdsResult.forEach((user) => {
+      usersResultMap[user._id.toString()] = user.username;
+    });
+    let reviewsWithUserName = [];
+    let wordMap = new Map();
+    movie.reviews.forEach((review) => {
+      let likesWithUserName = getLikesWithUserName(review, usersResultMap);
+      let dislikesWithUserName = getDislikesWithUserName(
+        review,
+        usersResultMap
+      );
+      let currentUserInLikes = review.likes.filter(
+        (like) => like === req.session.user.id
+      );
+      let currentUserInDislikes = review.dislikes.filter(
+        (dislike) => dislike === req.session.user.id
+      );
+
+      let timestamp = createTimestampWithElapsedTime(review.timestamp);
+
+      review.comment.split(" ").forEach((word) => {
+        let wordLowerCase = word
+          .trim()
+          .replace(".", "")
+          .replace(",", "")
+          .replace("_", "")
+          .replace("!", "")
+          .toLowerCase();
+        if (wordLowerCase && wordLowerCase.length > 0) {
+          if (wordMap.get(wordLowerCase)) {
+            let count = parseInt(wordMap.get(wordLowerCase), 10);
+            wordMap.set(wordLowerCase, count + 1);
+          } else {
+            wordMap.set(wordLowerCase, 1);
+          }
+        }
+      });
+
+      reviewsWithUserName.push({
+        user: usersResultMap[review.user_id],
+        // TODO Change this today-n days|weeks|months|years ago
+        timestamp: timestamp,
+        rating: review.rating.toFixed(0),
+        comment: review.comment,
+        commentId: review.comment_id,
+        likes: likesWithUserName,
+        likesCount: review.likes ? review.likes.length : 0,
+        dislikes: dislikesWithUserName,
+        dislikesCount: review.dislikes ? review.dislikes.length : 0,
+        likedByCurrentUser: currentUserInLikes.length > 0 ? true : false,
+        dislikedByCurrentUser: currentUserInDislikes.length > 0 ? true : false,
+      });
+    });
+
+    topWordsArray = getTop5Keywords(wordMap);
+
+    reviewsWithUserName = reviewsWithUserName.sort((a, b) => {
+      return b.likesCount - b.dislikesCount - (a.likesCount - a.dislikesCount);
+    });
+    movie.avg_rating = movie.avg_rating.toFixed(1);
+
+    movie.duration = `${Math.floor(movie.duration / 60)} hours, ${
+      movie.duration % 60
+    } minutes`;
+
+    res.render("movies/moviePage", {
+      title: movie.name,
+      movie: movie,
+      reviewsWithUserName: reviewsWithUserName,
+      topWordsArray: topWordsArray,
+    });
   } catch (e) {
     res.status(404).render("movies/error", {
       title: "No Movie Found",
@@ -270,78 +335,6 @@ router.get("/:id", async (req, res) => {
       error: "No Movie Found with Movie ID = `" + req.params.id + "`",
     });
   }
-  let usersResultMap = {};
-  userIdsResult.forEach((user) => {
-    usersResultMap[user._id.toString()] = user.username;
-  });
-  let reviewsWithUserName = [];
-  let wordMap = new Map();
-  movie.reviews.forEach((review) => {
-    let likesWithUserName = getLikesWithUserName(review, usersResultMap);
-    let dislikesWithUserName = getDislikesWithUserName(
-      review,
-      usersResultMap
-    );
-    let currentUserInLikes = review.likes.filter(
-      (like) => like === req.session.user.id
-    );
-    let currentUserInDislikes = review.dislikes.filter(
-      (dislike) => dislike === req.session.user.id
-    );
-
-    let timestamp = createTimestampWithElapsedTime(review.timestamp);
-
-    review.comment.split(" ").forEach((word) => {
-      let wordLowerCase = word
-        .trim()
-        .replace(".", "")
-        .replace(",", "")
-        .replace("_", "")
-        .replace("!", "")
-        .toLowerCase();
-      if (wordLowerCase && wordLowerCase.length > 0) {
-        if (wordMap.get(wordLowerCase)) {
-          let count = parseInt(wordMap.get(wordLowerCase), 10);
-          wordMap.set(wordLowerCase, count + 1);
-        } else {
-          wordMap.set(wordLowerCase, 1);
-        }
-      }
-    });
-
-    reviewsWithUserName.push({
-      user: usersResultMap[review.user_id],
-      // TODO Change this today-n days|weeks|months|years ago
-      timestamp: timestamp,
-      rating: review.rating.toFixed(0),
-      comment: review.comment,
-      commentId: review.comment_id,
-      likes: likesWithUserName,
-      likesCount: review.likes ? review.likes.length : 0,
-      dislikes: dislikesWithUserName,
-      dislikesCount: review.dislikes ? review.dislikes.length : 0,
-      likedByCurrentUser: currentUserInLikes.length > 0 ? true : false,
-      dislikedByCurrentUser: currentUserInDislikes.length > 0 ? true : false,
-    });
-  });
-
-  topWordsArray = getTop5Keywords(wordMap);
-
-  reviewsWithUserName = reviewsWithUserName.sort((a, b) => {
-    return b.likesCount - b.dislikesCount - (a.likesCount - a.dislikesCount);
-  });
-  movie.avg_rating = movie.avg_rating.toFixed(1);
-
-  movie.duration = `${Math.floor(movie.duration / 60)} hours, ${
-      movie.duration % 60
-    } minutes`;
-
-  res.render("movies/moviePage", {
-    title: movie.name,
-    movie: movie,
-    reviewsWithUserName: reviewsWithUserName,
-    topWordsArray: topWordsArray,
-  });
 });
 
 router.post("/:id/comment", async (req, res) => {

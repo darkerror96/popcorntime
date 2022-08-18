@@ -4,9 +4,7 @@ const {
     ObjectId
 } = require("mongodb");
 const validation = require("../utils/validation");
-const {
-    isValidHttpUrl
-} = require("../utils/validation");
+const { isValidHttpUrl } = require("../utils/validation");
 
 const exportedMethods = {
     async getAllMovies() {

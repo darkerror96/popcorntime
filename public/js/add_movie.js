@@ -1,7 +1,6 @@
 (function ($) {
 
     const addMovieForm = $('#addMovieForm'),
-        result = $('#result'),
         movieName = $('#movieName'),
         movieSummary = $('#movieSummary'),
         movieGenres = $('#movieGenres'),

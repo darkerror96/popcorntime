@@ -1,18 +1,19 @@
-# Flick Finder - A movie review app
+# Flick Finder - A Movie Review Web App
 
 ## Set up
 
 - Clone the project using `git clone https://github.com/darkerror96/popcorntime.git`
 - Open terminal or command prompt inside `popcorntime` directory
 - Run `npm install` to download node dependencies
-- If database connection details are to be changed, open `config/settings.json` and update connection settings (By default, the app looks for a MongoDB instance on the same host)
+  - If database connection details are to be changed, open `config/settings.json` and update connection settings (By default, the app looks for a MongoDB instance on the same host)
 
 ## Run database seeding
 
 - Open terminal or command prompt inside `popcorntime` directory
 - Run `npm run seed` : This command will add a user, an admin and around 1900+ movies to MongoDB
-- Dummy User : `johndoe` (pwd - `johndoe!Xop`)
-- Dummy Admin : `admin` (pwd - `admin$Sgl`)
+  - Dummy User : `johndoe` | pwd - `johndoe!Xop`
+  - Dummy Admin : `admin` | pwd - `admin$Sgl`
+- NOTE: - Database seeding script normally takes around `40 secs` to run.
 
 ## Run project
 

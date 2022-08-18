@@ -179,7 +179,7 @@
         submitReviewForm.reset();
         errorMessageDiv.text();
         errorMessageDiv.addClass("hidden");
-        let newCommentBlock = createCommentBlock(postCommentResponse);        
+        let newCommentBlock = createCommentBlock(postCommentResponse);
 
         let noReviewsYetBlock = document.getElementById("reviewsAbsent");
         if (noReviewsYetBlock) {

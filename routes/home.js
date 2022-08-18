@@ -115,6 +115,7 @@ router.get("/", async (req, res) => {
         genre: likedGenres,
       });
     }
+    
 
   } catch (e) {
     res.status(500).render("movies/error", {

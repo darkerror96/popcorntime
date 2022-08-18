@@ -4,7 +4,6 @@ const users = require("../data/users");
 const movies = require("../data/movies");
 
 router.get("/", async (req, res) => {
-  var movieOption = ["Movie", "Cast", "Director", "Year"];
 
   try {
     if (req.session && req.session.user && req.session.user.id) {
@@ -81,7 +80,6 @@ router.get("/", async (req, res) => {
 
       res.render("movies/homePage", {
         title: "Flick Finder",
-        option: movieOption,
         actorHeading: "By Preferred Actor:",
         actor: likedActors,
         directorHeading: "By Preferred Director:",
@@ -106,7 +104,6 @@ router.get("/", async (req, res) => {
       likedGenres = getRandom(randomRecommendation, 5);
       res.render("movies/homePage", {
         title: "Flick Finder",
-        option: movieOption,
         actorHeading: "By Preferred Actor:",
         actor: likedActors,
         directorHeading: "By Preferred Director:",

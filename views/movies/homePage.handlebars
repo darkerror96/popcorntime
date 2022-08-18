@@ -9,10 +9,12 @@
   <form action="/search" method="POST" class="new-search-form">
     Search by 
 
-    <select id="movieInfo" name="options" placeholder="Choose from selection">
-      {{#each option}}
-        <option>{{this}}</option>
-      {{/each}}
+    
+    <select id="movieInfo" name="options">
+      <option>Movie</option>
+      <option>Cast</option>
+      <option>Director</option>
+      <option>Year</option>
     </select>
     <br />
 

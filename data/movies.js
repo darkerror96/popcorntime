@@ -3,7 +3,6 @@ const movies = mongoCollections.movies;
 const {
     ObjectId
 } = require("mongodb");
-const axios = require("axios");
 const validation = require("../utils/validation");
 const {
     isValidHttpUrl
@@ -266,28 +265,6 @@ const exportedMethods = {
 
         return movieResult;
     },
-    async searchMovieByAPI(searchTerm) {
-        searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
-
-        const {
-            data
-        } = await axios.get(
-            "https://www.omdbapi.com/?apikey=58db0176&s=" + searchTerm
-        );
-
-        let movieResult = [];
-        let movieCounter = 0;
-        for (var i = 0; i < data.Search.length; i++) {
-            movieResult.push(data.Search[i]);
-            movieCounter++;
-
-            if (movieCounter === 10) {
-                break;
-            }
-        }
-
-        return movieResult;
-    },
     async fetchGenre(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
@@ -423,51 +400,6 @@ const exportedMethods = {
     },
 };
 
-async function searchMovieByAPI(searchTerm) {
-    searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
-
-    const {
-        data
-    } = await axios.get(
-        "https://www.omdbapi.com/?apikey=58db0176&s=" + searchTerm
-    );
-
-    let movieResult = [];
-    let movieCounter = 0;
-    for (var i = 0; i < data.Search.length; i++) {
-        movieResult.push(data.Search[i]);
-        movieCounter++;
-
-        if (movieCounter === 10) {
-            break;
-        }
-    }
-
-    return movieResult;
-}
-
-async function getMovieAPI(imdbID) {
-    const {
-        data
-    } = await axios.get(
-        "https://www.omdbapi.com/?apikey=58db0176&i=" + imdbID
-    );
-    return data;
-}
-
-async function getMovie(imdbID) {
-    imdbID = validation.checkStringNoRegex(imdbID, "imdbID");
-
-    const data = await getMovieAPI(imdbID);
-
-    if (data.Title == null) {
-        throw "Movie not found for ID = `" + imdbID + "`";
-    }
-
-    return data;
-}
-
 module.exports = {
     ...exportedMethods,
-    // createMovie
 };

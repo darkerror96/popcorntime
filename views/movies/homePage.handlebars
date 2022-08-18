@@ -1,64 +1,65 @@
 
   <h1>Flick Finder</h1>
 
+  <br />
   <p>This application is the one-stop shop for anything related to Movies! You
     can search for any movie, actor, director, etc. and get the information you
     are looking for.</p>
-  <br />
 
   <form action="/search" method="POST" class="new-search-form">
-    Search Movies
+    Search by 
 
     <select id="movieInfo" name="options" placeholder="Choose from selection">
       {{#each option}}
         <option>{{this}}</option>
       {{/each}}
     </select>
+    <br />
 
     <label>
-      <input
-        type="text"
-        name="searchTerm"
-        placeholder="Enter Movie Name"
-        value="{{movies.searchTerm}}"
-      />
+      <input type="text" name="searchTerm" placeholder="Enter Movie Name" value="{{movies.searchTerm}}" />
     </label>
+
     <button type="submit" class="btn btn-info">
       <i class="glyphicon glyphicon-search"></i>
       Search
     </button>
   </form>
+  <br />
+  <h2>Recommendations</h2>
 
-  <h3>
-    Recommendations
-  </h3>
-  <h5>
-    {{actorHeading}}
-    {{#each actor}}
-    <a href="/movies/{{_id}}">
-      <li>
-        {{name}}
-      </li>
-    </a>
-    {{/each}}
-  </h5>
-  
-  
-  <h5>{{directorHeading}}
-    {{#each director}}
-    <a href="/movies/{{_id}}">
-      <li>
-        {{name}}
-      </li>
-    </a>
-  {{/each}}
-  </h5>
-  <h5>{{genreHeading}}
-  {{#each genre}}
-    <a href="/movies/{{_id}}">
-      <li>
-        {{name}}
-      </li>
-    </a>
-  {{/each}}
-  </h5>
+  <div class="cards-list">
+    <div class="recommendCard bg-gold">
+      <br>
+      <h5>{{actorHeading}}</h5>
+      <br>
+      {{#each actor}}
+        <div>
+          <i class="glyphicon glyphicon-play"></i> <a class="recommendCard-title" href="/movies/{{_id}}">{{name}}</a>
+        </div>
+      {{/each}}    
+    </div>
+
+    <div class="recommendCard bg-news">
+      <br>
+      <h5>{{directorHeading}}</h5>
+      <br>
+      {{#each director}}
+        <div>
+          <i class="glyphicon glyphicon-play"></i> <a class="recommendCard-title" href="/movies/{{_id}}">{{name}}</a>
+        </div>
+      {{/each}}    
+    </div>
+
+    <div class="recommendCard bg-purple">
+      <br>
+      <h5>{{genreHeading}}</h5>
+      <br>
+      {{#each genre}}
+        <div>
+          <i class="glyphicon glyphicon-play"></i> <a class="recommendCard-title" href="/movies/{{_id}}">{{name}}</a>
+        </div>
+      {{/each}}    
+    </div>
+
+  </div>

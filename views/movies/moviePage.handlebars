@@ -2,21 +2,23 @@
   <div>
     <h1>{{movie.name}}</h1>
     <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src="{{movie.poster}}" />
+    <br>
+
     {{#ifEquals role "admin"}}
       <form id="admin-form" action="/movies/edit/{{movie._id}}" method="GET">
-        <button type="submit" value="editDelete">Edit / Delete Movie</button>    
+        <button type="submit" class="btn btn-info" value="editDelete">
+          <i class="glyphicon glyphicon-pencil"></i> Edit / Delete Movie
+        </button>
       </form>
     {{/ifEquals}}
 
     {{!-- add watchlist button here  --}}
     {{#ifEquals role "admin" }}
-        <button type="submit" value="watch_list">Add to watchlist</button>    
-    </form>
+      <button type="submit" class="btn btn-success">
+        <i class="glyphicon glyphicon-heart"></i> Add to Watchlist
+      </button>
     {{/ifEquals}}
 
-  
-
-    
     <dl>
       <dt>Release date</dt>
       <dd>{{movie.release_date}}</dd>
@@ -107,12 +109,12 @@
             {{#if this.likedByCurrentUser }}
             <span class="review_action" style="color: rgb(160, 60, 0)" id="unlike_{{this.commentId}}">Undo 'Like'</span>
             {{else}}
-            <span class="review_action" style="color: rgb(0, 100, 0)" id="like_{{this.commentId}}">Like</span>
+            <span class="review_action" style="color: rgb(0, 100, 0)" id="like_{{this.commentId}}"><i class="glyphicon glyphicon-thumbs-up"></i> Like</span>
             {{/if}}
             {{#if this.dislikedByCurrentUser }}
             <span class="review_action" style="color: rgb(160, 60, 0)" id="undislike_{{this.commentId}}">Undo 'Dislike'</span>
             {{else}}
-            <span class="review_action" style="color: rgb(200, 0, 0)" id="dislike_{{this.commentId}}">Dislike</span>
+            <span class="review_action" style="color: rgb(200, 0, 0)" id="dislike_{{this.commentId}}"><i class="glyphicon glyphicon-thumbs-down"></i> Dislike</span>
             {{/if}}
           </p>
           <div id="errorActionDiv_{{this.commentId}}" class="alert alert-danger hidden" role="alert">

@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const users = require("../data/users");
 const movies = require("../data/movies");
-const validation = require("../utils/validation");
 
 router.get("/", async (req, res) => {
   var movieOption = ["Movie", "Cast", "Director", "Year"];
@@ -94,29 +93,30 @@ router.get("/", async (req, res) => {
       let randomRecommendation = [];
       let likedActors, likedDirectors, likedGenres = [];
       const allMovies = await movies.getAllMovies();
-        randomRecommendation = allMovies
-          .sort((a, b) => {
-            if (a.avg_rating === b.avg_rating) {
-              return b.reviews.length - a.reviews.length;
-            }
-            return b.avg_rating - a.avg_rating;
-          })
-          .slice(0, 100);
-        likedActors = getRandom(randomRecommendation, 5);
-        likedDirectors = getRandom(randomRecommendation, 5);
-        likedGenres = getRandom(randomRecommendation, 5);
-        res.render("movies/homePage", {
-            title: "Flick Finder",
-            option: movieOption,
-            actorHeading: "By Preferred Actor:",
-            actor: likedActors,
-            directorHeading: "By Preferred Director:",
-            director: likedDirectors,
-            genreHeading: "By Preferred Genre:",
-            genre: likedGenres,      
-        });
+      randomRecommendation = allMovies
+        .sort((a, b) => {
+          if (a.avg_rating === b.avg_rating) {
+            return b.reviews.length - a.reviews.length;
+          }
+          return b.avg_rating - a.avg_rating;
+        })
+        .slice(0, 100);
+      likedActors = getRandom(randomRecommendation, 5);
+      likedDirectors = getRandom(randomRecommendation, 5);
+      likedGenres = getRandom(randomRecommendation, 5);
+      res.render("movies/homePage", {
+        title: "Flick Finder",
+        option: movieOption,
+        actorHeading: "By Preferred Actor:",
+        actor: likedActors,
+        directorHeading: "By Preferred Director:",
+        director: likedDirectors,
+        genreHeading: "By Preferred Genre:",
+        genre: likedGenres,
+      });
     }
-      
+    
+
   } catch (e) {
     res.status(500).render("movies/error", {
       title: "No Movies Found",

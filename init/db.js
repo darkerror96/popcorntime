@@ -21,35 +21,12 @@ async function main() {
     let moviesDB = await movies.getAllMovies();
     console.log(`\nTotal Movies in DB : ${moviesDB.length}`);
 
-    // Add Movies - Read search term list from .env file
-    console.log("\n--- Adding Movies using OMDB API ---");
-    const movieSearchTermList = process.env.MOVIE_SEARCH_TERM_LIST;
-    for (let searchTerm of movieSearchTermList.split(",")) {
-        const movies = await searchMovieByAPI(searchTerm.trim());
-        for (let movie of movies) {
-            let m = await getMovieByIMDbID(movie.imdbID);
+    // Add Movies from OMDB API
+    // console.log("\n--- Adding Movies using OMDB API ---");
+    // await addOMDBMovies();
 
-            let r = new Date(m.Released);
-            let rt = r.getFullYear() + "-";
-
-            if ((r.getMonth() + 1).toString().length == 1) {
-                rt += "0" + (r.getMonth() + 1) + "-";
-            } else {
-                rt += (r.getMonth() + 1) + "-";
-            }
-
-            if (r.getDate().toString().length == 1) {
-                rt += "0" + r.getDate();
-            } else {
-                rt += r.getDate();
-            }
-
-            await addMovie(m.Title.trim(), m.Plot.trim(), m.Genre.split(", "), m.Runtime.split(" min")[0], m.Poster.trim(), rt, m.Actors.split(", "), m.Director.split(", "), m.imdbRating);
-        }
-    }
-
-    moviesDB = await movies.getAllMovies();
-    console.log(`\nTotal Movies in DB : ${moviesDB.length}`);
+    // moviesDB = await movies.getAllMovies();
+    // console.log(`\nTotal Movies in DB : ${moviesDB.length}`);
 
     // Close mongodb connection explicitly
     mongoConnection.closeConnection();
@@ -148,6 +125,37 @@ async function addTMDBMovies() {
             }
 
             await addMovie(name, summary, genres, duration, poster, release_date, cast, director, avg_rating);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function addOMDBMovies() {
+    try {
+        const movieSearchTermList = process.env.MOVIE_SEARCH_TERM_LIST;
+        for (let searchTerm of movieSearchTermList.split(",")) {
+            const movies = await searchMovieByAPI(searchTerm.trim());
+            for (let movie of movies) {
+                let m = await getMovieByIMDbID(movie.imdbID);
+
+                let r = new Date(m.Released);
+                let rt = r.getFullYear() + "-";
+
+                if ((r.getMonth() + 1).toString().length == 1) {
+                    rt += "0" + (r.getMonth() + 1) + "-";
+                } else {
+                    rt += (r.getMonth() + 1) + "-";
+                }
+
+                if (r.getDate().toString().length == 1) {
+                    rt += "0" + r.getDate();
+                } else {
+                    rt += r.getDate();
+                }
+
+                await addMovie(m.Title.trim(), m.Plot.trim(), m.Genre.split(", "), m.Runtime.split(" min")[0], m.Poster.trim(), rt, m.Actors.split(", "), m.Director.split(", "), m.imdbRating);
+            }
         }
     } catch (err) {
         console.log(err);

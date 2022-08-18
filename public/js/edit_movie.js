@@ -1,14 +1,15 @@
 (function ($) {
 
     const editMovieForm = $('#editMovieForm'),
-        result = $('#result'),
         movieName = $('#movieName'),
         movieSummary = $('#movieSummary'),
         movieGenres = $('#movieGenres'),
         movieDuration = $('#movieDuration'),
         movieReleaseDate = $('#movieReleaseDate'),
         movieCast = $('#movieCast'),
-        movieDirector = $('#movieDirector');
+        movieDirector = $('#movieDirector'),
+        errorMessageDiv = $("#errorMessageDiv"),
+        successMessageDiv = $("#successMessageDiv");
 
     var file = "",
         fileName = "",
@@ -25,7 +26,10 @@
     // delete movie button
     $('#deleteBtn').click(function () {
         try {
-            result.hide();
+            errorMessageDiv.text();
+            errorMessageDiv.addClass("hidden");
+            successMessageDiv.text();
+            successMessageDiv.addClass("hidden");
 
             const pathname = window.location.pathname;
             let movieID = pathname.split("/movies/edit/");
@@ -40,26 +44,26 @@
             };
 
             // DEL movie from DB
-            let formData = new FormData();
-            formData.append('movieData', JSON.stringify(movieData));
-
             fetch('http://localhost:3000/movies/delete', {
                     method: 'DELETE',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(movieData)
                 }).then(response => response.json())
                 .then(json => {
 
                     if (json.status === 200) {
-                        result.show();
-                        result.html('<p class="success">Movie successfully deleted!</p>');
+                        successMessageDiv.text("Movie successfully deleted!");
+                        successMessageDiv.removeClass("hidden");
                     } else {
-                        result.show();
-                        result.html('<p class="error">Error deleting movie : ' + json.error + '</p>');
+                        errorMessageDiv.text("Error deleting movie : " + json.error);
+                        errorMessageDiv.removeClass("hidden");
                     }
                 });
         } catch (e) {
-            result.show();
-            result.html('<p class="error">' + e + '</p>');
+            errorMessageDiv.text(e);
+            errorMessageDiv.removeClass("hidden");
         }
     });
 
@@ -68,7 +72,10 @@
         event.preventDefault();
 
         try {
-            result.hide();
+            errorMessageDiv.text();
+            errorMessageDiv.addClass("hidden");
+            successMessageDiv.text();
+            successMessageDiv.addClass("hidden");
 
             const pathname = window.location.pathname;
             let movieID = pathname.split("/movies/edit/");
@@ -125,16 +132,16 @@
                     if (json.status === 200) {
                         const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
-                        result.show();
-                        result.html('<p class="success">Movie successfully updated! Click <a href=' + movieURL + '>here</a> to see updated page...</p>');
+                        successMessageDiv.html('Movie successfully updated! Click <a href=' + movieURL + '>here</a> to see updated page...');
+                        successMessageDiv.removeClass("hidden");
                     } else {
-                        result.show();
-                        result.html('<p class="error">Error updating movie : ' + json.error + '</p>');
+                        errorMessageDiv.text("Error updating movie : " + json.error);
+                        errorMessageDiv.removeClass("hidden");
                     }
                 });
         } catch (e) {
-            result.show();
-            result.html('<p class="error">' + e + '</p>');
+            errorMessageDiv.text(e);
+            errorMessageDiv.removeClass("hidden");
         }
     });
 

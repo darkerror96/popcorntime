@@ -5,7 +5,10 @@ html, body {
     font-size: 14pt;
 }
 body {
-    background: #dedede;
+    background: -webkit-linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
+    background: -o-linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
+    background: -moz-linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
+    background: linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
     font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 main {
@@ -41,6 +44,7 @@ h6 {
     font-size: 1.05rem;
 }
 p {
+    color:rgb(0, 224, 120);
     font-size: 1rem;
     line-height: 2;
 }

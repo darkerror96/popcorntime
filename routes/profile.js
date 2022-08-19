@@ -69,12 +69,7 @@ router.get("/watchlist/:id", async (req, res) => {
       } else {
         res.status(304).send();
       }
-      res.render("users/profile", {
-        title: "Profile",
-        username: user.username,
-        preferences: user.preferences,
-        watchList: watchList
-      });
+
       return;
     } catch (e) {
       res.status(400).json(e).send();

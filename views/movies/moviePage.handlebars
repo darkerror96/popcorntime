@@ -16,15 +16,16 @@
     </form>
   {{/ifEquals}}
 
-  
-   {{#ifEquals role "admin"}}
-    <form id="add-to-watchList-btn">
+
+   {{#if username}}
+    <form id="add-to-watchList-btn" action="/watchlist/{{movie._id}}" method="POST">
       <button type="submit" class="btn btn-primary" value="addToWatchListBtn">
         <i class="glyphicon glyphicon-pencil"></i>
-        Test Add
+        Add to Watchlist
       </button>
     </form>
-  {{/ifEquals}}
+  {{/if }}
+
   <dl>
     <dt>Release date</dt>
     <dd>{{movie.release_date}}</dd>

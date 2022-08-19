@@ -16,7 +16,7 @@
     </form>
   {{/ifEquals}}
 
-  
+
    {{#if username}}
     <form id="add-to-watchList-btn" action="/watchlist/{{movie._id}}" method="POST">
       <button type="submit" class="btn btn-primary" value="addToWatchListBtn">
@@ -25,6 +25,7 @@
       </button>
     </form>
   {{/if }}
+
   <dl>
     <dt>Release date</dt>
     <dd>{{movie.release_date}}</dd>

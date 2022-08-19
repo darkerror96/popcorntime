@@ -1,10 +1,22 @@
 <h1>Hall of Fame</h1>
 <br>
-{{#each movies}}
-    <div class="hallOfFameDiv">
-        <h3>{{increment @index}}.<a href="/movies/{{_id}}">{{name}}</a></h3>
-        <img src="{{poster}}" alt="Poster for {{name}}" />
-        <p>Flick Finder Rating: {{avg_rating}}</p>
-        <p>{{summary}}</p>
-    </div>
-{{/each}}
+<div class="cards-list">
+  {{#each movies}}
+    <a href="/movies/{{_id}}">
+      <div class="card 1">
+        <div class="card_image hall-of-fame-img">
+          <img
+            alt="Poster for {{movie.name}}"
+            src="{{poster}}"
+            title="{{name}}"
+          />
+        <div class="title-black">{{increment @index}}. {{name}}</div>
+        <div class="card-subtitle">Flick Finder Rating: {{avg_rating}}</div>
+        </div>
+      </div>
+      <br><br><br>
+    </a>
+  {{/each}}
+</div>
+</div>
+

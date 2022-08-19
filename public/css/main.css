@@ -5,10 +5,10 @@ html, body {
     font-size: 14pt;
 }
 body {
-    background: -webkit-linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
-    background: -o-linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
-    background: -moz-linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
-    background: linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
+    background: -webkit-linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
+    background: -o-linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
+    background: -moz-linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
+    background: linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
     font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 main {
@@ -32,6 +32,7 @@ h2 {
 }
 h3 {
     font-size: 1.5rem;
+    text-align: center;
 }
 h4 {
     font-size: 1.25rem;

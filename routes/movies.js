@@ -1,6 +1,4 @@
-const {
-  v4
-} = require("uuid");
+const { v4 } = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -44,16 +42,8 @@ router.post("/add", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let {
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -107,17 +97,8 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let {
-    id,
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { id, name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let posterUpdate = false;
   let poster = "";
@@ -289,12 +270,17 @@ router.get("/:id", async (req, res) => {
         review,
         usersResultMap
       );
-      let currentUserInLikes = review.likes.filter(
-        (like) => like === req.session.user.id
-      );
-      let currentUserInDislikes = review.dislikes.filter(
-        (dislike) => dislike === req.session.user.id
-      );
+
+      let currentUserInLikes = [];
+      let currentUserInDislikes = [];
+      if (req.session && req.session.user && req.session.user.id) {
+        currentUserInLikes = review.likes.filter(
+          (like) => like === req.session.user.id
+        );
+        currentUserInDislikes = review.dislikes.filter(
+          (dislike) => dislike === req.session.user.id
+        );
+      }
 
       let timestamp = createTimestampWithElapsedTime(review.timestamp);
 

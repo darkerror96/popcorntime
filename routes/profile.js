@@ -48,21 +48,25 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/watchlist/:id", async (req, res) => {
+  console.log("\n\n STARTING \n\n");
   if (req.session && req.session.user && req.session.user.id) {
     let movieId = req.params.id;
     try {
       movieId = validation.checkId(movieId, "Id url param");
     } catch (e) {
+      console.log("\n\n BREAKING \n\n");
       res.status(400).json(e).send();
       return;
     }
 
     try {
+      console.log("\n\n STARTING2 \n\n");
       const user = await users.getUserById(req.session.user_id);
       const index = user.watch_list.findIndex(
         (watchListMovieId) => movieId === watchListMovieId
       );
       if (index === -1) {
+        console.log("\n\n STARTING3 \n\n");
         users.addToWatchList(req.session.user.id, movieId);
         res.status(200).send();
       } else {

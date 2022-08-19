@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 16;
 const users = require("../data/users");
 const validate = require("../utils/validation");
+const xss = require("xss");
 
 router.get("/", async (req, res) => {
   res.render("users/signup", {
@@ -14,13 +15,20 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const title = "Sign Up";
-    const email = validate.checkEmail(req.body.email);
-    const username = validate.checkUsername(req.body.username);
-    const firstName = validate.checkString(req.body.first_name);
-    const lastName = validate.checkString(req.body.last_name);
-    const birthday = validate.checkDate(req.body.birthday);
-    const password = validate.checkPassword(req.body.password);
-    const confirmPassword = validate.checkPassword(req.body.confirmPassword);
+    let email = xss(req.body.email);
+    email = validate.checkEmail(email);
+    let username = xss(req.body.username);
+    username = validate.checkUsername(username);
+    let firstName = xss(req.body.first_name);
+    firstName = validate.checkString(firstName);
+    let lastName = xss(req.body.last_name);
+    validate.checkString(lastName);
+    let birthday = xss(req.body.birthday);
+    birthday = validate.checkDate(birthday);
+    let password = xss(req.body.password);
+    password = validate.checkPassword(password);
+    let confirmPassword = xss(req.body.confirmPassword);
+    confirmPassword = validate.checkPassword(confirmPassword);
 
     const checkUser = await users.getUser(username);
     const checkEmail = await users.getUserByEmail(email);

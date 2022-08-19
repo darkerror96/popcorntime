@@ -12,7 +12,7 @@ var cors = require("cors");
 const connection = require("./config/mongoConnection");
 
 const main = async () => {
-  const db = await connection.dbConnection();
+  await connection.dbConnection();
   console.log("Connected to database");
 
   //Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any origins

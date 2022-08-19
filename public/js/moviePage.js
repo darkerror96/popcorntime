@@ -29,6 +29,52 @@
     return newCommentBlock;
   }
 
+  function checkNumber(val, variableName, minValue, maxValue) {
+    if (!val) {
+      throw `Error: You must provide a number for ${variableName} between ${minValue} and ${maxValue}!`;
+    }
+
+    try {
+      val = parseFloat(val);
+    } catch (e) {
+      throw `Error: ${
+        variableName || "provided variable"
+      } can't be parsed to a number`;
+    }
+
+    if (val < minValue) {
+      throw `Error: ${
+        variableName || "provided variable"
+      } must not be lesser than ${minValue}`;
+    }
+
+    if (val > maxValue) {
+      throw `Error: ${
+        variableName || "provided variable"
+      } must not be greater than ${maxValue}`;
+    }
+    return val;
+  }
+
+  function checkString(strVal, varName) {
+    if (!strVal) throw `Error: You must provide value for ${varName}!`;
+    if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
+    strVal = strVal.trim();
+    if (strVal.length === 0)
+      throw `Error: Empty text or text with just spaces is not valid for ${varName}`;
+    if (!isNaN(strVal))
+      throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
+    const regexNoSymbols = /^[a-zA-Z0-9À-ÖØ-öø-ÿ.,\-\'_! ]*$/;
+    const regexHasAlphabets = /[a-zA-Z]/;
+    if (!regexNoSymbols.test(strVal)) {
+      throw `Error: Only alphabets, numbers, period, dash, and underscore are allowed for ${varName}`;
+    }
+    if (!regexHasAlphabets.test(strVal)) {
+      throw `Error: No alphabets found in ${varName}`;
+    }
+    return strVal;
+  }
+
   function addEventListenersToActionButtons() {
     for (let reviewActionButton of reviewActionButtons) {
       // Note: Any updates to this must be copied to the createCommentBlock() function
@@ -153,64 +199,72 @@
   submitReviewButton.addEventListener("click", (event) => {
     $("body").css("cursor", "progress");
     event.preventDefault();
-    let rating = $("#ratingInput").val();
-    let comment = $("#textAreaComment").val();
-    let movieId = movieIdField.value;
+
     let errorMessageDiv = $("#errorMessageDiv");
+    try {
+      let rating = $("#ratingInput").val();
+      rating = checkNumber(rating, "rating", 1, 10);
+      let comment = $("#textAreaComment").val();
+      comment = checkString(comment, "comment");
+      let movieId = movieIdField.value;
 
-    let avg_ratingsSpan = $("#avg_rating");
-    let total_reviewsSpan = $("#total_reviews");
+      let avg_ratingsSpan = $("#avg_rating");
+      let total_reviewsSpan = $("#total_reviews");
 
-    let reviewsHeader = $("#reviewsHeader");
+      let reviewsHeader = $("#reviewsHeader");
 
-    let postCommentCallInfo = {
-      method: "POST",
-      url: `/movies/${movieId}/comment`,
-      contentType: "application/json",
-      data: JSON.stringify({
-        rating: rating,
-        comment: comment,
-      }),
-    };
+      let postCommentCallInfo = {
+        method: "POST",
+        url: `/movies/${movieId}/comment`,
+        contentType: "application/json",
+        data: JSON.stringify({
+          rating: rating,
+          comment: comment,
+        }),
+      };
 
-    $.ajax(postCommentCallInfo)
-      .then(function (responseMessage) {
-        let postCommentResponse = $(responseMessage)[0];
-        submitReviewForm.reset();
-        errorMessageDiv.text();
-        errorMessageDiv.addClass("hidden");
-        let newCommentBlock = createCommentBlock(postCommentResponse);        
+      $.ajax(postCommentCallInfo)
+        .then(function (responseMessage) {
+          let postCommentResponse = $(responseMessage)[0];
+          submitReviewForm.reset();
+          errorMessageDiv.text();
+          errorMessageDiv.addClass("hidden");
+          let newCommentBlock = createCommentBlock(postCommentResponse);
 
-        let noReviewsYetBlock = document.getElementById("reviewsAbsent");
-        if (noReviewsYetBlock) {
-          noReviewsYetBlock.remove();
-          reviewsHeader.after(`<dd id="reviewsPresent"></dd>`);
-        }
-        let existingReviews = $("#reviewsPresent");
-        existingReviews.append(newCommentBlock);
+          let noReviewsYetBlock = document.getElementById("reviewsAbsent");
+          if (noReviewsYetBlock) {
+            noReviewsYetBlock.remove();
+            reviewsHeader.after(`<dd id="reviewsPresent"></dd>`);
+          }
+          let existingReviews = $("#reviewsPresent");
+          existingReviews.append(newCommentBlock);
 
-        addEventListenersToActionButtons();
+          addEventListenersToActionButtons();
 
-        let newAverage = postCommentResponse.newAverage;
-        let newNumOfReviews = postCommentResponse.newNumOfReviews;
+          let newAverage = postCommentResponse.newAverage;
+          let newNumOfReviews = postCommentResponse.newNumOfReviews;
 
-        avg_ratingsSpan.text(newAverage);
-        total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
-      })
-      .fail(function (data, textStatus, xhr) {
-        if (data.status == 403) {
-          errorMessageDiv.text("You need to be logged in to post reviews");
-          errorMessageDiv.removeClass("hidden");
-        } else if (data.status == 400) {
-          errorMessageDiv.text(data.responseText);
-          errorMessageDiv.removeClass("hidden");
-        } else {
-          errorMessageDiv.text(
-            "Unable to connect to server. Please try again later."
-          );
-          errorMessageDiv.removeClass("hidden");
-        }
-      });
+          avg_ratingsSpan.text(newAverage);
+          total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
+        })
+        .fail(function (data, textStatus, xhr) {
+          if (data.status == 403) {
+            errorMessageDiv.text("You need to be logged in to post reviews");
+            errorMessageDiv.removeClass("hidden");
+          } else if (data.status == 400) {
+            errorMessageDiv.text(data.responseText);
+            errorMessageDiv.removeClass("hidden");
+          } else {
+            errorMessageDiv.text(
+              "Unable to connect to server. Please try again later."
+            );
+            errorMessageDiv.removeClass("hidden");
+          }
+        });
+    } catch (e) {
+      errorMessageDiv.text(e);
+      errorMessageDiv.removeClass("hidden");
+    }
 
     $("body").css("cursor", "default");
   });

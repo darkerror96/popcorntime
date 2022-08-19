@@ -1,7 +1,9 @@
 const mongoCollections = require("../config/mongoCollections");
 const validate = require("../utils/validation");
 const users = mongoCollections.users;
-const { ObjectId } = require("mongodb");
+const {
+  ObjectId
+} = require("mongodb");
 
 const exportedMethods = {
   async getUser(username) {
@@ -20,7 +22,7 @@ const exportedMethods = {
     try {
       const userCollection = await users();
       const user = await userCollection.find({}).toArray();
-      return user;  
+      return user;
     } catch (e) {
       throw "Error: Could not get users";
     }
@@ -72,46 +74,37 @@ const exportedMethods = {
   },
   async addToWatchList(id, movieId) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne(
-      {
-        _id: ObjectId(id),
+    const updateInfo = await usersCollection.updateOne({
+      _id: ObjectId(id),
+    }, {
+      $addToSet: {
+        watch_list: movieId,
       },
-      {
-        $addToSet: {
-          watch_list: movieId,
-        },
-      }
-    );
+    });
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },
   async updatePreferences(id, updatedPreferences) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne(
-      {
-        _id: ObjectId(id),
+    const updateInfo = await usersCollection.updateOne({
+      _id: ObjectId(id),
+    }, {
+      $set: {
+        preferences: updatedPreferences,
       },
-      {
-        $set: {
-          preferences: updatedPreferences,
-        },
-      }
-    );
+    });
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },
   async removeFromWatchList(id, movieId) {
     const usersCollection = await users();
-    const updateInfo = await usersCollection.updateOne(
-      {
-        _id: ObjectId(id),
+    const updateInfo = await usersCollection.updateOne({
+      _id: ObjectId(id),
+    }, {
+      $pull: {
+        watch_list: movieId,
       },
-      {
-        $pull: {
-          watch_list: movieId,
-        },
-      }
-    );
+    });
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
       throw "Update failed";
   },

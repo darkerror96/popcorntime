@@ -9,6 +9,7 @@ const wordCheck = require("../utils/wordCheck");
 
 var multer = require("multer");
 let fs = require("fs-extra");
+const e = require("express");
 
 require("dotenv").config();
 
@@ -137,9 +138,44 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
       posterUpdate
     );
 
-    return res.status(201).json({
+    return res.status(200).json({
       status: 200,
       movieID: existingMovie._id,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      error: e,
+    });
+  }
+});
+
+router.delete("/delete", async (req, res) => {
+  if (
+    !req.session ||
+    !req.session.user ||
+    !req.session.user.id ||
+    req.session.user.role !== "admin"
+  ) {
+    res.redirect("/");
+    return;
+  }
+
+  let id = "";
+
+  try {
+    id = req.body.id;
+    id = validation.checkId(id, "Movie ID");
+  } catch (e) {
+    return res.status(400).json({
+      error: e,
+    });
+  }
+
+  try {
+    await movies.deleteMovie(id);
+
+    return res.status(200).json({
+      status: 200,
     });
   } catch (e) {
     return res.status(500).json({
@@ -194,8 +230,9 @@ router.get("/edit/:id", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  if (req.session && req.session.user && req.session.user.id) {
-    let id = req.params.id;
+  let id = req.params.id;
+
+  try {
     id = validation.checkId(id, "Id url param");
     const movie = await movies.getMovieById(id);
 
@@ -205,6 +242,7 @@ router.get("/:id", async (req, res) => {
     pushFieldsToArray(userIds, movie.reviews, "dislikes");
 
     let userIdsResult = undefined;
+
     try {
       userIdsResult = await users.getUsersById(userIds);
       if (!userIdsResult) {
@@ -217,6 +255,7 @@ router.get("/:id", async (req, res) => {
         error: "No Movie Found with Movie ID = `" + req.params.id + "`",
       });
     }
+
     let usersResultMap = {};
     userIdsResult.forEach((user) => {
       usersResultMap[user._id.toString()] = user.username;
@@ -289,11 +328,12 @@ router.get("/:id", async (req, res) => {
       reviewsWithUserName: reviewsWithUserName,
       topWordsArray: topWordsArray,
     });
-  } else {
-    res.status(403).render("../views/users/signup", {
-      message: "You need to be signed up to access this page",
+  } catch (e) {
+    res.status(404).render("movies/error", {
+      title: "No Movie Found",
+      hasErrors: true,
+      error: "No Movie Found with Movie ID = `" + req.params.id + "`",
     });
-    return;
   }
 });
 

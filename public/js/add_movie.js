@@ -1,14 +1,15 @@
 (function ($) {
 
     const addMovieForm = $('#addMovieForm'),
-        result = $('#result'),
         movieName = $('#movieName'),
         movieSummary = $('#movieSummary'),
         movieGenres = $('#movieGenres'),
         movieDuration = $('#movieDuration'),
         movieReleaseDate = $('#movieReleaseDate'),
         movieCast = $('#movieCast'),
-        movieDirector = $('#movieDirector');
+        movieDirector = $('#movieDirector'),
+        errorMessageDiv = $("#errorMessageDiv"),
+        successMessageDiv = $("#successMessageDiv");
 
     var file = "",
         fileName = "",
@@ -27,7 +28,10 @@
         event.preventDefault();
 
         try {
-            result.hide();
+            errorMessageDiv.text();
+            errorMessageDiv.addClass("hidden");
+            successMessageDiv.text();
+            successMessageDiv.addClass("hidden");
 
             let movieNameVal = movieName.val(),
                 movieSummaryVal = movieSummary.val(),
@@ -73,16 +77,16 @@
                     if (json.status === 201) {
                         const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
-                        result.show();
-                        result.html('<p class="success"><a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully added!</p>');
+                        successMessageDiv.html('<a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully added!');
+                        successMessageDiv.removeClass("hidden");
                     } else {
-                        result.show();
-                        result.html('<p class="error">Error adding movie : ' + json.error + '</p>');
+                        errorMessageDiv.text("Error adding movie : " + json.error);
+                        errorMessageDiv.removeClass("hidden");
                     }
                 });
         } catch (e) {
-            result.show();
-            result.html('<p class="error">' + e + '</p>');
+            errorMessageDiv.text(e);
+            errorMessageDiv.removeClass("hidden");
         }
     });
 

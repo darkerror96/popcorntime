@@ -132,7 +132,7 @@
                     if (json.status === 200) {
                         const movieURL = "http://localhost:3000/movies/" + json.movieID;
 
-                        successMessageDiv.html('Movie successfully updated! Click <a href=' + movieURL + '>here</a> to see updated page...');
+                        successMessageDiv.html('<a href=' + movieURL + '>' + movieNameVal + '</a> movie successfully updated!');
                         successMessageDiv.removeClass("hidden");
                     } else {
                         errorMessageDiv.text("Error updating movie : " + json.error);

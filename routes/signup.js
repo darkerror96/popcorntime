@@ -16,6 +16,9 @@ router.post("/", async (req, res) => {
     const title = "Sign Up";
     const email = validate.checkEmail(req.body.email);
     const username = validate.checkUsername(req.body.username);
+    const firstName = validate.checkString(req.body.first_name);
+    const lastName = validate.checkString(req.body.last_name);
+    const birthday = validate.checkDate(req.body.birthday);
     const password = validate.checkPassword(req.body.password);
     const confirmPassword = validate.checkPassword(req.body.confirmPassword);
 
@@ -46,9 +49,9 @@ router.post("/", async (req, res) => {
         email: email,
         username: username,
         password: hashedPassword,
-        first_name: "",
-        last_name: "",
-        birthday: "",
+        first_name: firstName,
+        last_name: lastName,
+        birthday: birthday,
         role: "user",
         watch_list: [],
         preferences: {
@@ -64,7 +67,8 @@ router.post("/", async (req, res) => {
       };
       users.insertUser(newUser);
       console.log("User created");
-      res.redirect("/");
+      req.session.success = true;
+      res.redirect("/login");
     }
   } catch (e) {
     res.status(500).render("users/signup", {

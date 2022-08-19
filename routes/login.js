@@ -5,9 +5,17 @@ const user = require("../data/users");
 const validate = require("../utils/validation");
 
 router.get("/", async (req, res) => {
-  res.render("users/login", {
-    title: "Login",
-  });
+  if (req.session.success === true) {
+    req.session.success = false;
+    res.render("users/login", {
+      title: "Login",
+      success: "Account successfully created, please login",
+    });
+  } else {
+    res.render("users/login", {
+      title: "Login",
+    });
+  }
 });
 
 router.post("/", async (req, res) => {

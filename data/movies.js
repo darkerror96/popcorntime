@@ -94,6 +94,7 @@ const exportedMethods = {
     },
     async searchCast(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
+        searchTerm = validation.checkString(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
         searchTerm = searchTerm.replace(/\s/g, "");
         const moviesCollection = await movies();
@@ -172,6 +173,7 @@ const exportedMethods = {
     },
     async searchDirector(searchTerm) {
         searchTerm = validation.checkStringNoRegex(searchTerm, "searchTerm");
+        searchTerm = validation.checkString(searchTerm, "searchTerm");
         searchTerm = searchTerm.toLowerCase();
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
@@ -235,7 +237,6 @@ const exportedMethods = {
     },
     async searchYear(searchTerm) {
         searchTerm = validation.checkNumber(searchTerm, "Year", 1850, 2023);
-
         const moviesCollection = await movies();
         const data = await moviesCollection.find({}).toArray();
 

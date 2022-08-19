@@ -2,10 +2,11 @@
 const express = require('express');
 const router = express.Router();
 const movies = require("../data/movies");
+var xss = require("xss");
 
 router.post('/', async (req, res) => {
-    let searchTerm = req.body.searchTerm;
-    let searchType = req.body.options;
+    let searchTerm = xss(req.body.searchTerm);
+    let searchType = xss(req.body.options);
 
     if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length === 0) {
         res.status(400).render('movies/error', {
@@ -18,17 +19,16 @@ router.post('/', async (req, res) => {
 
     try {
         let movieList = [];
-        if (searchType == "Movie") {
+        if (searchType === "Movie") {
             movieList = await movies.searchMovie(searchTerm);
-            if (movieList.length == 0) {
-                movieList = await movies.searchMovieByAPI(searchTerm);
-            }
-        } else if (searchType == "Cast") {
+        } else if (searchType === "Cast") {
             movieList = await movies.searchCast(searchTerm);
-        } else if (searchType == "Director") {
+        } else if (searchType === "Director") {
             movieList = await movies.searchDirector(searchTerm);
-        } else if (searchType == "Year") {
+        } else if (searchType === "Year") {
             movieList = await movies.searchYear(searchTerm);
+        } else {
+            throw "Invalid Search Type option selected!";
         }
 
         if (movieList.length == 0) {

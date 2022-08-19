@@ -196,14 +196,6 @@
     fetch(`http://localhost:3000/profile/watchlist/${movieId}`, {
                     method: 'POST'
                 }).then(response => console.log(response));
-                // two thigs I tried doing 
-                // 1 - inserting directly into DB using 
-                //     users = require("../../data/users"): runs into require not found
-                // 2 - calling API http://localhost:3000/profile/watchlist/${movieId} runs into bad 
-                //       request 
-
-                
-                // ask the team how to insert to DB from moviePage.js 
   }
 
   const submitReviewForm = document.getElementById("reviewForm");

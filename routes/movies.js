@@ -306,7 +306,7 @@ router.post("/:id/comment", async (req, res) => {
     try {
       requestBody.rating = validation.checkNumber(
         requestBody.rating,
-        "Rating",
+        "rating",
         1,
         10
       );
@@ -680,9 +680,10 @@ function getTop5Keywords(wordMap) {
   wordMap.delete("this");
   wordMap.delete("too");
 
-  // Remove 1, 2 letter words
+  // Remove 1, 2 letter words, non-alphabetic words
+  const regexHasAlphabets = /[a-zA-Z]/;
   for (let [keyword, count] of wordMap.entries()) {
-    if (keyword && keyword.length < 3) {
+    if (!keyword || keyword.length < 3 || !regexHasAlphabets.test(keyword)) {
       wordMap.delete(keyword);
     }
   }
@@ -693,7 +694,7 @@ function getTop5Keywords(wordMap) {
   let wordMapArray = [];
   for (let [keyword, count] of wordMap.entries()) {
     if (arrayLength < 5) {
-      wordMapArray.push(`${keyword} (${count} entries)`);
+      wordMapArray.push(`${keyword} (${count} mentions)`);
       arrayLength++;
     } else {
       break;

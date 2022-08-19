@@ -189,7 +189,7 @@
     $("body").css("cursor", "default");
   }
 
-  async function addEventListenerToAddToWatchList() {
+  function addEventListenerToAddToWatchList() {
     addToWatchListButton.addEventListener("click", (event) => {
     });
     let movieId = movieIdField.value;

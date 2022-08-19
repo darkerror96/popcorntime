@@ -9,7 +9,7 @@
 
   {{#ifEquals role "admin"}}
     <form id="admin-form" action="/movies/edit/{{movie._id}}" method="GET">
-      <button type="submit" class="btn btn-info" value="editDelete">
+      <button type="submit" class="btn btn-primary" value="editDelete">
         <i class="glyphicon glyphicon-pencil"></i>
         Edit / Delete Movie
       </button>
@@ -18,7 +18,7 @@
 
   {{! add watchlist button here  }}
   {{#ifEquals role "admin"}}
-    <button type="submit" class="btn btn-success">
+    <button type="submit" class="btn btn-primary">
       <i class="glyphicon glyphicon-heart"></i>
       Add to Watchlist
     </button>

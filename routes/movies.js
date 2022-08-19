@@ -13,6 +13,8 @@ const e = require("express");
 
 require("dotenv").config();
 
+var xss = require("xss");
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let path = process.env.POSTER_FILE_PATH + Date.now() + `/`;
@@ -212,7 +214,7 @@ router.get("/edit/:id", async (req, res) => {
   }
 
   try {
-    let id = req.params.id;
+    let id = xss(req.params.id);
     id = validation.checkId(id, "Movie ID");
     const movie = await movies.getMovieById(id);
 
@@ -230,7 +232,7 @@ router.get("/edit/:id", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  let id = req.params.id;
+  let id = xss(req.params.id);
 
   try {
     id = validation.checkId(id, "Id url param");
@@ -252,7 +254,7 @@ router.get("/:id", async (req, res) => {
       res.status(404).render("movies/error", {
         title: "No Movie Found",
         hasErrors: true,
-        error: "No Movie Found with Movie ID = `" + req.params.id + "`",
+        error: "No Movie Found with Movie ID = `" + id + "`",
       });
     }
 
@@ -268,12 +270,17 @@ router.get("/:id", async (req, res) => {
         review,
         usersResultMap
       );
-      let currentUserInLikes = review.likes.filter(
-        (like) => like === req.session.user.id
-      );
-      let currentUserInDislikes = review.dislikes.filter(
-        (dislike) => dislike === req.session.user.id
-      );
+
+      let currentUserInLikes = [];
+      let currentUserInDislikes = [];
+      if (req.session && req.session.user && req.session.user.id) {
+        currentUserInLikes = review.likes.filter(
+          (like) => like === req.session.user.id
+        );
+        currentUserInDislikes = review.dislikes.filter(
+          (dislike) => dislike === req.session.user.id
+        );
+      }
 
       let timestamp = createTimestampWithElapsedTime(review.timestamp);
 
@@ -332,14 +339,14 @@ router.get("/:id", async (req, res) => {
     res.status(404).render("movies/error", {
       title: "No Movie Found",
       hasErrors: true,
-      error: "No Movie Found with Movie ID = `" + req.params.id + "`",
+      error: "No Movie Found with Movie ID = `" + id + "`",
     });
   }
 });
 
 router.post("/:id/comment", async (req, res) => {
   if (req.session && req.session.user && req.session.user.id) {
-    let id = req.params.id;
+    let id = xss(req.params.id);
     id = validation.checkId(id, "Id url param");
     const requestBody = req.body;
 

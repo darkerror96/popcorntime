@@ -54,8 +54,10 @@ module.exports = {
       throw `Error: You must provide a number for ${variableName} between ${minValue} and ${maxValue}!`;
     }
 
+    if (isNaN(val)) throw `Error: ${variableName} (${val}) is not a number.`;
+
     try {
-      val = parseFloat(val);
+        val = parseFloat(val);      
     } catch (e) {
       throw `Error: ${
         variableName || "provided variable"

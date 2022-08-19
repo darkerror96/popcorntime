@@ -1,29 +1,35 @@
-  <h1>Movies Found</h1>
-  <br />
+<h1>Movies Found</h1>
+<br />
 
-  <h2>Top 10 list of Movies based on your search for `{{searchTerm}}`</h2>
-  <br />
+<h2>Top 10 list of Movies based on your search for `{{searchTerm}}`</h2>
+<br />
 
-  <div class="cards-list">
+<div class="cards-list">
   {{#each movies}}
     <a href="/movies/{{_id}}">
       <div class="card 1">
         <div class="card_image">
-          <img alt="Poster for {{movie.name}}" src="{{poster}}" title="{{name}}"/>
+          <img
+            alt="Poster for {{movie.name}}"
+            src="{{poster}}"
+            title="{{name}}"
+          />
           <div class="title-black"> {{name}}</div>
         </div>
       </div>
-      <br>
+      <br />
     </a>
-  {{/each}}  
-  </div>
+  {{/each}}
+</div>
 
-  <br />
-  <br />
+<br />
+<br />
 
-  <nav>
+<nav>
+  <form action="/" method="GET" class="new-search-form">
     <button class="btn btn-info">
+      Make another search
       <i class="glyphicon glyphicon-search"></i>
-      <a href="/" class="back">Make another search</a>
     </button>
-  </nav>
+  </form>
+</nav>

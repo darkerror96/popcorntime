@@ -5,10 +5,10 @@ html, body {
     font-size: 14pt;
 }
 body {
-    background: -webkit-linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
-    background: -o-linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
-    background: -moz-linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
-    background: linear-gradient(110deg, #6f3bfd 60%, #947fcf 60%);
+    background: -webkit-linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
+    background: -o-linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
+    background: -moz-linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
+    background: linear-gradient(110deg, #ffb2bc 60%, #ff7c9d 60%);
     font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 main {
@@ -44,7 +44,7 @@ h6 {
     font-size: 1.05rem;
 }
 p {
-    color:rgb(0, 224, 120);
+    color: #222;
     font-size: 1rem;
     line-height: 2;
 }
@@ -60,13 +60,15 @@ img {
     margin-left: auto;
     margin-right: auto;
 }
+div.form{
+    display: block;
+    text-align: center;
+}
 .new-search-form {
     max-width: 300px;
-    display: block;
-    min-height: 3em;
-    margin: 10px 0;
-    width: 100%;
-    margin-left: 385px;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
 }
 .show {

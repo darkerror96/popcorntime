@@ -16,14 +16,15 @@
     </form>
   {{/ifEquals}}
 
-  {{! add watchlist button here  }}
-  {{#ifEquals role "admin"}}
-    <button type="submit" class="btn btn-primary">
-      <i class="glyphicon glyphicon-heart"></i>
-      Add to Watchlist
-    </button>
+  
+   {{#ifEquals role "admin"}}
+    <form id="add-to-watchList-btn">
+      <button type="submit" class="btn btn-primary" value="addToWatchListBtn">
+        <i class="glyphicon glyphicon-pencil"></i>
+        Test Add
+      </button>
+    </form>
   {{/ifEquals}}
-
   <dl>
     <dt>Release date</dt>
     <dd>{{movie.release_date}}</dd>

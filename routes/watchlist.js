@@ -66,6 +66,4 @@ function pushToArray(targetArray, inputArray) {
       inputArray.forEach((input) => targetArray.push(input));
     }
   }
-
-
 module.exports = router;

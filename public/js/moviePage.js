@@ -189,12 +189,11 @@
   }
 
   // function addEventListenerToAddToWatchList() {
-  //   addToWatchListButton.addEventListener("click", (event) => {
-  //   });
+  //   addToWatchListButton.addEventListener("click", (event) => {});
   //   let movieId = movieIdField.value;
   //   fetch(`http://localhost:3000/profile/watchlist/${movieId}`, {
-  //                   method: 'POST'
-  //               }).then(response => console.log(response));
+  //     method: "POST",
+  //   }).then((response) => console.log(response));
   // }
 
   const submitReviewForm = document.getElementById("reviewForm");
@@ -236,7 +235,7 @@
       $.ajax(postCommentCallInfo)
         .then(function (responseMessage) {
           let postCommentResponse = $(responseMessage)[0];
-          submitReviewForm.reset();
+          // submitReviewForm.reset();
           errorMessageDiv.text();
           errorMessageDiv.addClass("hidden");
           let newCommentBlock = createCommentBlock(postCommentResponse);
@@ -256,6 +255,7 @@
 
           avg_ratingsSpan.text(newAverage);
           total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
+          window.location.reload();
         })
         .fail(function (data, textStatus, xhr) {
           if (data.status == 403) {

@@ -88,6 +88,18 @@ const main = async () => {
     return arg1 + 1;
   });
 
+  hbs.handlebars.registerHelper(
+    "isInWatchList",
+    function (array, value, options) {
+      value = value.toString();
+      if (array.includes(value)) {
+        return options.fn(this);
+      } else {
+        return options.inverse(this);
+      }
+    }
+  );
+
   configRoutes(app);
 
   app.listen(3000, () => {

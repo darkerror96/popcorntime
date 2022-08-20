@@ -329,12 +329,27 @@ router.get("/:id", async (req, res) => {
       movie.duration % 60
     } minutes`;
 
-    res.render("movies/moviePage", {
-      title: movie.name,
-      movie: movie,
-      reviewsWithUserName: reviewsWithUserName,
-      topWordsArray: topWordsArray,
-    });
+    if (req.session.user) {
+      try {
+        let user = await users.getUserById(req.session.user.id);
+        res.render("movies/moviePage", {
+          title: movie.name,
+          movie: movie,
+          reviewsWithUserName: reviewsWithUserName,
+          topWordsArray: topWordsArray,
+          user: user,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      res.render("movies/moviePage", {
+        title: movie.name,
+        movie: movie,
+        reviewsWithUserName: reviewsWithUserName,
+        topWordsArray: topWordsArray,
+      });
+    }
   } catch (e) {
     res.status(404).render("movies/error", {
       title: "No Movie Found",
@@ -582,6 +597,31 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
       message: "You need to be signed up to access this page",
     });
     return;
+  }
+});
+
+router.post("/addtowatchlist", async (req, res) => {
+  if (req.session.user) {
+    movieId = req.body.movieId;
+    try {
+      await users.addToWatchList(req.session.user.id, movieId);
+      res.redirect(`/movies/${movieId}`);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+});
+
+router.post("/removefromwatchlist", async (req, res) => {
+  if (req.session.user) {
+    movieId = req.body.movieId[0];
+    console.log(movieId);
+    try {
+      await users.removeFromWatchList(req.session.user.id, movieId);
+      res.redirect(`/movies/${movieId}`);
+    } catch (e) {
+      console.log(e);
+    }
   }
 });
 

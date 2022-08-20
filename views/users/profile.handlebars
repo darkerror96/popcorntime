@@ -4,19 +4,28 @@
 
 <main>
     <h2 style="font-weight: bold; margin-bottom: 1em;">Watch list</h2>
-    <div class="" id="watchlist">
-        {{#if watchList}}
-        <table>
-            {{#each watchList}}
-            <td class='thumbnail-list-td'>
-                {{!-- TODO Fix links after movie page is ready --}}
-                <a href='/movies/{{this._id}}'>
-                    <img class='thumbnail-item-img' alt="Poster for {{movie.name}}" src={{this.poster}} />
-                    <div class='thumbnail-item-title'>{{ this.name }}</div>
-                </a>
-            </td>
-            {{/each}}
-        </table>
+    <div class="" <id="watchlist">
+            {{#if watchList}}
+            <div class="cards-list">
+  {{#each watchList}}
+   <a href='/movies/{{this._id}}'>
+      <div class="card 1">
+        <div class="card_image">
+          <img
+            alt="Poster for {{movie.name}}"
+            src="{{poster}}"
+            title="{{name}}"
+          />
+        <div class="title-black">{{increment @index}}. {{name}}</div>
+        <div class="card-subtitle glyphicon glyphicon-star">{{avg_rating}}/10</div>
+        </div>
+      </div>
+      <br><br><br>
+    </a>
+  {{/each}}
+</div>
+</div>
+        
         {{else}}
         <p class="empty-list">
             You don't have any movies in your watchlist yet

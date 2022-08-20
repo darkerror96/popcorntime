@@ -3,17 +3,28 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const user = require("../data/users");
 const validate = require("../utils/validation");
+const xss = require("xss");
 
 router.get("/", async (req, res) => {
-  res.render("users/login", {
-    title: "Login",
-  });
+  if (req.session.success === true) {
+    req.session.success = false;
+    res.render("users/login", {
+      title: "Login",
+      success: "Account successfully created, please login",
+    });
+  } else {
+    res.render("users/login", {
+      title: "Login",
+    });
+  }
 });
 
 router.post("/", async (req, res) => {
   try {
-    const username = validate.checkUsername(req.body.username);
-    const password = validate.checkPassword(req.body.password);
+    let username = xss(req.body.username);
+    username = validate.checkUsername(username);
+    let password = xss(req.body.password);
+    password = validate.checkPassword(password);
     const userAttempt = await user.getUser(username);
     if (userAttempt) {
       const hashedPassword = userAttempt.password;

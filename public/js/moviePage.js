@@ -1,5 +1,4 @@
 (function () {
-
   function createCommentBlock(postCommentResponse) {
     let newCommentBlock = `
     <div class="review_block" style="border: 1px solid orange">
@@ -189,14 +188,14 @@
     $("body").css("cursor", "default");
   }
 
-  function addEventListenerToAddToWatchList() {
-    addToWatchListButton.addEventListener("click", (event) => {
-    });
-    let movieId = movieIdField.value;
-    fetch(`http://localhost:3000/profile/watchlist/${movieId}`, {
-                    method: 'POST'
-                }).then(response => console.log(response));
-  }
+  // function addEventListenerToAddToWatchList() {
+  //   addToWatchListButton.addEventListener("click", (event) => {
+  //   });
+  //   let movieId = movieIdField.value;
+  //   fetch(`http://localhost:3000/profile/watchlist/${movieId}`, {
+  //                   method: 'POST'
+  //               }).then(response => console.log(response));
+  // }
 
   const submitReviewForm = document.getElementById("reviewForm");
   const submitReviewButton = document.getElementById("btn-review");
@@ -281,5 +280,5 @@
   });
 
   addEventListenersToActionButtons();
-  addEventListenerToAddToWatchList();
+  // addEventListenerToAddToWatchList();
 })();

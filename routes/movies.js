@@ -615,7 +615,6 @@ router.post("/addtowatchlist", async (req, res) => {
 router.post("/removefromwatchlist", async (req, res) => {
   if (req.session.user) {
     movieId = req.body.movieId[0];
-    console.log(movieId);
     try {
       await users.removeFromWatchList(req.session.user.id, movieId);
       res.redirect(`/movies/${movieId}`);

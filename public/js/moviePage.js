@@ -188,6 +188,7 @@
     $("body").css("cursor", "default");
   }
 
+
   // function addEventListenerToAddToWatchList() {
   //   addToWatchListButton.addEventListener("click", (event) => {});
   //   let movieId = movieIdField.value;

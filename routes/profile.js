@@ -71,7 +71,7 @@ router.get("/watchlist/:id", async (req, res) => {
       } else {
         res.status(304).send();
       }
-     
+
       return;
     } catch (e) {
       res.status(400).json(e).send();

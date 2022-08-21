@@ -30,6 +30,7 @@ router.post('/', async (req, res) => {
         } else {
             throw "Invalid Search Type option selected!";
         }
+        const results = movieList.length;
 
         if (movieList.length == 0) {
             res.status(404).render('movies/error', {
@@ -40,6 +41,7 @@ router.post('/', async (req, res) => {
         } else {
             res.render('movies/searchPage', {
                 title: "Movies Found",
+                result: results,
                 movies: movieList,
                 searchTerm: searchTerm
             });

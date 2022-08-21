@@ -65,7 +65,9 @@ router.get("/watchlist/:id", async (req, res) => {
       if (index === -1) {
         users.addToWatchList(req.session.user.id, movieId);
         console.log(users.watchList);
-        res.status(200).send();
+
+        // res.status(200).send();
+        res.redirect("users/profile"); 
       } else {
         res.status(304).send();
       }

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="icon" href="/public/img/icons8-movie-64.png">
 </head>
 
 <body>
@@ -14,7 +15,7 @@
         <a href="/"><i class="glyphicon glyphicon-home"></i> Home</a>
         <a href="/halloffame"><i class="glyphicon glyphicon-film"></i> Hall of Fame</a>
         {{#if username}}
-        <a href="/watchlist"><i class="glyphicon glyphicon-bookmark"></i> Watchlist</a>
+        {{!-- <a href="/watchlist"><i class="glyphicon glyphicon-bookmark"></i> Watchlist</a> --}}
         <a href="/profile"><i class="glyphicon glyphicon-user"></i> Profile</a>
         {{#ifEquals role "admin"}}
         <a href="/admin"><i class="glyphicon glyphicon-cog"></i> Manage Movies</a>
@@ -32,6 +33,8 @@
 
     <footer>
         FlickFinder | 2022
+        <br>
+        <img src="/public/img/icons8-movie-64.png" alt="favicon">
     </footer>
 
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"

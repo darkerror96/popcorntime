@@ -1,5 +1,4 @@
 (function () {
-
   function createCommentBlock(postCommentResponse) {
     let newCommentBlock = `
     <div class="review_block" style="border: 1px solid orange">
@@ -189,22 +188,14 @@
     $("body").css("cursor", "default");
   }
 
-  function addEventListenerToAddToWatchList() {
-    addToWatchListButton.addEventListener("click", (event) => {
-    });
-    let movieId = movieIdField.value;
-    fetch(`http://localhost:3000/profile/watchlist/${movieId}`, {
-                    method: 'POST'
-                }).then(response => console.log(response));
-                // two thigs I tried doing 
-                // 1 - inserting directly into DB using 
-                //     users = require("../../data/users"): runs into require not found
-                // 2 - calling API http://localhost:3000/profile/watchlist/${movieId} runs into bad 
-                //       request 
 
-                
-                // ask the team how to insert to DB from moviePage.js 
-  }
+  // function addEventListenerToAddToWatchList() {
+  //   addToWatchListButton.addEventListener("click", (event) => {});
+  //   let movieId = movieIdField.value;
+  //   fetch(`http://localhost:3000/profile/watchlist/${movieId}`, {
+  //     method: "POST",
+  //   }).then((response) => console.log(response));
+  // }
 
   const submitReviewForm = document.getElementById("reviewForm");
   const submitReviewButton = document.getElementById("btn-review");
@@ -289,5 +280,5 @@
   });
 
   addEventListenersToActionButtons();
-  addEventListenerToAddToWatchList();
+  // addEventListenerToAddToWatchList();
 })();

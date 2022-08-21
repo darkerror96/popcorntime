@@ -235,7 +235,7 @@
       $.ajax(postCommentCallInfo)
         .then(function (responseMessage) {
           let postCommentResponse = $(responseMessage)[0];
-          submitReviewForm.reset();
+          // submitReviewForm.reset();
           errorMessageDiv.text();
           errorMessageDiv.addClass("hidden");
           let newCommentBlock = createCommentBlock(postCommentResponse);
@@ -255,6 +255,7 @@
 
           avg_ratingsSpan.text(newAverage);
           total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
+          window.location.reload();
         })
         .fail(function (data, textStatus, xhr) {
           if (data.status == 403) {

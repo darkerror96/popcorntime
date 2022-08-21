@@ -12,6 +12,11 @@ router.get("/", async (req, res) => {
       return b.avg_rating - a.avg_rating;
     })
     .slice(0, 10);
+
+  for (r in topTen) {
+    topTen[r].avg_rating = Math.round(topTen[r].avg_rating * 10) / 10;
+  }
+
   res.render("movies/hall_of_fame", {
     title: "Hall of Fame",
     movies: topTen,

@@ -17,25 +17,37 @@
   {{/ifEquals}}
 
 
-
-   {{#if username}}
-   {{#isInWatchList user.watch_list movie._id}}
-   <form id="remove-from-watchList-btn" action="/movies/removefromwatchlist" method="POST">
-     <input type="hidden" name="movieId" value="{{movie._id}}">
-     <button type="submit" class="btn btn-primary" value="removeFromWatchList">
-       <i class="glyphicon glyphicon-remove"></i>
-       Remove from Watchlist
-     </button>
-     {{else}}
-    <form id="add-to-watchList-btn" action="/movies/addtowatchlist" method="POST">
-      <input type="hidden" name="movieId" value="{{movie._id}}">
-      <button type="submit" class="btn btn-primary" value="addToWatchListBtn">
-        <i class="glyphicon glyphicon-plus"></i>
-        Add to Watchlist
-      </button>
-    </form>
+  {{#if username}}
+    {{#isInWatchList user.watch_list movie._id}}
+      <form
+        id="remove-from-watchList-btn"
+        action="/movies/removefromwatchlist"
+        method="POST"
+      >
+        <input type="hidden" name="movieId" value="{{movie._id}}" />
+        <button
+          type="submit"
+          class="btn btn-primary"
+          value="removeFromWatchList"
+        >
+          <i class="glyphicon glyphicon-remove"></i>
+          Remove from Watchlist
+        </button>
+      </form>
+    {{else}}
+      <form
+        id="add-to-watchList-btn"
+        action="/movies/addtowatchlist"
+        method="POST"
+      >
+        <input type="hidden" name="movieId" value="{{movie._id}}" />
+        <button type="submit" class="btn btn-primary" value="addToWatchListBtn">
+          <i class="glyphicon glyphicon-plus"></i>
+          Add to Watchlist
+        </button>
+      </form>
     {{/isInWatchList}}
-  {{/if }}
+  {{/if}}
 
   <dl>
     <dt>Release date</dt>

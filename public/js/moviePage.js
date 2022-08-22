@@ -188,13 +188,13 @@
     $("body").css("cursor", "default");
   }
 
+
   // function addEventListenerToAddToWatchList() {
-  //   addToWatchListButton.addEventListener("click", (event) => {
-  //   });
+  //   addToWatchListButton.addEventListener("click", (event) => {});
   //   let movieId = movieIdField.value;
   //   fetch(`http://localhost:3000/profile/watchlist/${movieId}`, {
-  //                   method: 'POST'
-  //               }).then(response => console.log(response));
+  //     method: "POST",
+  //   }).then((response) => console.log(response));
   // }
 
   const submitReviewForm = document.getElementById("reviewForm");

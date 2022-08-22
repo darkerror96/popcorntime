@@ -1,5 +1,5 @@
 // Source: https://github.com/dariusk/corpora/blob/master/data/words/prepositions.json
-let prepositions = [
+let trivalWords = [
   "aboard",
   "about",
   "above",
@@ -40,6 +40,7 @@ let prepositions = [
   "besides",
   "between",
   "beyond",
+  "but",
   "by",
   "case",
   "circa",
@@ -48,15 +49,18 @@ let prepositions = [
   "down",
   "due",
   "during",
+  "ever",
   "except",
   "far",
   "for",
   "from",
   "front",
+  "how",
   "in",
   "inside",
   "instead",
   "into",
+  "just",
   "less",
   "left",
   "lieu",
@@ -67,6 +71,8 @@ let prepositions = [
   "nearer",
   "nearest",
   "next",
+  "nevertheless",
+  "no",
   "notwithstanding",
   "of",
   "off",
@@ -85,20 +91,28 @@ let prepositions = [
   "prior",
   "pursuant",
   "rather",
+  "really",
   "regard",
   "regardless",
   "right",
   "sake",
   "save",
   "since",
+  "so",
+  "sometimes",
   "soon",
   "spite",
   "subsequent",
   "such",
   "thanks",
+  "that",
+  "the",
+  "there",
+  "this",
   "through",
   "throughout",
   "to",
+  "too",
   "toward",
   "towards",
   "under",
@@ -118,10 +132,28 @@ let prepositions = [
   "worth",
 ];
 
+let verbs = ["are", "is", "was", "where"];
+
+let nouns = ["i", "children", "film", "kids", "movie", "we"];
+
 module.exports = {
-  removePrepositions(wordMap) {
-    prepositions.forEach((preposition) => {
-      wordMap.delete(preposition);
+  removeTrivialWords(wordMap) {
+    trivalWords.forEach((trivalWord) => {
+      wordMap.delete(trivalWord);
+    });
+    return wordMap;
+  },
+
+  removeVerbs(wordMap) {
+    verbs.forEach((verb) => {
+      wordMap.delete(verb);
+    });
+    return wordMap;
+  },
+
+  removeNouns(wordMap) {
+    nouns.forEach((noun) => {
+      wordMap.delete(noun);
     });
     return wordMap;
   },

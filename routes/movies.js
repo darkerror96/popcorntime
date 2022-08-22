@@ -440,6 +440,7 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
 
     const movie = await movies.getMovieById(movieId);
     let userIds = [];
+    userIds.push(req.session.user.id);
     pushFieldToArray(userIds, movie.reviews, "user_id");
     pushFieldsToArray(userIds, movie.reviews, "likes");
     pushFieldsToArray(userIds, movie.reviews, "dislikes");
@@ -753,18 +754,9 @@ function getDislikesWithUserName(review, usersResultMap) {
 
 function getTop5Keywords(wordMap) {
   // Remove common words
-  wordMap = wordCheck.removePrepositions(wordMap);
-  wordMap.delete("but");
-  wordMap.delete("film");
-  wordMap.delete("how");
-  wordMap.delete("i");
-  wordMap.delete("is");
-  wordMap.delete("movie");
-  wordMap.delete("sometimes");
-  wordMap.delete("that");
-  wordMap.delete("the");
-  wordMap.delete("this");
-  wordMap.delete("too");
+  wordMap = wordCheck.removeTrivialWords(wordMap);
+  wordMap = wordCheck.removeVerbs(wordMap);
+  wordMap = wordCheck.removeNouns(wordMap);
 
   // Remove 1, 2 letter words, non-alphabetic words
   const regexHasAlphabets = /[a-zA-Z]/;
@@ -780,7 +772,11 @@ function getTop5Keywords(wordMap) {
   let wordMapArray = [];
   for (let [keyword, count] of wordMap.entries()) {
     if (arrayLength < 5) {
-      wordMapArray.push(`${keyword} (${count} mentions)`);
+      if (count == 1) {
+        wordMapArray.push(`${keyword} (${count} mention)`);
+      } else {
+        wordMapArray.push(`${keyword} (${count} mentions)`);
+      }
       arrayLength++;
     } else {
       break;

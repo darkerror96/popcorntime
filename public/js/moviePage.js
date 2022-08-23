@@ -154,7 +154,7 @@
           return;
         }
         if (action === "undislike") {
-          reviewActionButton.innerHTML = `<i class="glyphicon glyphicon-thumbs-up"></i>Dislike`;
+          reviewActionButton.innerHTML = `<i class="glyphicon glyphicon-thumbs-down"></i>Dislike`;
           reviewActionButton.style = "color: rgb(200, 0, 0)";
           reviewActionButton.id = `dislike_${commentId}`;
 
@@ -246,7 +246,7 @@
           let newNumOfReviews = postCommentResponse.newNumOfReviews;
 
           avg_ratingsSpan.text(newAverage);
-          total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
+          total_reviewsSpan.text(`out of ${newNumOfReviews} review(s)`);
         })
         .fail(function (data, textStatus, xhr) {
           if (data.status == 403) {

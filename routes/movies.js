@@ -1,6 +1,4 @@
-const {
-  v4
-} = require("uuid");
+const { v4 } = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -44,16 +42,8 @@ router.post("/add", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let {
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -107,17 +97,8 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let {
-    id,
-    name,
-    summary,
-    genres,
-    duration,
-    release_date,
-    cast,
-    director
-  } =
-  JSON.parse(req.body.movieData);
+  let { id, name, summary, genres, duration, release_date, cast, director } =
+    JSON.parse(req.body.movieData);
 
   let posterUpdate = false;
   let poster = "";
@@ -289,12 +270,17 @@ router.get("/:id", async (req, res) => {
         review,
         usersResultMap
       );
-      let currentUserInLikes = review.likes.filter(
-        (like) => like === req.session.user.id
-      );
-      let currentUserInDislikes = review.dislikes.filter(
-        (dislike) => dislike === req.session.user.id
-      );
+
+      let currentUserInLikes = [];
+      let currentUserInDislikes = [];
+      if (req.session && req.session.user && req.session.user.id) {
+        currentUserInLikes = review.likes.filter(
+          (like) => like === req.session.user.id
+        );
+        currentUserInDislikes = review.dislikes.filter(
+          (dislike) => dislike === req.session.user.id
+        );
+      }
 
       let timestamp = createTimestampWithElapsedTime(review.timestamp);
 
@@ -343,12 +329,27 @@ router.get("/:id", async (req, res) => {
       movie.duration % 60
     } minutes`;
 
-    res.render("movies/moviePage", {
-      title: movie.name,
-      movie: movie,
-      reviewsWithUserName: reviewsWithUserName,
-      topWordsArray: topWordsArray,
-    });
+    if (req.session.user) {
+      try {
+        let user = await users.getUserById(req.session.user.id);
+        res.render("movies/moviePage", {
+          title: movie.name,
+          movie: movie,
+          reviewsWithUserName: reviewsWithUserName,
+          topWordsArray: topWordsArray,
+          user: user,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      res.render("movies/moviePage", {
+        title: movie.name,
+        movie: movie,
+        reviewsWithUserName: reviewsWithUserName,
+        topWordsArray: topWordsArray,
+      });
+    }
   } catch (e) {
     res.status(404).render("movies/error", {
       title: "No Movie Found",
@@ -439,6 +440,7 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
 
     const movie = await movies.getMovieById(movieId);
     let userIds = [];
+    userIds.push(req.session.user.id);
     pushFieldToArray(userIds, movie.reviews, "user_id");
     pushFieldsToArray(userIds, movie.reviews, "likes");
     pushFieldsToArray(userIds, movie.reviews, "dislikes");
@@ -599,6 +601,30 @@ router.post("/:movieId/comment/:commentId/:action", async (req, res) => {
   }
 });
 
+router.post("/addtowatchlist", async (req, res) => {
+  if (req.session.user) {
+    movieId = req.body.movieId;
+    try {
+      await users.addToWatchList(req.session.user.id, movieId);
+      res.redirect(`/movies/${movieId}`);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+});
+
+router.post("/removefromwatchlist", async (req, res) => {
+  if (req.session.user) {
+    movieId = req.body.movieId;
+    try {
+      await users.removeFromWatchList(req.session.user.id, movieId);
+      res.redirect(`/movies/${movieId}`);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+});
+
 function createTimestampWithElapsedTime(reviewTimestamp) {
   let currentTime = new Date();
   let reviewDateTimestamp = new Date(reviewTimestamp);
@@ -728,18 +754,9 @@ function getDislikesWithUserName(review, usersResultMap) {
 
 function getTop5Keywords(wordMap) {
   // Remove common words
-  wordMap = wordCheck.removePrepositions(wordMap);
-  wordMap.delete("but");
-  wordMap.delete("film");
-  wordMap.delete("how");
-  wordMap.delete("i");
-  wordMap.delete("is");
-  wordMap.delete("movie");
-  wordMap.delete("sometimes");
-  wordMap.delete("that");
-  wordMap.delete("the");
-  wordMap.delete("this");
-  wordMap.delete("too");
+  wordMap = wordCheck.removeTrivialWords(wordMap);
+  wordMap = wordCheck.removeVerbs(wordMap);
+  wordMap = wordCheck.removeNouns(wordMap);
 
   // Remove 1, 2 letter words, non-alphabetic words
   const regexHasAlphabets = /[a-zA-Z]/;
@@ -755,7 +772,11 @@ function getTop5Keywords(wordMap) {
   let wordMapArray = [];
   for (let [keyword, count] of wordMap.entries()) {
     if (arrayLength < 5) {
-      wordMapArray.push(`${keyword} (${count} mentions)`);
+      if (count == 1) {
+        wordMapArray.push(`${keyword} (${count} mention)`);
+      } else {
+        wordMapArray.push(`${keyword} (${count} mentions)`);
+      }
       arrayLength++;
     } else {
       break;

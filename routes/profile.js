@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/watchlist/:id", async (req, res) => {
+router.get("/watchlist/:id", async (req, res) => {
   if (req.session && req.session.user && req.session.user.id) {
     let movieId = req.params.id;
     try {
@@ -58,16 +58,20 @@ router.post("/watchlist/:id", async (req, res) => {
     }
 
     try {
-      const user = await users.getUserById(req.session.user_id);
+      const user = await users.getUserById(req.session.user.id);
       const index = user.watch_list.findIndex(
         (watchListMovieId) => movieId === watchListMovieId
       );
       if (index === -1) {
         users.addToWatchList(req.session.user.id, movieId);
-        res.status(200).send();
+        console.log(users.watchList);
+
+        // res.status(200).send();
+        res.redirect("users/profile"); 
       } else {
         res.status(304).send();
       }
+
       return;
     } catch (e) {
       res.status(400).json(e).send();

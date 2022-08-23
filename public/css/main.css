@@ -5,7 +5,10 @@ html, body {
     font-size: 14pt;
 }
 body {
-    background: #dedede;
+    background: -webkit-linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
+    background: -o-linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
+    background: -moz-linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
+    background: linear-gradient(110deg, #d2ff31 60%, #68faff 60%);
     font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 main {
@@ -29,6 +32,7 @@ h2 {
 }
 h3 {
     font-size: 1.5rem;
+    text-align: center;
 }
 h4 {
     font-size: 1.25rem;
@@ -41,6 +45,7 @@ h6 {
     font-size: 1.05rem;
 }
 p {
+    color: #222;
     font-size: 1rem;
     line-height: 2;
 }
@@ -56,13 +61,15 @@ img {
     margin-left: auto;
     margin-right: auto;
 }
+div.form{
+    display: block;
+    text-align: center;
+}
 .new-search-form {
     max-width: 300px;
-    display: block;
-    min-height: 3em;
-    margin: 10px 0;
-    width: 100%;
-    margin-left: 385px;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
 }
 .show {
@@ -215,7 +222,7 @@ nav {
 .recommendCard {
     margin: 30px auto;
     width: 310px;
-    height: 310px;
+    height: 320px;
     border-radius: 10px;
     box-shadow: 5px 5px 30px 7px rgba(0,0,0,0.25), -5px -5px 30px 7px rgba(0,0,0,0.22);
     cursor: pointer;
@@ -290,4 +297,8 @@ nav {
         display: block;
         text-align: left;
    }
+}
+
+#signup-success{
+    text-align: center;
 }

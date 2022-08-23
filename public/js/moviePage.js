@@ -19,8 +19,8 @@
       </span>
       <p>        
         <span class="review_action" style="color: rgb(0, 100, 0)" id="like_${postCommentResponse.commentId}" 
-          onclick="reviewAction('like', '${postCommentResponse.commentId}', this)">Like</span>
-        <span class="review_action" style="color: rgb(200, 0, 0)" id="dislike_${postCommentResponse.commentId}">Dislike</span>    
+          onclick="reviewAction('like', '${postCommentResponse.commentId}', this)"><i class="glyphicon glyphicon-thumbs-up"></i>Like</span>
+        <span class="review_action" style="color: rgb(200, 0, 0)" id="dislike_${postCommentResponse.commentId}"><i class="glyphicon glyphicon-thumbs-down"></i>Dislike</span>    
       </p>
       <div id="errorActionDiv_${postCommentResponse.commentId}" class="alert alert-danger hidden" role="alert"></div>
     </div>
@@ -105,7 +105,7 @@
         errorActionDiv.addClass("hidden");
 
         if (action === "like") {
-          reviewActionButton.innerHTML = "Undo 'Like'";
+          reviewActionButton.innerHTML = `Undo 'Like'`;
           reviewActionButton.style = "color: rgb(160, 60, 0)";
           reviewActionButton.id = `unlike_${commentId}`;
 
@@ -121,7 +121,7 @@
           return;
         }
         if (action === "unlike") {
-          reviewActionButton.innerHTML = "Like";
+          reviewActionButton.innerHTML = `<i class="glyphicon glyphicon-thumbs-up"></i>Like`;
           reviewActionButton.style = "color: rgb(0, 100, 0)";
           reviewActionButton.id = `like_${commentId}`;
 
@@ -154,7 +154,7 @@
           return;
         }
         if (action === "undislike") {
-          reviewActionButton.innerHTML = "Dislike";
+          reviewActionButton.innerHTML = `<i class="glyphicon glyphicon-thumbs-down"></i>Dislike`;
           reviewActionButton.style = "color: rgb(200, 0, 0)";
           reviewActionButton.id = `dislike_${commentId}`;
 
@@ -192,6 +192,7 @@
   const submitReviewButton = document.getElementById("btn-review");
   const movieIdField = document.getElementById("movieId");
   const reviewActionButtons = document.getElementsByClassName("review_action");
+  const addToWatchListButton = document.getElementById("add-to-watchList-btn");
   submitReviewButton.addEventListener("submit", (event) => {
     event.preventDefault();
   });
@@ -245,7 +246,7 @@
           let newNumOfReviews = postCommentResponse.newNumOfReviews;
 
           avg_ratingsSpan.text(newAverage);
-          total_reviewsSpan.text(`(out of ${newNumOfReviews} reviews)`);
+          total_reviewsSpan.text(`out of ${newNumOfReviews} review(s)`);
         })
         .fail(function (data, textStatus, xhr) {
           if (data.status == 403) {
@@ -270,4 +271,5 @@
   });
 
   addEventListenersToActionButtons();
+  // addEventListenerToAddToWatchList();
 })();

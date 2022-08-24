@@ -1,54 +1,53 @@
 <h1>Sign Up</h1>
 <form id="signup-form" method="POST" action="/signup">
-    <label for="email">Email</label>
-    <br>
-    <input type="email" name="email" id="email" value="{{formData.email}}" required>
-    <br>
-    <label for="username">Username</label>
-    <br>
-    <input type="text" name="username" id="username" value="{{formData.username}}" required>
-    <br>
-    <label for="first_name">First Name</label>
-    <br>
-    <input type="text" name="first_name" id="first_name" value="{{formData.first_name}}" required>
-    <br>
-    <label for="last_name">Last Name</label>
-    <br>
-    <input type="text" name="last_name" id="last_name" value="{{formData.last_name}}" required>
-    <br>
-    <label for="birthday">Birthday</label>
-    <br>
-    <input type="date" name="birthday" id="birthday" value="{{formData.birthday}}" required>
-    <br>
-    <label for="password">Password</label>
-    <br>
-    <input type="password" name="password" id="password" required>
-    <br>
-    <label for="confirmPassword">Confirm Password</label>
-    <br>
-    <input type="password" name="confirmPassword" id="confirmPassword" required>
-    <br>
-    <label>Preferences:</label>
-    <br>
-    <label for="movieGenres">
-    Genres:<br> <textarea name="movieGenres" id="movieGenres" placeholder="Enter Genre/s followed by `,` ex: Action,Comedy" rows="2" cols="50" required>{{formData.genres}}</textarea>
-  </label>
-    <br>
-    <label for="movieCast">
-    Cast: <br><textarea name="movieCast" id="movieCast" placeholder="Enter Actor Name/s followed by `,` ex: Chris Pratt,Vin Diesel" rows="2" cols="50" required>{{formData.cast}}</textarea>
-  </label>
-  <br> 
+   <br>
+   <label for="email">Email</label>
+   <br>
+   <input type="email" name="email" id="email" value="{{formData.email}}" required>
+   <br><br>
+   <label for="username">Username</label>
+   <br>
+   <input type="text" name="username" id="username" value="{{formData.username}}" required>
+   <br><br>
+   <label for="first_name">First Name</label>
+   <br>
+   <input type="text" name="first_name" id="first_name" value="{{formData.first_name}}" required>
+   <br><br>
+   <label for="last_name">Last Name</label>
+   <br>
+   <input type="text" name="last_name" id="last_name" value="{{formData.last_name}}" required>
+   <br><br>
+   <label for="birthday">Birthday</label>
+   <br>
+   <input type="date" name="birthday" id="birthday" value="{{formData.birthday}}" required>
+   <br><br>
+   <label for="password">Password</label>
+   <br>
+   <input type="password" name="password" id="password" required>
+   <br><br>
+   <label for="confirmPassword">Confirm Password</label>
+   <br>
+   <input type="password" name="confirmPassword" id="confirmPassword" required>
+   <br><br>
+   <label>Preferences:</label>
+   <br><br>
+   <label for="movieGenres">
+   Genres:<br> <textarea name="movieGenres" id="movieGenres" placeholder="Enter Genre/s followed by `,` ex: Action,Comedy" rows="2" cols="50" required>{{formData.genres}}</textarea>
+   </label>
+   <br><br>
+   <label for="movieCast">
+   Cast: <br><textarea name="movieCast" id="movieCast" placeholder="Enter Actor Name/s followed by `,` ex: Chris Pratt,Vin Diesel" rows="2" cols="50" required>{{formData.cast}}</textarea>
+   </label>
+   <br><br>
    <label for="movieDirector">
-    Director:<br> <textarea name="movieDirector" id="movieDirector" placeholder="Enter Director Name/s followed by `,` ex: Alfred Hitchock,Orson Welles" rows="2"
+   Director:<br> <textarea name="movieDirector" id="movieDirector" placeholder="Enter Director Name/s followed by `,` ex: Alfred Hitchock,Orson Welles" rows="2"
       cols="50" required>{{formData.director}}</textarea>
-  </label>
-
-    <br><br>
-    <input type="submit" value="Sign Up">
+   </label>
+   <br><br>
+   <input type="submit" value="Sign Up">
+   <br><br>
 </form>
-
 {{#if error}}
 <p>{{error}}</p>
 {{/if}}
-
 <p>Already have an account? <a href="/login">Login</a></p>

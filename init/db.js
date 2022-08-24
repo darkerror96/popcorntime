@@ -7,19 +7,22 @@ const tmdb_movies = require("./tmdb_movies");
 
 async function main() {
     // Add Dummy User Account
-    const user = await addUserAccount(process.env.DUMMY_USER_EMAIL, process.env.DUMMY_USER_PWD_HASHED, process.env.DUMMY_USER_USERNAME, "John", "Doe", "user");
-    console.log(`Dummy User created : ${user}`);
+    console.log("--- Adding Dummy User and Admin ---");
+    console.log("\n(NOTE: - Get dummy user and admin credentials : username / pwd from README file)\n");
+    await addUserAccount(process.env.DUMMY_USER_EMAIL, process.env.DUMMY_USER_PWD_HASHED, process.env.DUMMY_USER_USERNAME, "John", "Doe", "user");
+    console.log(`Dummy User created : ${process.env.DUMMY_USER_USERNAME}`);
 
     // Add Dummy Admin Account
-    const admin = await addUserAccount(process.env.DUMMY_ADMIN_EMAIL, process.env.DUMMY_ADMIN_PWD_HASHED, process.env.DUMMY_ADMIN_USERNAME, "Admin", "Geek", "admin");
-    console.log(`Dummy Admin created : ${admin}`);
+    await addUserAccount(process.env.DUMMY_ADMIN_EMAIL, process.env.DUMMY_ADMIN_PWD_HASHED, process.env.DUMMY_ADMIN_USERNAME, "Admin", "Geek", "admin");
+    console.log(`Dummy Admin created : ${process.env.DUMMY_ADMIN_USERNAME}`);
 
     // Add Movies from tmdb_movies.json file
     console.log("\n--- Adding Movies using TMDB Movies JSON file ---");
+    console.log("\n(NOTE: - Movie DB seed script takes around 40-45 secs to add 1900+ movies to DB)\n");
     await addTMDBMovies();
 
     let moviesDB = await movies.getAllMovies();
-    console.log(`\nTotal Movies in DB : ${moviesDB.length}`);
+    console.log(`Total Movies in DB : ${moviesDB.length}`);
 
     // Add Movies from OMDB API
     // console.log("\n--- Adding Movies using OMDB API ---");
@@ -31,7 +34,7 @@ async function main() {
     // Close mongodb connection explicitly
     mongoConnection.closeConnection();
 
-    console.log("\nDB Seeding completed!");
+    console.log("\nxxxxx DB Seeding completed xxxxx\n");
 }
 
 async function addUserAccount(email, hashedPassword, username, first_name, last_name, role) {

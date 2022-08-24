@@ -1,4 +1,6 @@
-const { v4 } = require("uuid");
+const {
+  v4
+} = require("uuid");
 
 const express = require("express");
 const router = express.Router();
@@ -42,8 +44,16 @@ router.post("/add", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let { name, summary, genres, duration, release_date, cast, director } =
-    JSON.parse(req.body.movieData);
+  let {
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } =
+  JSON.parse(req.body.movieData);
 
   let poster = req.files[0].path;
 
@@ -97,8 +107,17 @@ router.post("/edit", Data.any("poster"), async (req, res) => {
     return;
   }
 
-  let { id, name, summary, genres, duration, release_date, cast, director } =
-    JSON.parse(req.body.movieData);
+  let {
+    id,
+    name,
+    summary,
+    genres,
+    duration,
+    release_date,
+    cast,
+    director
+  } =
+  JSON.parse(req.body.movieData);
 
   let posterUpdate = false;
   let poster = "";
